@@ -46,12 +46,12 @@
         <Button
             style="@style/buttonStyle"
             android:id="@+id/btnSend"
-            android:text="@string/btn_send"
+            android:text="@string/save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:drawablePadding="@dimen/padding_small"
-            android:drawableLeft="@drawable/ic_send_white_24dp"
+            android:drawableLeft="@drawable/ic_check_white_24dp"
             android:layout_centerInParent="true"/>
 
     </RelativeLayout>

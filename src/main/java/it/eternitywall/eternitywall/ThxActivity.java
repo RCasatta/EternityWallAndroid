@@ -66,6 +66,12 @@ public class ThxActivity extends ActionBarActivity {
         }
         else {
             btn.setText("OK");
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
             final String email = sp.getString("email", "");
             final boolean ckOne = sp.getBoolean("ckone", true);
             final boolean ckTwo = sp.getBoolean("cktwo", true);

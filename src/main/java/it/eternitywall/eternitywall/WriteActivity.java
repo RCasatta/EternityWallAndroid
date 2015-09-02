@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.style.WrapTogetherSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,18 +23,10 @@ import android.widget.Toast;
 
 import com.google.common.base.Optional;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
-import it.eternitywall.eternitywall.adapters.MessageListAdapter;
 
 
 public class WriteActivity extends ActionBarActivity {
@@ -126,7 +117,7 @@ public class WriteActivity extends ActionBarActivity {
 
                 AsyncTask t = new AsyncTask() {
 
-                    private double value;
+                    private String value;
                     private boolean ok = false;
 
                     @Override
@@ -161,7 +152,7 @@ public class WriteActivity extends ActionBarActivity {
                                 JSONObject jo = new JSONObject(jstring);
 
                                 address = jo.getString("address");
-                                value = 1D * jo.getLong("value") / (100 * 1000 * 1000);
+                                value = jo.getString("btc");
 
                                 Log.i(TAG, "" + value);
 
