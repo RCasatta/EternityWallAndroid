@@ -88,6 +88,9 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
          [subscribe] - if equal to true, it will also register user to the mailing list
          [notifyreply] - if equal to true, email receive notification also of reply to message
 
+         http://eternitywall.it/m/c09e8df0df522c0d7ffe027a5d8b8d94f8bc237410e8b1242b32c9967070f4e3?format=json
+         return detail info on specified message (with father message (if any), current message and answer list (if any)
+
          *
          */
 
@@ -121,7 +124,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        // getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
