@@ -3,4 +3,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="write">Write message</string>
+    <string name="btn_send">Send</string>
+    <string name="err_check_internet">Check your Internet connection</string>
 </resources>

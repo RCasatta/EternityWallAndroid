@@ -26,6 +26,7 @@ import java.util.zip.InflaterInputStream;
  */
 public class Http {
     private final static Logger log      = Logger.getLogger(Http.class.getName());
+    public static final String P8G_TOKEN = "G2ZcqbPCauiwJfqMGjz54dK2o5QdXSpb";
 
     public static Optional<String> get(String urlString) {
         return get(urlString, 10000);

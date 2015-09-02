@@ -46,6 +46,14 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
         progress = (ProgressBar) findViewById(R.id.progress);
         swipe = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);
 
+        findViewById(R.id.payButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, WriteActivity.class);
+                startActivity(i);
+            }
+        });
+
         /**
          * EW PROTOCOL
          *
@@ -97,6 +105,17 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
 
 
         });
+        Intent intent = getIntent();
+        if(intent.getAction() != null && intent.getAction().equals(Intent.ACTION_SEND) && intent.getType().equals("text/plain")) {
+
+            intent.setAction(null);
+
+            String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+            Intent i = new Intent(MainActivity.this, WriteActivity.class);
+            i.putExtra("sharedText", sharedText);
+            startActivity(i);
+
+        }
     }
 
     @Override
@@ -157,7 +176,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
                 }
                 else {
                     //succhia!
-                    Toast.makeText(MainActivity.this, "Check your Internet connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
                 }
             }
 

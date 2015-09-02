@@ -7,6 +7,7 @@
         <item name="android:actionBarTabTextStyle">@style/MyActionBarTabText</item>
         <item name="android:actionMenuTextColor">@color/action_bar_text_color</item>
         <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:buttonStyle">@style/buttonStyle</item>
 
         <item name="colorPrimary">@color/primary</item>
 
@@ -40,5 +41,15 @@
         <item name="android:background">@drawable/style_message_background</item>
         <item name="android:padding">@dimen/padding_high</item>
     </style>
+
+    <style name="buttonStyle">
+        <item name="android:background">@drawable/style_button_background</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:paddingLeft">@dimen/padding_high</item>
+        <item name="android:paddingRight">@dimen/padding_high</item>
+        <item name="android:paddingTop">@dimen/padding_small</item>
+        <item name="android:paddingBottom">@dimen/padding_small</item>
+    </style>
+
 
 </resources>
