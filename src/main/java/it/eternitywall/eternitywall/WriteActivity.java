@@ -144,7 +144,7 @@ public class WriteActivity extends ActionBarActivity {
 
                         if(ok) {
                             Intent i = new Intent(Intent.ACTION_VIEW,Uri.parse("bitcoin:"+address+"?amount="+value/*+"&message=Payment&label=Satoshi&extra=other-param"*/));
-                            startActivityForResult(i, REQ_CODE);
+                            startActivityForResult(Intent.createChooser(i, getString(R.string.ask_choose_wallet)), REQ_CODE);
                         }
                         else {
                             Toast.makeText(WriteActivity.this, getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
