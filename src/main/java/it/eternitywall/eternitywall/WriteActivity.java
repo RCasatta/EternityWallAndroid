@@ -1,13 +1,17 @@
 package it.eternitywall.eternitywall;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.style.WrapTogetherSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,6 +30,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +43,7 @@ public class WriteActivity extends ActionBarActivity {
     private static final Integer MAX_LENGTH = 72;
 
     private static final String TAG = "WriteActivity";
+    private static final int REQ_CODE = 100;
 
     private EditText txtMessage;
     private TextView txtCounter;
@@ -93,15 +99,39 @@ public class WriteActivity extends ActionBarActivity {
                     return;
                 }
 
+                Intent i = new Intent(Intent.ACTION_VIEW,Uri.parse("bitcoin:17uPJEkDU3WtQp83oDuiQbnMnneA3Yfksc"));
+                if(!isAvailable(i)) {
+                    AlertDialog d = new AlertDialog.Builder(WriteActivity.this)
+                            .setTitle(getString(R.string.app_name))
+                            .setMessage("There are no bitcoin wallet app installed, do you want to install GreenBits?")
+                            .setNegativeButton("No, thanks", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .setPositiveButton("Yes" + "!", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + "com.greenaddress.greenbits_android_wallet")));
+                                }
+                            })
+                            .create();
+                    d.show();
+                    return;
+                }
+
                 AsyncTask t = new AsyncTask() {
 
-                    private long value;
+                    private double value;
                     private String address;
                     private boolean ok = false;
 
                     @Override
                     protected void onPreExecute() {
                         super.onPreExecute();
+
                         btnSend.setVisibility(View.INVISIBLE);
                         progress.setVisibility(View.VISIBLE);
                     }
@@ -113,10 +143,10 @@ public class WriteActivity extends ActionBarActivity {
                         btnSend.setVisibility(View.VISIBLE);
 
                         if(ok) {
-
+                            Intent i = new Intent(Intent.ACTION_VIEW,Uri.parse("bitcoin:"+address+"?amount="+value/*+"&message=Payment&label=Satoshi&extra=other-param"*/));
+                            startActivityForResult(i, REQ_CODE);
                         }
                         else {
-                            //succhia!
                             Toast.makeText(WriteActivity.this, getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -131,7 +161,9 @@ public class WriteActivity extends ActionBarActivity {
                                 JSONObject jo = new JSONObject(jstring);
 
                                 address = jo.getString("address");
-                                value = jo.getLong("value");
+                                value = 1D*jo.getLong("value")/(100*1000*1000);
+                                
+                                Log.i(TAG, ""+value);
 
                                 ok = true;
                             }
