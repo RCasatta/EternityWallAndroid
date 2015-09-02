@@ -240,7 +240,12 @@ public class WriteActivity extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == REQ_CODE && address != null) {
+        if(requestCode == REQ_CODE && address != null && data != null /*&& resultCode != RESULT_CANCELED*/) {
+
+            //TODO: debug RESULT_CODE on wallet application
+
+            Log.d(TAG, "requestCode=" + requestCode + " resultCode=" + resultCode + " data=" + data);
+
             Intent i = new Intent(this, ThxActivity.class);
             i.putExtra("address", address);
             startActivity(i);
