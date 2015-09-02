@@ -1,5 +1,8 @@
 package it.eternitywall.eternitywall.dialogfragments;
 
+import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -52,12 +55,21 @@ public class NotifyDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 if(txtEmail.getText().length() == 0 || !EmailValidation.isValid(txtEmail.getText().toString())) {
-                    Toast.makeText(getActivity(), "Please insert a valid email address", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getActivity().getString(R.string.err_email_address), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
+                //save the settings
+                SharedPreferences sp = getActivity().getSharedPreferences(Application.class.getSimpleName(), Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString("email", txtEmail.getText().toString());
+                editor.putBoolean("ckone", ckOne.isChecked());
+                editor.putBoolean("cktwo", ckTwo.isChecked());
+                editor.commit();
+
+                //something wrong!! address should always be set...
                 if(address == null) {
-                    Toast.makeText(getActivity(), "Oops... missing address, something wrong in post message!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getActivity().getString(R.string.err_generic), Toast.LENGTH_SHORT).show();
                     dismiss();
                     return;
                 }
@@ -88,15 +100,14 @@ public class NotifyDialogFragment extends DialogFragment {
 
                     @Override
                     protected Object doInBackground(Object[] params) {
-                        Optional<String> json = null;
                         try {
 
                             //https://eternitywall.appspot.com/v1/notify?email=[email]&hash=[hash]&address=[address]&subscribe=[subscribe]&notifyreply=[notifyreply]
                             Optional<String> res = Http.get(
-                                    "https://eternitywall.appspot.com/v1/notify?"+
-                                    "email="+txtEmail.getText()+"&address="+address+
-                                    (ckOne.isChecked() ? "&subscribe=true" : "")+
-                                    (ckTwo.isChecked() ? "&notifyreply=true" : ""));
+                                    "https://eternitywall.appspot.com/v1/notify?" +
+                                            "email=" + txtEmail.getText() + "&address=" + address +
+                                            (ckOne.isChecked() ? "&subscribe=true" : "") +
+                                            (ckTwo.isChecked() ? "&notifyreply=true" : ""));
 
                             ok = res.isPresent();
 

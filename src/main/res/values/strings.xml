@@ -11,4 +11,6 @@
     <string name="thanks_msg">Your message is being written on the wall.\nLeave your email to be notified when ready.</string>
     <string name="thanks_title">Thank you!</string>
     <string name="btn_notify">NOTIFY ME</string>
+    <string name="err_email_address">Please insert a valid email address</string>
+    <string name="err_generic">Oops... missing address, something wrong in post message!</string>
 </resources>
