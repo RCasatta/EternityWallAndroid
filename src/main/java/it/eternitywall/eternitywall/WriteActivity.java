@@ -52,6 +52,8 @@ public class WriteActivity extends ActionBarActivity {
     private String curmsg = "";
     private Button btnSend;
 
+    private String address;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,13 +96,13 @@ public class WriteActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                if(curmsg.isEmpty()) {
+                if (curmsg.isEmpty()) {
                     Toast.makeText(WriteActivity.this, getString(R.string.err_empty_message), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                Intent i = new Intent(Intent.ACTION_VIEW,Uri.parse("bitcoin:17uPJEkDU3WtQp83oDuiQbnMnneA3Yfksc"));
-                if(!isAvailable(i)) {
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("bitcoin:17uPJEkDU3WtQp83oDuiQbnMnneA3Yfksc"));
+                if (!isAvailable(i)) {
                     AlertDialog d = new AlertDialog.Builder(WriteActivity.this)
                             .setTitle(getString(R.string.app_name))
                             .setMessage("There are no bitcoin wallet app installed, do you want to install GreenBits?")
@@ -125,7 +127,6 @@ public class WriteActivity extends ActionBarActivity {
                 AsyncTask t = new AsyncTask() {
 
                     private double value;
-                    private String address;
                     private boolean ok = false;
 
                     @Override
@@ -142,11 +143,10 @@ public class WriteActivity extends ActionBarActivity {
                         progress.setVisibility(View.INVISIBLE);
                         btnSend.setVisibility(View.VISIBLE);
 
-                        if(ok) {
-                            Intent i = new Intent(Intent.ACTION_VIEW,Uri.parse("bitcoin:"+address+"?amount="+value/*+"&message=Payment&label=Satoshi&extra=other-param"*/));
+                        if (ok) {
+                            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("bitcoin:" + address + "?amount=" + value/*+"&message=Payment&label=Satoshi&extra=other-param"*/));
                             startActivityForResult(Intent.createChooser(i, getString(R.string.ask_choose_wallet)), REQ_CODE);
-                        }
-                        else {
+                        } else {
                             Toast.makeText(WriteActivity.this, getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -156,14 +156,14 @@ public class WriteActivity extends ActionBarActivity {
                         Optional<String> json = null;
                         try {
                             json = Http.get("http://eternitywall.it/bitcoinform?format=json&text=" + URLEncoder.encode(curmsg, "UTF-8") + "&source=" + getApplicationContext().getPackageName());
-                            if(json.isPresent()) {
+                            if (json.isPresent()) {
                                 String jstring = json.get();
                                 JSONObject jo = new JSONObject(jstring);
 
                                 address = jo.getString("address");
-                                value = 1D*jo.getLong("value")/(100*1000*1000);
-                                
-                                Log.i(TAG, ""+value);
+                                value = 1D * jo.getLong("value") / (100 * 1000 * 1000);
+
+                                Log.i(TAG, "" + value);
 
                                 ok = true;
                             }
@@ -240,7 +240,12 @@ public class WriteActivity extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Toast.makeText(this, "requestCode=" + requestCode + " resultCode=" + resultCode + " data=" + data , Toast.LENGTH_LONG).show();
+        if(requestCode == REQ_CODE && address != null) {
+            Intent i = new Intent(this, ThxActivity.class);
+            i.putExtra("address", address);
+            startActivity(i);
+            finish();
+        }
     }
 
     private Integer calcRemainingBytes() {

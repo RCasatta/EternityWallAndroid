@@ -4,8 +4,11 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="write">Write message</string>
-    <string name="btn_send">Send</string>
+    <string name="btn_send">SEND</string>
     <string name="err_check_internet">Check your Internet connection</string>
     <string name="ask_choose_wallet">Select a Bitcoin Wallet App</string>
     <string name="err_empty_message">Empty messages are not allowed</string>
+    <string name="thanks_msg">Your message is being written on the wall.\nLeave your email to be notified when ready.</string>
+    <string name="thanks_title">Thank you!</string>
+    <string name="btn_notify">NOTIFY ME</string>
 </resources>
