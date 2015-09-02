@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="message_border">#eee</color>
+    <color name="action_bar_background">#a02</color>
+    <color name="action_bar_text_color">#aaa</color>
+
+    <color name="primary">#eee</color>
+    <color name="primaryDark">#aaa</color>
+    <color name="accent">#448AFF</color>
+</resources>
