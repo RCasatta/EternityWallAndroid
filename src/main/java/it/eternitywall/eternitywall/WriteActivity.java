@@ -95,7 +95,7 @@ public class WriteActivity extends ActionBarActivity {
             public void onClick(View v) {
 
                 if(curmsg.isEmpty()) {
-                    Toast.makeText(WriteActivity.this, "Empty messages are not allowed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(WriteActivity.this, getString(R.string.err_empty_message), Toast.LENGTH_SHORT).show();
                     return;
                 }
 

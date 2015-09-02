@@ -7,4 +7,5 @@
     <string name="btn_send">Send</string>
     <string name="err_check_internet">Check your Internet connection</string>
     <string name="ask_choose_wallet">Select a Bitcoin Wallet App</string>
+    <string name="err_empty_message">Empty messages are not allowed</string>
 </resources>
