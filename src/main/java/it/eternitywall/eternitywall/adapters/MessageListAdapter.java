@@ -1,8 +1,6 @@
 package it.eternitywall.eternitywall.adapters;
 
 import android.app.Activity;
-import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -10,7 +8,10 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.R;
@@ -19,6 +20,7 @@ import it.eternitywall.eternitywall.R;
  * Created by federicoserrelli on 26/08/15.
  */
 public class MessageListAdapter extends ArrayAdapter<Message> {
+    private final static Logger log      = Logger.getLogger(MessageListAdapter.class.getName());
 
     public interface MessageListAdapterManager {
         public void loadMoreData();
@@ -28,12 +30,14 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
     private List<Message> data;
     private Activity activity;
     private MessageListAdapterManager manager;
+    private Integer inQueue;
 
-    public MessageListAdapter(Activity activity, int resource, List<Message> objects, MessageListAdapterManager manager) {
+    public MessageListAdapter(Activity activity, int resource, List<Message> objects, Integer inQueue, MessageListAdapterManager manager) {
         super(activity, resource, objects);
         this.data = objects;
         this.activity = activity;
         this.manager = manager;
+        this.inQueue = inQueue;
     }
 
     @Override
@@ -46,11 +50,16 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
         Message m = data.get(position);
         MessageHolder h;
 
+        log.info("position=" + position);
+
+
         if(row == null) {
             row = activity.getLayoutInflater().inflate(layoutResourceId, parent, false);
             h = new MessageHolder();
             h.txtDate = (TextView) row.findViewById(R.id.txtDate);
             h.txtMessage = (TextView) row.findViewById(R.id.txtMessage);
+            h.headerText = (TextView) row.findViewById(R.id.headerText);
+
             row.setTag(h);
         }
         else {
@@ -61,13 +70,45 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
         h.txtDate.setText(new SimpleDateFormat("dd MMM yyyy HH.mm").format(new Date(m.getTimestamp())));
         h.txtMessage.setText(m.getMessage());
 
+        if(position==0) {
+            if(inQueue!=null && inQueue>0) {
+                h.headerText.setVisibility(View.VISIBLE);
+                String value = mapNumbers.get(inQueue);
+                if(value==null)
+                    value = inQueue.toString();
+
+                h.headerText.setText(value + " message" + (inQueue > 1 ? "s" : "") + " in queue…");
+
+            }
+        } else {
+            h.headerText.setVisibility( View.GONE );
+        }
+
         if(position == data.size()-1)
             manager.loadMoreData();
         return row;
     }
 
     protected class MessageHolder {
+        protected TextView headerText;
         protected TextView txtDate;
         protected TextView txtMessage;
     }
+
+    static Map<Integer,String> mapNumbers=new HashMap<>();
+    static {
+        mapNumbers.put(1,"one");
+        mapNumbers.put(2,"two");
+        mapNumbers.put(3,"three");
+        mapNumbers.put(4,"four");
+        mapNumbers.put(5,"five");
+        mapNumbers.put(6,"six");
+        mapNumbers.put(7,"seven");
+        mapNumbers.put(8,"eight");
+        mapNumbers.put(9,"nine");
+        mapNumbers.put(10,"ten");
+    }
+
+
+
 }

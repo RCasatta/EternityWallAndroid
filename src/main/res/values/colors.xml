@@ -8,6 +8,8 @@
     <color name="primaryDark">#aaa</color>
     <color name="accent">#448AFF</color>
 
+    <color name="primaryText">#111</color>
+
     <!-- unused -->
     <color name="button_dark_blue">#2e6da4</color>
     <color name="button_blue">#337ab7</color>

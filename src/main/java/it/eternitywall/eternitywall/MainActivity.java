@@ -36,6 +36,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
 
     private String cursor;
     private List<Message> messages;
+    private Integer inQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +97,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
 
         messages = new ArrayList<Message>();
         cursor = null;
+        inQueue = null;
         loadMoreData();
 
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -103,6 +105,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
             public void onRefresh() {
                 messages = new ArrayList<Message>();
                 cursor = null;
+                inQueue = null;
                 loadMoreData();
             }
 
@@ -170,11 +173,12 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
                 if(ok) {
                     if(messages != null && !messages.isEmpty()) {
                         messages.addAll(mMessages);
-                        ((MessageListAdapter) lstMessages.getAdapter()).notifyDataSetChanged();
+                        final MessageListAdapter messageListAdapter = (MessageListAdapter) lstMessages.getAdapter();
+                        messageListAdapter.notifyDataSetChanged();
                     }
                     else {
                         messages.addAll(mMessages);
-                        lstMessages.setAdapter(new MessageListAdapter(MainActivity.this, R.layout.item_message, messages, MainActivity.this));
+                        lstMessages.setAdapter(new MessageListAdapter(MainActivity.this, R.layout.item_message, messages, inQueue, MainActivity.this));
                     }
                 }
                 else {
@@ -192,6 +196,10 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
                         JSONObject jo = new JSONObject(jstring);
 
                         cursor = jo.getString("next");
+                        if(jo.has("messagesInQueue")) {
+                            inQueue = jo.getInt("messagesInQueue");
+                        }
+
                         JSONArray ja = jo.getJSONArray("messages");
 
                         for(int m=0; m<ja.length(); m++) {

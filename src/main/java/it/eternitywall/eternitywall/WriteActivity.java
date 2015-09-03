@@ -170,18 +170,6 @@ public class WriteActivity extends ActionBarActivity {
         });
 
         /**
-         * EW PROTOCOL
-         *
-         * input pau the fee
-         * EWAxenoky set nick "xenoky" to first input of transaction
-         *
-         *
-         * first input is the sender
-         * other input are ignored
-         * first output is the message id (DUST value)
-         * second output (optional) if the message id answering to
-         * OP_RETURN EW message
-         * other outputs are ignored
          *
          * The following API endpoints are available:
 
@@ -203,6 +191,13 @@ public class WriteActivity extends ActionBarActivity {
          [subscribe] - if equal to true, it will also register user to the mailing list
          [notifyreply] - if equal to true, email receive notification also of reply to message
 
+         http://eternitywall.it/m/[hash]?format=json
+         returns a json with Eternity Wall message M with tx hash equal to [hash].
+         If M is an answer also the answer is returned
+         If M has replies, a list of replies is returned
+         [hash] - the hash of the tx that contains the OP_RETURN with the message
+
+
          *
          */
     }
@@ -210,7 +205,7 @@ public class WriteActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        // getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
