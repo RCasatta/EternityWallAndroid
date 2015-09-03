@@ -27,15 +27,30 @@ android {
         applicationId "it.eternitywall.eternitywall"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 2
-        versionName "1.0"
+        versionCode 3
+        versionName "1.0." + defaultConfig.getProperty("versionCode")
     }
     buildTypes {
+        debug {
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    productFlavors {
+        dev {
+            applicationId "it.eternitywall.ewdev"
+        }
+
+        deploy {
+
+        }
+
+    }
+
 }
 
 dependencies {
