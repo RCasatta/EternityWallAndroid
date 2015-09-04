@@ -135,7 +135,10 @@ public class WriteActivity extends ActionBarActivity {
                         btnSend.setVisibility(View.VISIBLE);
 
                         if (ok) {
-                            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("bitcoin:" + address + "?amount=" + value/*+"&message=Payment&label=Satoshi&extra=other-param"*/));
+                            final String uriString = "bitcoin:" + address + "?amount=" + value/*+"&message=Payment&label=Satoshi&extra=other-param"*/;
+                            Log.i(TAG,"uriString=(" + uriString + ")");
+                            final Uri uri = Uri.parse(uriString);
+                            Intent i = new Intent(Intent.ACTION_VIEW, uri);
                             startActivityForResult(Intent.createChooser(i, getString(R.string.ask_choose_wallet)), REQ_CODE);
                         } else {
                             Toast.makeText(WriteActivity.this, getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
