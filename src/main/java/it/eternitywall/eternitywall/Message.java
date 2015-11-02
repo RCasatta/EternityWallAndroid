@@ -19,7 +19,9 @@ public class Message implements Serializable, Comparable<Message> {
     private Long timestamp;
     private String messageId;
     private Integer replies;
+    private Integer likes;
     private Boolean answer;
+
 
     public Boolean getAnswer() {
         return answer;
@@ -69,6 +71,14 @@ public class Message implements Serializable, Comparable<Message> {
         this.txHash = txHash;
     }
 
+    public Integer getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Integer likes) {
+        this.likes = likes;
+    }
+
     @Override
     public String toString() {
         return "Message{" +
@@ -100,6 +110,7 @@ public class Message implements Serializable, Comparable<Message> {
         try { m.txHash = jo.getString("hash");} catch (JSONException e) {} //optional
         try { m.replies = jo.getInt("replies");} catch (JSONException e) { m.replies = 0; } //optional
         try { m.answer = jo.getBoolean("answer");} catch (JSONException e) { m.answer = false; } //optional
+        try { m.likes = jo.getInt("likes");} catch (JSONException e) { m.likes = 0; } //optional
 
         return m;
     }

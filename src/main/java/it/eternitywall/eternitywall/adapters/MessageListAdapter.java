@@ -58,6 +58,7 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
             h = new MessageHolder();
             h.txtDate = (TextView) row.findViewById(R.id.txtDate);
             h.txtMessage = (TextView) row.findViewById(R.id.txtMessage);
+            h.txtStatus = (TextView) row.findViewById(R.id.txtStatus);
             h.headerText = (TextView) row.findViewById(R.id.headerText);
 
             row.setTag(h);
@@ -69,6 +70,28 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
 
         h.txtDate.setText(new SimpleDateFormat("dd MMM yyyy HH.mm").format(new Date(m.getTimestamp())));
         h.txtMessage.setText(m.getMessage());
+
+        // Add status field
+        String strStatus="";
+        if (m.getReplies()>0){
+            strStatus+=String.valueOf(m.getReplies())+(m.getReplies()==1?" reply ": " replies ");
+        }
+        if (m.getAnswer()==true){
+            if (strStatus.length()>0)
+                strStatus+="- ";
+            strStatus+="answer";
+        }
+        if (m.getLikes()>0){
+            if (strStatus.length()>0)
+                strStatus+="- ";
+            strStatus+=String.valueOf(m.getLikes())+(m.getLikes()==1?" like ": " likes ");
+        }
+        if (strStatus.length()>0){
+            h.txtStatus.setText(strStatus);
+            h.txtStatus.setVisibility(View.VISIBLE);
+        }
+
+
 
         if(position==0) {
             if(inQueue!=null && inQueue>0) {
@@ -93,6 +116,7 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
         protected TextView headerText;
         protected TextView txtDate;
         protected TextView txtMessage;
+        protected TextView txtStatus;
     }
 
     static Map<Integer,String> mapNumbers=new HashMap<>();
