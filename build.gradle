@@ -28,6 +28,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 22
         versionCode 3
+        multiDexEnabled true
         versionName "1.0." + defaultConfig.getProperty("versionCode")
     }
     buildTypes {
@@ -60,7 +61,9 @@ dependencies {
     compile 'com.google.guava:guava:18.0'
     compile 'org.json:json:20090211'
     compile 'commons-lang:commons-lang:2.6'
-    compile 'org.bitcoinj:bitcoinj-core:0.12.3'
-
+    //compile 'org.bitcoinj:bitcoinj-core:0.12.3'
+    compile('org.bitcoinj:bitcoinj-core:0.12.3') {
+        exclude module: 'scrypt'
+    }
 
 }
