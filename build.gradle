@@ -60,6 +60,7 @@ dependencies {
     compile 'com.google.guava:guava:18.0'
     compile 'org.json:json:20090211'
     compile 'commons-lang:commons-lang:2.6'
+    compile 'org.bitcoinj:bitcoinj-core:0.12.3'
 
 
 }
