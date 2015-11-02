@@ -1,0 +1,51 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_high"
+    android:layout_height="match_parent" tools:context=".WriteActivity">
+
+    <EditText
+        android:id="@+id/txtMessage"
+        android:layout_width="match_parent"
+        android:padding="@dimen/padding_high"
+        android:lines="5"
+        android:background="@drawable/style_message_background"
+        android:hint="write your message..."
+        android:gravity="top"
+        android:layout_height="wrap_content"></EditText>
+
+    <TextView
+        android:id="@+id/txtCounter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@android:style/TextAppearance.Small"
+        android:gravity="right"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/padding_high"
+        android:layout_height="wrap_content">
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:indeterminate="true"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:visibility="invisible"
+            android:background="@android:color/transparent"
+            android:layout_centerInParent="true"/>
+
+        <Button
+            style="@style/buttonStyle"
+            android:id="@+id/btnSend"
+            android:text="@string/btn_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:drawablePadding="@dimen/padding_small"
+            android:drawableLeft="@drawable/ic_send_white_24dp"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
+
+</LinearLayout>
