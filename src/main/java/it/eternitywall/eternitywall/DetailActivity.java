@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,41 +18,85 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.base.Optional;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
+import it.eternitywall.eternitywall.adapters.MessageListAdapter;
 
-public class DetailActivity extends ActionBarActivity {
+
+public class DetailActivity extends ActionBarActivity  {
 
     private static final Integer MAX_LENGTH = 72;
 
     private static final String TAG = "WriteActivity";
     private static final int REQ_CODE = 100;
 
-    private EditText txtMessage;
-    private TextView txtCounter;
+    private TextView txtMessage;
+    private TextView txtDate;
     private ProgressBar progress;
+    private String hash=null;
+    private ListView repliesMessages;
+    private ListView answersMessages;
 
-    private String curmsg = "";
-    private Button btnSend;
+    private List<Message> replies;
+    private List<Message> answers;
 
-    private String address;
+
+    Button btnShare,btnLikes,btnProof,btnRanking,btnReplies,btnTranslate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_write);
+        setContentView(R.layout.activity_detail);
 
+        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
+        btnShare = (Button)findViewById(R.id.btnShare);
+        btnLikes = (Button)findViewById(R.id.btnLikes);
+        btnProof = (Button)findViewById(R.id.btnProof);
+        btnRanking = (Button)findViewById(R.id.btnRanking);
+        btnReplies = (Button)findViewById(R.id.btnReply);
+        btnTranslate = (Button)findViewById(R.id.btnTranslate);
+        btnShare.setTypeface(font);
+        btnLikes.setTypeface(font);
+        btnProof.setTypeface(font);
+        btnRanking.setTypeface(font);
+        btnReplies.setTypeface(font);
+        btnTranslate.setTypeface(font);
+
+        txtMessage = (TextView)findViewById(R.id.txtMessage);
+        txtDate = (TextView)findViewById(R.id.txtDate);
+        progress = (ProgressBar) findViewById(R.id.progress);
+        repliesMessages=(ListView) findViewById(R.id.repliesMessages);
+        answersMessages=(ListView) findViewById(R.id.answersMessages);
+
+        replies = new ArrayList<Message>();
+        answers = new ArrayList<Message>();
+
+        try {
+            hash = getIntent().getStringExtra("hash");
+        }catch (Exception e){
+            //succhia!
+            Toast.makeText(DetailActivity.this, getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
+        }
+        loadMessage();
+/*
         txtMessage = (EditText) findViewById(R.id.txtMessage);
-        if(getIntent().getExtras() != null && getIntent().getStringExtra("sharedText") != null)
+        if (getIntent().getExtras() != null && getIntent().getStringExtra("sharedText") != null)
             txtMessage.setText(getIntent().getStringExtra("sharedText"));
 
         txtMessage.addTextChangedListener(new TextWatcher() {
@@ -70,12 +115,12 @@ public class DetailActivity extends ActionBarActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 curmsg = s.toString();
-                if(calcRemainingBytes() < 0) {
+                if (calcRemainingBytes() < 0) {
                     curmsg = oldText;
                     txtMessage.setText(curmsg);
                     txtMessage.setSelection(curmsg.length());
                 }
-                txtCounter.setText(calcRemainingBytes()+" "+"characters available");
+                txtCounter.setText(calcRemainingBytes() + " " + "characters available");
             }
         });
         txtCounter = (TextView) findViewById(R.id.txtCounter);
@@ -135,8 +180,8 @@ public class DetailActivity extends ActionBarActivity {
                         btnSend.setVisibility(View.VISIBLE);
 
                         if (ok) {
-                            final String uriString = "bitcoin:" + address + "?amount=" + value/*+"&message=Payment&label=Satoshi&extra=other-param"*/;
-                            Log.i(TAG,"uriString=(" + uriString + ")");
+                            final String uriString = "bitcoin:" + address + "?amount=" + value/*+"&message=Payment&label=Satoshi&extra=other-param";
+                            Log.i(TAG, "uriString=(" + uriString + ")");
                             final Uri uri = Uri.parse(uriString);
                             Intent i = new Intent(Intent.ACTION_VIEW, uri);
                             startActivityForResult(Intent.createChooser(i, getString(R.string.ask_choose_wallet)), REQ_CODE);
@@ -171,40 +216,8 @@ public class DetailActivity extends ActionBarActivity {
                 t.execute();
             }
         });
-
-        /**
-         *
-         * The following API endpoints are available:
-
-         http://eternitywall.it/?format=json&cursor=[cursor]
-         returns a json with Eternity Wall messages.
-         [cursor] - Optional, if provided the message returned start from cursor (the value of cursor is provided in the json)
-
-         http://eternitywall.it/bitcoinform?format=json&text=[text]&reply=[replyid]&source=[source]
-         returns a json with a bitcoin address to pay to write on the wall.
-         [text] - The text of the message
-         [replyid] - Optional, in case of replying to a message.
-         [source] - Optional, specify source of message (your app name).
-
-         https://eternitywall.appspot.com/v1/notify?email=[email]&hash=[hash]&address=[address]&subscribe=[subscribe]&notifyreply=[notifyreply]
-         if called, user will be notified with an email when the message has been written (block confirmed) and optionally to receive notification when there are replies
-         [email] - us
-         [hash] - Not required if [address] is specified. hash of the tx containing the message
-         [address] - Not required if [hash] is specified. bitcoin address paid to write the message
-         [subscribe] - if equal to true, it will also register user to the mailing list
-         [notifyreply] - if equal to true, email receive notification also of reply to message
-
-         http://eternitywall.it/m/[hash]?format=json
-         returns a json with Eternity Wall message M with tx hash equal to [hash].
-         If M is an answer also the answer is returned
-         If M has replies, a list of replies is returned
-         [hash] - the hash of the tx that contains the OP_RETURN with the message
-
-
-         *
-         */
+*/
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -227,36 +240,143 @@ public class DetailActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == REQ_CODE && address != null && data != null /*&& resultCode != RESULT_CANCELED*/) {
+    public void loadMessage() {
+        AsyncTask t = new AsyncTask() {
 
-            //TODO: debug RESULT_CODE on wallet application
+            private boolean ok = false;
+            private Message mMessage = null;
+            private List<Message> mReplies = null;
+            private List<Message> mAnswers = null;
 
-            Log.d(TAG, "requestCode=" + requestCode + " resultCode=" + resultCode + " data=" + data);
 
-            Intent i = new Intent(this, ThxActivity.class);
-            i.putExtra("address", address);
-            startActivity(i);
-            finish();
-        }
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progress.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                super.onPostExecute(o);
+                if (DetailActivity.this.isFinishing())
+                    return;
+                progress.setVisibility(View.INVISIBLE);
+
+                if(ok) {
+                    txtDate.setText(new SimpleDateFormat("dd MMM yyyy HH.mm").format(new Date(mMessage.getTimestamp())));
+                    txtMessage.setText(mMessage.getMessage());
+                    // TO DO
+                    //if (mMessage.getAnswer()==true)
+                    if (mMessage.getLikes()>0)
+                        btnLikes.setText( getResources().getString(R.string.icon_likes) + " ("+String.valueOf(mMessage.getLikes())+")" );
+                    if (mMessage.getReplies()>0)
+                        btnReplies.setText( getResources().getString(R.string.icon_commenting) + " ("+String.valueOf(mMessage.getReplies())+")" );
+
+                    btnShare.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent();
+                            intent.setAction(Intent.ACTION_SEND);
+                            intent.putExtra(Intent.EXTRA_TEXT, "http://eternitywall.it/m/"+mMessage.getTxHash());
+                            intent.setType("text/plain");
+                            startActivity(intent);
+                        }
+                    });
+                    btnRanking.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            /*Message ranking
+                            0.123 middle
+
+                            This page has been viewed 22 times of which 22 in the last seven days. It has 1 like.
+                           */
+                            new AlertDialog.Builder(DetailActivity.this)
+                                    .setTitle("Message ranking")
+                                    .setMessage("")
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // continue with delete
+                                        }
+                                    })
+                                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // do nothing
+                                        }
+                                    })
+                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .show();
+                        }
+                    });
+
+                    if(replies != null && !replies.isEmpty()) {
+                        replies.addAll(mReplies);
+                        final MessageListAdapter messageListAdapter = (MessageListAdapter) repliesMessages.getAdapter();
+                        messageListAdapter.notifyDataSetChanged();
+                    }
+                    else {
+                        replies.addAll(mReplies);
+                        repliesMessages.setAdapter(new MessageListAdapter(DetailActivity.this, R.layout.item_message, mReplies, 0, null));
+                    }
+                    if(answers != null && !answers.isEmpty()) {
+                        answers.addAll(mAnswers);
+                        final MessageListAdapter messageListAdapter = (MessageListAdapter) answersMessages.getAdapter();
+                        messageListAdapter.notifyDataSetChanged();
+                    }
+                    else {
+                        answers.addAll(mAnswers);
+                        answersMessages.setAdapter(new MessageListAdapter(DetailActivity.this, R.layout.item_message, mAnswers, 0, null));
+                    }
+                }
+                else {
+                    //succhia!
+                    Toast.makeText(DetailActivity.this, getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+            @Override
+            protected Object doInBackground(Object[] params) {
+                Optional<String> json = Http.get("http://eternitywall.it/m/"+hash+"?format=json");
+                if(json.isPresent()) {
+                    try {
+                        String jstring = json.get();
+                        JSONObject jo = new JSONObject(jstring);
+                        mMessage = Message.buildFromJson(jo.getJSONObject("current"));
+                        Log.i(TAG, mMessage.toString());
+
+                        // build list of replies messages
+                        try {
+                            JSONArray jReplies = jo.getJSONArray("replies");
+                            mReplies=new ArrayList<Message>();
+                            for (int i=0;i<jReplies.length();i++){
+                                Message reply = Message.buildFromJson(jReplies.getJSONObject(i));
+                                mReplies.add( reply );
+                            }
+                        } catch (JSONException e) {
+                            mReplies=new ArrayList<Message>();
+                        } //optional
+
+                        // build list of answers messages
+                        try {
+                            JSONObject jAnswer = jo.getJSONObject("replyFrom");
+                            mAnswers=new ArrayList<Message>();
+                            Message answer = Message.buildFromJson(jAnswer);
+                            mAnswers.add( answer );
+                        } catch (JSONException e) {
+                            mAnswers=new ArrayList<Message>();
+                        } //optional
+
+
+                        ok = true;
+                    }
+                    catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+                return null;
+            }
+        };
+        t.execute();
     }
 
-    private Integer calcRemainingBytes() {
-        try {
-            int length = curmsg.getBytes("UTF-8").length;
-            return MAX_LENGTH-length;
-        }
-        catch (Exception ex) {
-            return MAX_LENGTH;
-        }
-    }
-
-    private boolean isAvailable(Intent intent) {
-        final PackageManager mgr = getPackageManager();
-        List<ResolveInfo> list =
-                mgr.queryIntentActivities(intent,
-                        PackageManager.MATCH_DEFAULT_ONLY);
-        return list.size() > 0;
-    }
 }

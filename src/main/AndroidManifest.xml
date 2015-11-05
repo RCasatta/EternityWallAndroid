@@ -32,6 +32,10 @@
             android:name=".ThxActivity"
             android:label="@string/app_name" >
         </activity>
+        <activity
+            android:name=".DetailActivity"
+            android:label="@string/app_name" >
+        </activity>
     </application>
 
 </manifest>

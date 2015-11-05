@@ -1,6 +1,8 @@
 package it.eternitywall.eternitywall.adapters;
 
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import it.eternitywall.eternitywall.DetailActivity;
 import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.R;
 
@@ -47,7 +50,7 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
 
     @Override
     public View getView(int position, View row, ViewGroup parent) {
-        Message m = data.get(position);
+        final Message m = data.get(position);
         MessageHolder h;
 
         log.info("position=" + position);
@@ -60,7 +63,6 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
             h.txtMessage = (TextView) row.findViewById(R.id.txtMessage);
             h.txtStatus = (TextView) row.findViewById(R.id.txtStatus);
             h.headerText = (TextView) row.findViewById(R.id.headerText);
-
             row.setTag(h);
         }
         else {
@@ -90,6 +92,16 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
             h.txtStatus.setText(strStatus);
             h.txtStatus.setVisibility(View.VISIBLE);
         }
+        // add click listener
+        h.onClickListener = new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), DetailActivity.class);
+                intent.putExtra("hash",String.valueOf( m.getTxHash() ));
+                getContext().startActivity(intent);
+            }
+        };
+        row.setOnClickListener(h.onClickListener);
 
 
 
@@ -107,7 +119,7 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
             h.headerText.setVisibility( View.GONE );
         }
 
-        if(position == data.size()-1)
+        if(position == data.size()-1 && manager!=null)
             manager.loadMoreData();
         return row;
     }
@@ -117,6 +129,7 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
         protected TextView txtDate;
         protected TextView txtMessage;
         protected TextView txtStatus;
+        protected View.OnClickListener onClickListener;
     }
 
     static Map<Integer,String> mapNumbers=new HashMap<>();

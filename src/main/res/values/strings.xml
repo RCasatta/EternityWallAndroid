@@ -14,4 +14,12 @@
     <string name="err_email_address">Please insert a valid email address</string>
     <string name="err_generic">Oops... missing address, something wrong in post message!</string>
     <string name="save">SAVE</string>
+
+    <string name="icon_share">&#xf1e0;</string>
+    <string name="icon_link">&#xf08e;</string>
+    <string name="icon_ranking">&#xf06e;</string>
+    <string name="icon_likes">&#xf087;</string>
+    <string name="icon_commenting">&#xf27b;</string>
+    <string name="icon_translate">&#xf0ac;</string>
+
 </resources>
