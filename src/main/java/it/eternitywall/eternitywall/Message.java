@@ -21,7 +21,12 @@ public class Message implements Serializable, Comparable<Message> {
     private Integer replies;
     private Integer likes;
     private Boolean answer;
-
+    private Integer rank;
+    private Integer height;
+    private Double value;
+    private Integer view;
+    private Integer weekView;
+    private Integer retweets;
 
     public Boolean getAnswer() {
         return answer;
@@ -111,6 +116,12 @@ public class Message implements Serializable, Comparable<Message> {
         try { m.replies = jo.getInt("replies");} catch (JSONException e) { m.replies = 0; } //optional
         try { m.answer = jo.getBoolean("answer");} catch (JSONException e) { m.answer = false; } //optional
         try { m.likes = jo.getInt("likes");} catch (JSONException e) { m.likes = 0; } //optional
+        try { m.rank = jo.getInt("rank");} catch (JSONException e) { m.rank = 0; } //optional
+        try { m.height = jo.getInt("height");} catch (JSONException e) { m.height = 0; } //optional
+        try { m.value = jo.getDouble("value");} catch (JSONException e) { m.value = new Double(0); } //optional
+        try { m.view = jo.getInt("view");} catch (JSONException e) { m.view = 0; } //optional
+        try { m.weekView = jo.getInt("weekView");} catch (JSONException e) { m.weekView = 0; } //optional
+        try { m.retweets = jo.getInt("retweets");} catch (JSONException e) { m.retweets = 0; } //optional
 
         return m;
     }
@@ -123,5 +134,53 @@ public class Message implements Serializable, Comparable<Message> {
     @Override
     public int compareTo(Message another) {
         return -this.timestamp.compareTo(another.getTimestamp());
+    }
+
+    public Integer getRank() {
+        return rank;
+    }
+
+    public void setRank(Integer rank) {
+        this.rank = rank;
+    }
+
+    public Integer getHeight() {
+        return height;
+    }
+
+    public void setHeight(Integer height) {
+        this.height = height;
+    }
+
+    public Double getValue() {
+        return value;
+    }
+
+    public void setValue(Double value) {
+        this.value = value;
+    }
+
+    public Integer getView() {
+        return view;
+    }
+
+    public void setView(Integer view) {
+        this.view = view;
+    }
+
+    public Integer getWeekView() {
+        return weekView;
+    }
+
+    public void setWeekView(Integer weekView) {
+        this.weekView = weekView;
+    }
+
+    public Integer getRetweets() {
+        return retweets;
+    }
+
+    public void setRetweets(Integer retweets) {
+        this.retweets = retweets;
     }
 }

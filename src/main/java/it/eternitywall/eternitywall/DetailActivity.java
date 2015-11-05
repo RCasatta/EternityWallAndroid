@@ -1,10 +1,14 @@
 package it.eternitywall.eternitywall;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -13,13 +17,18 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +47,10 @@ import java.util.List;
 
 import it.eternitywall.eternitywall.adapters.MessageListAdapter;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
 public class DetailActivity extends ActionBarActivity  {
 
@@ -94,129 +107,6 @@ public class DetailActivity extends ActionBarActivity  {
             Toast.makeText(DetailActivity.this, getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
         }
         loadMessage();
-/*
-        txtMessage = (EditText) findViewById(R.id.txtMessage);
-        if (getIntent().getExtras() != null && getIntent().getStringExtra("sharedText") != null)
-            txtMessage.setText(getIntent().getStringExtra("sharedText"));
-
-        txtMessage.addTextChangedListener(new TextWatcher() {
-
-            String oldText;
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                oldText = curmsg;
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                curmsg = s.toString();
-                if (calcRemainingBytes() < 0) {
-                    curmsg = oldText;
-                    txtMessage.setText(curmsg);
-                    txtMessage.setSelection(curmsg.length());
-                }
-                txtCounter.setText(calcRemainingBytes() + " " + "characters available");
-            }
-        });
-        txtCounter = (TextView) findViewById(R.id.txtCounter);
-
-        progress = (ProgressBar) findViewById(R.id.progress);
-
-        btnSend = (Button) findViewById(R.id.btnSend);
-        btnSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (curmsg.isEmpty()) {
-                    Toast.makeText(DetailActivity.this, getString(R.string.err_empty_message), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("bitcoin:17uPJEkDU3WtQp83oDuiQbnMnneA3Yfksc"));
-                if (!isAvailable(i)) {
-                    AlertDialog d = new AlertDialog.Builder(DetailActivity.this)
-                            .setTitle(getString(R.string.app_name))
-                            .setMessage("There are no bitcoin wallet app installed, do you want to install GreenBits?")
-                            .setNegativeButton("No, thanks", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            })
-                            .setPositiveButton("Yes" + "!", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + "com.greenaddress.greenbits_android_wallet")));
-                                }
-                            })
-                            .create();
-                    d.show();
-                    return;
-                }
-
-                AsyncTask t = new AsyncTask() {
-
-                    private String value;
-                    private boolean ok = false;
-
-                    @Override
-                    protected void onPreExecute() {
-                        super.onPreExecute();
-
-                        btnSend.setVisibility(View.INVISIBLE);
-                        progress.setVisibility(View.VISIBLE);
-                    }
-
-                    @Override
-                    protected void onPostExecute(Object o) {
-                        super.onPostExecute(o);
-                        progress.setVisibility(View.INVISIBLE);
-                        btnSend.setVisibility(View.VISIBLE);
-
-                        if (ok) {
-                            final String uriString = "bitcoin:" + address + "?amount=" + value/*+"&message=Payment&label=Satoshi&extra=other-param";
-                            Log.i(TAG, "uriString=(" + uriString + ")");
-                            final Uri uri = Uri.parse(uriString);
-                            Intent i = new Intent(Intent.ACTION_VIEW, uri);
-                            startActivityForResult(Intent.createChooser(i, getString(R.string.ask_choose_wallet)), REQ_CODE);
-                        } else {
-                            Toast.makeText(DetailActivity.this, getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    protected Object doInBackground(Object[] params) {
-                        Optional<String> json = null;
-                        try {
-                            json = Http.get("http://eternitywall.it/bitcoinform?format=json&text=" + URLEncoder.encode(curmsg, "UTF-8") + "&source=" + getApplicationContext().getPackageName());
-                            if (json.isPresent()) {
-                                String jstring = json.get();
-                                JSONObject jo = new JSONObject(jstring);
-
-                                address = jo.getString("address");
-                                value = jo.getString("btc");
-
-                                Log.i(TAG, "" + value);
-
-                                ok = true;
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        return null;
-                    }
-                };
-                t.execute();
-            }
-        });
-*/
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -238,6 +128,25 @@ public class DetailActivity extends ActionBarActivity  {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    private Bitmap generateQRCode(String data) {
+        Bitmap mBitmap=null;
+        com.google.zxing.Writer writer = new QRCodeWriter();
+        String finaldata =Uri.encode(data, "ISO-8859-1");
+        try {
+            BitMatrix bm = writer.encode(finaldata,BarcodeFormat.QR_CODE, 200, 200);
+            mBitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888);
+            for (int i = 0; i < 200; i++) {
+                for (int j = 0; j < 200; j++) {
+                    mBitmap.setPixel(i, j, bm.get(i, j) ? Color.BLACK: Color.WHITE);
+                }
+            }
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+        return mBitmap;
     }
 
     public void loadMessage() {
@@ -282,29 +191,98 @@ public class DetailActivity extends ActionBarActivity  {
                             startActivity(intent);
                         }
                     });
+                    btnProof.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // Proof website:
+                            // examples:
+                            //https://blockchain.info/tx/2db207f008822f90c6e67a21179a2da44b043ebef3d3854f26efb9ffde6aeef8
+                            //https://www.blocktrail.com/BTC/tx/2db207f008822f90c6e67a21179a2da44b043ebef3d3854f26efb9ffde6aeef8
+                            //http://chainflyer.bitflyer.jp/Transaction/2db207f008822f90c6e67a21179a2da44b043ebef3d3854f26efb9ffde6aeef8
+                            //https://www.smartbit.com.au/tx/2db207f008822f90c6e67a21179a2da44b043ebef3d3854f26efb9ffde6aeef8
+
+                            String []sites=new String[] { "Blockchain.info","Blocktrail","chainFlyer","Smartbit"};
+                            AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this);
+                            builder.setItems(sites, new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    switch (which) {
+                                        case 0:
+                                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://blockchain.info/tx/" + mMessage.getTxHash())));
+                                            break;
+                                        case 1:
+                                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.blocktrail.com/BTC/tx/" + mMessage.getTxHash())));
+                                            break;
+                                        case 2:
+                                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://chainflyer.bitflyer.jp/Transaction/" + mMessage.getTxHash())));
+                                            break;
+                                        case 3:
+                                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.smartbit.com.au/tx/" + mMessage.getTxHash())));
+                                            break;
+                                    }
+
+                                }
+                            });
+                            builder.setTitle("Proof");
+                            //builder.setIcon(android.R.drawable.ic_dialog_alert);
+                            builder.show();
+
+                        }
+                    });
                     btnRanking.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            /*Message ranking
-                            0.123 middle
 
-                            This page has been viewed 22 times of which 22 in the last seven days. It has 1 like.
-                           */
-                            new AlertDialog.Builder(DetailActivity.this)
-                                    .setTitle("Message ranking")
-                                    .setMessage("")
-                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            // continue with delete
-                                        }
-                                    })
-                                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            // do nothing
-                                        }
-                                    })
-                                    .setIcon(android.R.drawable.ic_dialog_alert)
-                                    .show();
+                            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(DetailActivity.this);
+                            LayoutInflater inflater = DetailActivity.this.getLayoutInflater();
+                            View dialogView = inflater.inflate(R.layout.dialog_ranking, null);
+                            dialogBuilder.setView(dialogView);
+                            dialogBuilder.setTitle("Message ranking");
+
+                            // set the custom dialog components - text, image and button
+                            TextView txtRank = (TextView) dialogView.findViewById(R.id.txtRank);
+                            TextView txtValue = (TextView) dialogView.findViewById(R.id.txtValue);
+                            TextView txtText = (TextView) dialogView.findViewById(R.id.txtText);
+                            txtText.setText("This message has been viewed " + mMessage.getView() + " times of which " + mMessage.getWeekView() + " in the last seven days.");
+
+                            long integer= Math.round(mMessage.getValue() * 1000);
+                            Double doubled = Double.valueOf(integer)/1000;
+
+                            txtValue.setText(doubled.toString());
+                            if (mMessage.getRank()==1)
+                                txtRank.setText("top");
+                            else if (mMessage.getRank()==2)
+                                txtRank.setText("middle");
+                            else if (mMessage.getRank()==3)
+                                txtRank.setText("low");
+                            dialogBuilder.setCancelable(true);
+                            dialogBuilder.show();
+
+                        }
+                    });
+                    btnLikes.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(DetailActivity.this);
+                            LayoutInflater inflater = DetailActivity.this.getLayoutInflater();
+                            View dialogView = inflater.inflate(R.layout.dialog_likes, null);
+                            dialogBuilder.setView(dialogView);
+                            dialogBuilder.setTitle("Like");
+
+                            // set the custom dialog components - text, image and button
+                            ImageView imgQr = (ImageView) dialogView.findViewById(R.id.imgQr);
+                            TextView txtQr = (TextView) dialogView.findViewById(R.id.txtQr);
+                            txtQr.setText(mMessage.getMessageId());
+
+                            Bitmap bitmap=generateQRCode(mMessage.getMessageId());
+                            if(bitmap!=null)
+                                imgQr.setImageBitmap(bitmap);
+
+                            dialogBuilder.setCancelable(true);
+                            dialogBuilder.show();
+
                         }
                     });
 
