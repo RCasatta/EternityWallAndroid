@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -72,6 +73,15 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
 
         h.txtDate.setText(new SimpleDateFormat("dd MMM yyyy HH.mm").format(new Date(m.getTimestamp())));
         h.txtMessage.setText(m.getMessage());
+        if (m.getRank()==1){
+            h.txtMessage.setTextAppearance(getContext(), android.R.style.TextAppearance_Large);
+        }else if (m.getRank()==2){
+            h.txtMessage.setTextAppearance(getContext(), android.R.style.TextAppearance_Medium );
+        }else if (m.getRank()==3){
+            h.txtMessage.setTextAppearance(getContext(), android.R.style.TextAppearance_Small );
+        }
+        h.txtStatus.setVisibility(View.GONE);
+        h.txtStatus.setText("");
 
         // Add status field
         String strStatus="";
@@ -88,6 +98,7 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
                 strStatus+="- ";
             strStatus+=String.valueOf(m.getLikes())+(m.getLikes()==1?" like ": " likes ");
         }
+
         if (strStatus.length()>0){
             h.txtStatus.setText(strStatus);
             h.txtStatus.setVisibility(View.VISIBLE);

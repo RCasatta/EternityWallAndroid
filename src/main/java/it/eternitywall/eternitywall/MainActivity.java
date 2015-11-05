@@ -172,13 +172,20 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
                 swipe.setRefreshing(false);
                 if(ok) {
                     if(messages != null && !messages.isEmpty()) {
-                        messages.addAll(mMessages);
-                        final MessageListAdapter messageListAdapter = (MessageListAdapter) lstMessages.getAdapter();
-                        messageListAdapter.notifyDataSetChanged();
+                        MessageListAdapter messageListAdapter = (MessageListAdapter) lstMessages.getAdapter();
+                        for (int i=0;i<mMessages.size();i++) {
+                            messageListAdapter.add(mMessages.get(i));
+                            messageListAdapter.notifyDataSetChanged();
+                        }
                     }
                     else {
-                        messages.addAll(mMessages);
-                        lstMessages.setAdapter(new MessageListAdapter(MainActivity.this, R.layout.item_message, messages, inQueue, MainActivity.this));
+                        MessageListAdapter messageListAdapter = new MessageListAdapter(MainActivity.this, R.layout.item_message, messages, inQueue, MainActivity.this);
+                        lstMessages.setAdapter(messageListAdapter);
+                        for (int i=0;i<mMessages.size();i++) {
+                            messageListAdapter.add(mMessages.get(i));
+                            messageListAdapter.notifyDataSetChanged();
+                        }
+
                     }
                 }
                 else {
