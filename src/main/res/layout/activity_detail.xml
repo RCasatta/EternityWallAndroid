@@ -120,7 +120,6 @@
                 android:gravity="center_vertical|center_horizontal"
                 android:drawablePadding="@dimen/padding_small"
                 android:text="@string/icon_commenting"
-                android:visibility="gone"
                 android:layout_centerInParent="true"
                 android:layout_weight="1"
                 android:layout_marginLeft="2dp"
