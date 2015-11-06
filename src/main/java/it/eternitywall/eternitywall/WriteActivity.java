@@ -43,7 +43,8 @@ public class WriteActivity extends ActionBarActivity {
     private String curmsg = "";
     private Button btnSend;
 
-    private String address;
+    private String address=null;
+    private String replyFrom=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,11 @@ public class WriteActivity extends ActionBarActivity {
         txtMessage = (EditText) findViewById(R.id.txtMessage);
         if(getIntent().getExtras() != null && getIntent().getStringExtra("sharedText") != null)
             txtMessage.setText(getIntent().getStringExtra("sharedText"));
+
+        if(getIntent().getExtras() != null && getIntent().getStringExtra("replyFrom") != null) {
+            txtMessage.setHint("reply from message id " + getIntent().getStringExtra("replyFrom"));
+            replyFrom=getIntent().getStringExtra("replyFrom");
+        }
 
         txtMessage.addTextChangedListener(new TextWatcher() {
 
@@ -149,7 +155,10 @@ public class WriteActivity extends ActionBarActivity {
                     protected Object doInBackground(Object[] params) {
                         Optional<String> json = null;
                         try {
-                            json = Http.get("http://eternitywall.it/bitcoinform?format=json&text=" + URLEncoder.encode(curmsg, "UTF-8") + "&source=" + getApplicationContext().getPackageName());
+                            String reply="";
+                            if (replyFrom!=null)
+                                reply="&replyid="+replyFrom;
+                            json = Http.get("http://eternitywall.it/bitcoinform?format=json&text=" + URLEncoder.encode(curmsg, "UTF-8") + "&source=" + getApplicationContext().getPackageName()+reply);
                             if (json.isPresent()) {
                                 String jstring = json.get();
                                 JSONObject jo = new JSONObject(jstring);

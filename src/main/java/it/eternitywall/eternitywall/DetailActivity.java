@@ -282,7 +282,14 @@ public class DetailActivity extends ActionBarActivity  {
 
                             dialogBuilder.setCancelable(true);
                             dialogBuilder.show();
-
+                        }
+                    });
+                    btnReplies.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent i = new Intent(DetailActivity.this, WriteActivity.class);
+                            i.putExtra("replyFrom", mMessage.getMessageId());
+                            startActivity(i);
                         }
                     });
 
