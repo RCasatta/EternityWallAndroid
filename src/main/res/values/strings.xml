@@ -22,7 +22,8 @@
     <string name="icon_commenting">&#xf27b;</string>
     <string name="icon_translate">&#xf0ac;</string>
     <string name="action_order">&#xf161;</string>
-    <string name="action_search">&#xf0c2;</string>
+    <string name="action_search">&#xf002;</string>
+    <string name="action_cloud">&#xf0c2;</string>
 
 
 </resources>

@@ -1,12 +1,15 @@
 package it.eternitywall.eternitywall;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -134,7 +137,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
         // Inflate the menu; this adds items to the action bar if it is present.
         // getMenuInflater().inflate(R.menu.menu_main, menu);
         // Inflate the menu items for use in the action bar
-        /*MenuInflater inflater = getMenuInflater();
+        MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
 
         // Get the root inflator.
@@ -153,13 +156,30 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
         menu.findItem(R.id.action_order).setActionView(txtOrder);
 
 
-        TextView txtSearch=new TextView(MainActivity.this);
+        /*TextView txtSearch=new TextView(MainActivity.this);
         txtSearch.setPadding(0,0,(int) getResources().getDimension(R.dimen.activity_horizontal_margin),0);
         txtSearch.setText(getResources().getString(R.string.action_search));
         txtSearch.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
         txtSearch.setTypeface(font);
-        menu.findItem(R.id.action_search).setActionView(txtSearch);
-*/
+        menu.findItem(R.id.action_search).setActionView(txtSearch);*/
+
+        TextView txtCloud=new TextView(MainActivity.this);
+        txtCloud.setPadding(0,0,(int) getResources().getDimension(R.dimen.activity_horizontal_margin),0);
+        txtCloud.setText(getResources().getString(R.string.action_cloud));
+        txtCloud.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
+        txtCloud.setTypeface(font);
+        menu.findItem(R.id.action_cloud).setActionView(txtCloud);
+
+
+        //SearchManager searchManager = (SearchManager)         getSystemService(Context.SEARCH_SERVICE);
+        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+       // searchView.setOnQueryTextListener(this);
+
+        /*searchView.setSearchableInfo(searchManager.
+                getSearchableInfo(getComponentName()));
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setOnQueryTextListener(this);*/
 
         return true;
     }
