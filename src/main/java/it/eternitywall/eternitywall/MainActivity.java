@@ -1,16 +1,21 @@
 package it.eternitywall.eternitywall;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.base.Optional;
@@ -128,6 +133,34 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         // getMenuInflater().inflate(R.menu.menu_main, menu);
+        // Inflate the menu items for use in the action bar
+        /*MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+
+        // Get the root inflator.
+        LayoutInflater baseInflater = (LayoutInflater)getBaseContext()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        // Inflate your custom view.
+
+        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
+
+        TextView txtOrder=new TextView(MainActivity.this);
+        txtOrder.setPadding(0,0,(int) getResources().getDimension(R.dimen.activity_horizontal_margin),0);
+        txtOrder.setText(getResources().getString(R.string.action_order));
+        txtOrder.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
+        txtOrder.setTypeface(font);
+        menu.findItem(R.id.action_order).setActionView(txtOrder);
+
+
+        TextView txtSearch=new TextView(MainActivity.this);
+        txtSearch.setPadding(0,0,(int) getResources().getDimension(R.dimen.activity_horizontal_margin),0);
+        txtSearch.setText(getResources().getString(R.string.action_search));
+        txtSearch.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
+        txtSearch.setTypeface(font);
+        menu.findItem(R.id.action_search).setActionView(txtSearch);
+*/
+
         return true;
     }
 
@@ -139,7 +172,9 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_order) {
+            return true;
+        }else if (id == R.id.action_search) {
             return true;
         }
 
