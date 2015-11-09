@@ -9,13 +9,16 @@ import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.AppCompatSpinner;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -33,7 +36,7 @@ import java.util.List;
 import it.eternitywall.eternitywall.adapters.MessageListAdapter;
 
 
-public class MainActivity extends ActionBarActivity implements MessageListAdapter.MessageListAdapterManager {
+public class MainActivity extends ActionBarActivity implements MessageListAdapter.MessageListAdapterManager, SearchView.OnQueryTextListener, SearchView.OnCloseListener, PopupMenu.OnMenuItemClickListener {
 
     private static final int REQUEST_CODE = 8274;
     private static final String TAG = "MainActivity";
@@ -41,7 +44,10 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
     private ListView lstMessages;
     private ProgressBar progress;
     private SwipeRefreshLayout swipe;
+    private SearchView searchView;
 
+    private String search;
+    private String sortby;
     private String cursor;
     private List<Message> messages;
     private Integer inQueue;
@@ -105,6 +111,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
 
         messages = new ArrayList<Message>();
         cursor = null;
+        search = null;
         inQueue = null;
         loadMoreData();
 
@@ -113,6 +120,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
             public void onRefresh() {
                 messages = new ArrayList<Message>();
                 cursor = null;
+                search = null;
                 inQueue = null;
                 loadMoreData();
             }
@@ -149,19 +157,30 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
         Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
 
         TextView txtOrder=new TextView(MainActivity.this);
-        txtOrder.setPadding(0,0,(int) getResources().getDimension(R.dimen.activity_horizontal_margin),0);
+        txtOrder.setPadding(0, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
         txtOrder.setText(getResources().getString(R.string.action_order));
         txtOrder.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
         txtOrder.setTypeface(font);
         menu.findItem(R.id.action_order).setActionView(txtOrder);
-
-
-        /*TextView txtSearch=new TextView(MainActivity.this);
-        txtSearch.setPadding(0,0,(int) getResources().getDimension(R.dimen.activity_horizontal_margin),0);
-        txtSearch.setText(getResources().getString(R.string.action_search));
-        txtSearch.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
-        txtSearch.setTypeface(font);
-        menu.findItem(R.id.action_search).setActionView(txtSearch);*/
+        menu.findItem(R.id.action_order).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                PopupMenu popupMenu = new PopupMenu(MainActivity.this, item.getActionView());
+                popupMenu.setOnMenuItemClickListener(MainActivity.this);
+                popupMenu.inflate(R.menu.menu_order);
+                popupMenu.show();
+                return true;
+            }
+        });
+        txtOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popupMenu = new PopupMenu(MainActivity.this, v);
+                popupMenu.setOnMenuItemClickListener(MainActivity.this);
+                popupMenu.inflate(R.menu.menu_order);
+                popupMenu.show();
+            }
+        });
 
         TextView txtCloud=new TextView(MainActivity.this);
         txtCloud.setPadding(0,0,(int) getResources().getDimension(R.dimen.activity_horizontal_margin),0);
@@ -173,8 +192,9 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
 
         //SearchManager searchManager = (SearchManager)         getSystemService(Context.SEARCH_SERVICE);
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
-       // searchView.setOnQueryTextListener(this);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+        searchView.setOnQueryTextListener(this);
+        searchView.setOnCloseListener(this);
 
         /*searchView.setSearchableInfo(searchManager.
                 getSearchableInfo(getComponentName()));
@@ -193,8 +213,15 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_order) {
+            PopupMenu popupMenu = new PopupMenu(MainActivity.this, item.getActionView());
+            //popupMenu.setOnMenuItemClickListener(MainActivity.this);
+            popupMenu.inflate(R.menu.menu_order);
+            popupMenu.show();
             return true;
         }else if (id == R.id.action_search) {
+            //searchable element
+            return true;
+        }else if (id == R.id.action_cloud) {
             return true;
         }
 
@@ -251,15 +278,25 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
 
             @Override
             protected Object doInBackground(Object[] params) {
-                Optional<String> json = cursor == null ? Http.get("http://eternitywall.it/?format=json") : Http.get("http://eternitywall.it/?format=json&cursor="+cursor);
+
+                Optional<String> json=null;
+                if (search==null)
+                    json = cursor == null ? Http.get("http://eternitywall.it/?format=json") : Http.get("http://eternitywall.it/?format=json&cursor="+cursor);
+                else
+                    json = cursor == null ? Http.get("http://eternitywall.it/search?format=json&q="+search) : Http.get("http://eternitywall.it/?format=json&cursor="+cursor+"&q="+search);
+
                 if(json.isPresent()) {
                     try {
                         String jstring = json.get();
                         JSONObject jo = new JSONObject(jstring);
 
-                        cursor = jo.getString("next");
-                        if(jo.has("messagesInQueue")) {
-                            inQueue = jo.getInt("messagesInQueue");
+                        try {
+                            cursor = jo.getString("next");
+                            if (jo.has("messagesInQueue")) {
+                                inQueue = jo.getInt("messagesInQueue");
+                            }
+                        } catch (Exception ex){
+                            ex.printStackTrace();
                         }
 
                         JSONArray ja = jo.getJSONArray("messages");
@@ -282,5 +319,55 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
             }
         };
         t.execute();
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        // OnQueryTextSubmit was called twice, so clean
+        searchView.setIconified(true);
+        searchView.clearFocus();
+        search = query;
+        cursor=null;
+        inQueue = null;
+        messages.clear();
+        loadMoreData();
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
+    }
+
+    @Override
+    public boolean onClose() {
+        search=null;
+        cursor=null;
+        inQueue = null;
+        messages.clear();
+        loadMoreData();
+        return false;
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_all:
+                sortby="alltimeviews";
+                return true;
+            case R.id.item_ranking:
+                sortby="ranking";
+                return true;
+            case R.id.item_likes:
+                sortby="likes";
+                return true;
+            case R.id.item_replies:
+                sortby="replies";
+                return true;
+            case R.id.item_last7days:
+                sortby="last7daysviews";
+                return true;
+        }
+        return false;
     }
 }

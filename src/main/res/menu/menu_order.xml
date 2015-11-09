@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
+
+<item
+    android:id="@+id/item_ranking"
+    app:showAsAction="ifRoom|withText"
+    android:title="Ranking"
+    android:visible="true"/>
+<item
+    android:id="@+id/item_all"
+    app:showAsAction="ifRoom|withText"
+    android:title="Views"
+    android:visible="true"/>
+<item
+    android:id="@+id/item_last7days"
+    app:showAsAction="ifRoom|withText"
+    android:title="Last 7 days views"
+    android:visible="true"/>
+<item
+        android:id="@+id/item_likes"
+        app:showAsAction="ifRoom|withText"
+        android:title="Likes"
+        android:visible="true"/>
+    <item
+        android:id="@+id/item_replies"
+        app:showAsAction="ifRoom|withText"
+        android:title="Replies"
+        android:visible="true"/>
+
+
+</menu>
