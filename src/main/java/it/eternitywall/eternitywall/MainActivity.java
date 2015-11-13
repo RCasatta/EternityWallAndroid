@@ -145,7 +145,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
         // Inflate the menu; this adds items to the action bar if it is present.
         // getMenuInflater().inflate(R.menu.menu_main, menu);
         // Inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
+/*        MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
 
         // Get the root inflator.
@@ -196,11 +196,10 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
         searchView.setOnQueryTextListener(this);
         searchView.setOnCloseListener(this);
 
-        /*searchView.setSearchableInfo(searchManager.
-                getSearchableInfo(getComponentName()));
-        searchView.setSubmitButtonEnabled(true);
-        searchView.setOnQueryTextListener(this);*/
-
+        //searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        //searchView.setSubmitButtonEnabled(true);
+        //searchView.setOnQueryTextListener(this);
+*/
         return true;
     }
 
