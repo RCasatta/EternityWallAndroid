@@ -145,7 +145,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
         // Inflate the menu; this adds items to the action bar if it is present.
         // getMenuInflater().inflate(R.menu.menu_main, menu);
         // Inflate the menu items for use in the action bar
-/*        MenuInflater inflater = getMenuInflater();
+        MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
 
         // Get the root inflator.
@@ -182,13 +182,13 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
             }
         });
 
-        TextView txtCloud=new TextView(MainActivity.this);
+        /*TextView txtCloud=new TextView(MainActivity.this);
         txtCloud.setPadding(0,0,(int) getResources().getDimension(R.dimen.activity_horizontal_margin),0);
         txtCloud.setText(getResources().getString(R.string.action_cloud));
         txtCloud.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
         txtCloud.setTypeface(font);
         menu.findItem(R.id.action_cloud).setActionView(txtCloud);
-
+*/
 
         //SearchManager searchManager = (SearchManager)         getSystemService(Context.SEARCH_SERVICE);
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
@@ -199,7 +199,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
         //searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         //searchView.setSubmitButtonEnabled(true);
         //searchView.setOnQueryTextListener(this);
-*/
+
         return true;
     }
 
