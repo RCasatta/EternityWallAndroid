@@ -121,8 +121,8 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
             public void onRefresh() {
                 messages = new ArrayList<Message>();
                 cursor = null;
-                search = null;
-                sortby = null;
+                //search = null;
+                //sortby = null;
                 inQueue = null;
                 loadMoreData();
             }
@@ -244,8 +244,12 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                if(!swipe.isRefreshing())
+                // don't refresh if there are messages on sortby or search mode
+                if ((sortby!=null || search!=null) && (messages!=null && !messages.isEmpty()))
+                    progress.setVisibility(View.INVISIBLE);//nothing
+                else if(!swipe.isRefreshing())
                     progress.setVisibility(View.VISIBLE);
+
             }
 
             @Override
@@ -281,11 +285,13 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
             protected Object doInBackground(Object[] params) {
                 Optional<String> json=null;
                 if (search!=null) {
+                    // search api return all the values without cursor
                     if(messages==null || messages.isEmpty())
                         json = cursor == null ? Http.get("http://eternitywall.it/search?format=json&q=" + search) : Http.get("http://eternitywall.it/?format=json&cursor=" + cursor + "&q=" + search);
                     else
                         ok = true;
                 }else if (sortby!=null){
+                    // sortby api return all the values without cursor
                     if(messages==null || messages.isEmpty())
                         json = Http.get("http://eternitywall.it/sortby/"+sortby+"?format=json");
                     else
