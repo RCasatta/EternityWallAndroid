@@ -112,6 +112,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
         messages = new ArrayList<Message>();
         cursor = null;
         search = null;
+        sortby = null;
         inQueue = null;
         loadMoreData();
 
@@ -121,6 +122,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
                 messages = new ArrayList<Message>();
                 cursor = null;
                 search = null;
+                sortby = null;
                 inQueue = null;
                 loadMoreData();
             }
@@ -220,9 +222,9 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
         }else if (id == R.id.action_search) {
             //searchable element
             return true;
-        }else if (id == R.id.action_cloud) {
+        }/*else if (id == R.id.action_cloud) {
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
@@ -277,14 +279,22 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
 
             @Override
             protected Object doInBackground(Object[] params) {
-
                 Optional<String> json=null;
-                if (search==null)
-                    json = cursor == null ? Http.get("http://eternitywall.it/?format=json") : Http.get("http://eternitywall.it/?format=json&cursor="+cursor);
-                else
-                    json = cursor == null ? Http.get("http://eternitywall.it/search?format=json&q="+search) : Http.get("http://eternitywall.it/?format=json&cursor="+cursor+"&q="+search);
+                if (search!=null) {
+                    if(messages==null || messages.isEmpty())
+                        json = cursor == null ? Http.get("http://eternitywall.it/search?format=json&q=" + search) : Http.get("http://eternitywall.it/?format=json&cursor=" + cursor + "&q=" + search);
+                    else
+                        ok = true;
+                }else if (sortby!=null){
+                    if(messages==null || messages.isEmpty())
+                        json = Http.get("http://eternitywall.it/sortby/"+sortby+"?format=json");
+                    else
+                        ok = true;
+                } else
+                    json = cursor == null ? Http.get("http://eternitywall.it/?format=json") : Http.get("http://eternitywall.it/?format=json&cursor=" + cursor);
 
-                if(json.isPresent()) {
+
+                if(json!=null && json.isPresent()) {
                     try {
                         String jstring = json.get();
                         JSONObject jo = new JSONObject(jstring);
@@ -295,6 +305,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
                                 inQueue = jo.getInt("messagesInQueue");
                             }
                         } catch (Exception ex){
+                            cursor=null;
                             ex.printStackTrace();
                         }
 
@@ -326,6 +337,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
         searchView.setIconified(true);
         searchView.clearFocus();
         search = query;
+        sortby=null;
         cursor=null;
         inQueue = null;
         messages.clear();
@@ -341,6 +353,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
     @Override
     public boolean onClose() {
         search=null;
+        sortby=null;
         cursor=null;
         inQueue = null;
         messages.clear();
@@ -353,20 +366,25 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
         switch (item.getItemId()) {
             case R.id.item_all:
                 sortby="alltimeviews";
-                return true;
+                break;
             case R.id.item_ranking:
                 sortby="ranking";
-                return true;
+                break;
             case R.id.item_likes:
                 sortby="likes";
-                return true;
+                break;
             case R.id.item_replies:
                 sortby="replies";
-                return true;
+                break;
             case R.id.item_last7days:
                 sortby="last7daysviews";
-                return true;
+                break;
         }
+        search=null;
+        cursor=null;
+        inQueue = null;
+        messages.clear();
+        loadMoreData();
         return false;
     }
 }

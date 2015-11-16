@@ -52,7 +52,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
-public class DetailActivity extends ActionBarActivity  {
+public class DetailActivity extends ActionBarActivity {
 
     private static final Integer MAX_LENGTH = 72;
 
@@ -62,7 +62,7 @@ public class DetailActivity extends ActionBarActivity  {
     private TextView txtMessage;
     private TextView txtDate;
     private ProgressBar progress;
-    private String hash=null;
+    private String hash = null;
     private ListView repliesMessages;
     private ListView answersMessages;
 
@@ -70,7 +70,7 @@ public class DetailActivity extends ActionBarActivity  {
     private List<Message> answers;
 
 
-    Button btnShare,btnLikes,btnProof,btnRanking,btnReplies,btnTranslate;
+    Button btnShare, btnLikes, btnProof, btnRanking, btnReplies, btnTranslate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,12 +78,12 @@ public class DetailActivity extends ActionBarActivity  {
         setContentView(R.layout.activity_detail);
 
         Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
-        btnShare = (Button)findViewById(R.id.btnShare);
-        btnLikes = (Button)findViewById(R.id.btnLikes);
-        btnProof = (Button)findViewById(R.id.btnProof);
-        btnRanking = (Button)findViewById(R.id.btnRanking);
-        btnReplies = (Button)findViewById(R.id.btnReply);
-        btnTranslate = (Button)findViewById(R.id.btnTranslate);
+        btnShare = (Button) findViewById(R.id.btnShare);
+        btnLikes = (Button) findViewById(R.id.btnLikes);
+        btnProof = (Button) findViewById(R.id.btnProof);
+        btnRanking = (Button) findViewById(R.id.btnRanking);
+        btnReplies = (Button) findViewById(R.id.btnReply);
+        btnTranslate = (Button) findViewById(R.id.btnTranslate);
         btnShare.setTypeface(font);
         btnLikes.setTypeface(font);
         btnProof.setTypeface(font);
@@ -91,23 +91,24 @@ public class DetailActivity extends ActionBarActivity  {
         btnReplies.setTypeface(font);
         btnTranslate.setTypeface(font);
 
-        txtMessage = (TextView)findViewById(R.id.txtMessage);
-        txtDate = (TextView)findViewById(R.id.txtDate);
+        txtMessage = (TextView) findViewById(R.id.txtMessage);
+        txtDate = (TextView) findViewById(R.id.txtDate);
         progress = (ProgressBar) findViewById(R.id.progress);
-        repliesMessages=(ListView) findViewById(R.id.repliesMessages);
-        answersMessages=(ListView) findViewById(R.id.answersMessages);
+        repliesMessages = (ListView) findViewById(R.id.repliesMessages);
+        answersMessages = (ListView) findViewById(R.id.answersMessages);
 
         replies = new ArrayList<Message>();
         answers = new ArrayList<Message>();
 
         try {
             hash = getIntent().getStringExtra("hash");
-        }catch (Exception e){
+        } catch (Exception e) {
             //succhia!
             Toast.makeText(DetailActivity.this, getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
         }
         loadMessage();
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -129,15 +130,15 @@ public class DetailActivity extends ActionBarActivity  {
 
 
     private Bitmap generateQRCode(String data) {
-        Bitmap mBitmap=null;
+        Bitmap mBitmap = null;
         com.google.zxing.Writer writer = new QRCodeWriter();
-        String finaldata =Uri.encode(data, "ISO-8859-1");
+        String finaldata = Uri.encode(data, "ISO-8859-1");
         try {
-            BitMatrix bm = writer.encode(finaldata,BarcodeFormat.QR_CODE, 200, 200);
+            BitMatrix bm = writer.encode(finaldata, BarcodeFormat.QR_CODE, 200, 200);
             mBitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888);
             for (int i = 0; i < 200; i++) {
                 for (int j = 0; j < 200; j++) {
-                    mBitmap.setPixel(i, j, bm.get(i, j) ? Color.BLACK: Color.WHITE);
+                    mBitmap.setPixel(i, j, bm.get(i, j) ? Color.BLACK : Color.WHITE);
                 }
             }
         } catch (WriterException e) {
@@ -168,22 +169,22 @@ public class DetailActivity extends ActionBarActivity  {
                     return;
                 progress.setVisibility(View.INVISIBLE);
 
-                if(ok) {
+                if (ok) {
                     txtDate.setText(new SimpleDateFormat("dd MMM yyyy HH.mm").format(new Date(mMessage.getTimestamp())));
                     txtMessage.setText(mMessage.getMessage());
                     // TO DO
                     //if (mMessage.getAnswer()==true)
-                    if (mMessage.getLikes()>0)
-                        btnLikes.setText( getResources().getString(R.string.icon_likes) + " ("+String.valueOf(mMessage.getLikes())+")" );
-                    if (mMessage.getReplies()>0)
-                        btnReplies.setText( getResources().getString(R.string.icon_commenting) + " ("+String.valueOf(mMessage.getReplies())+")" );
+                    if (mMessage.getLikes() > 0)
+                        btnLikes.setText(getResources().getString(R.string.icon_likes) + " (" + String.valueOf(mMessage.getLikes()) + ")");
+                    if (mMessage.getReplies() > 0)
+                        btnReplies.setText(getResources().getString(R.string.icon_commenting) + " (" + String.valueOf(mMessage.getReplies()) + ")");
 
                     btnShare.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent();
                             intent.setAction(Intent.ACTION_SEND);
-                            intent.putExtra(Intent.EXTRA_TEXT, "http://eternitywall.it/m/"+mMessage.getTxHash());
+                            intent.putExtra(Intent.EXTRA_TEXT, "http://eternitywall.it/m/" + mMessage.getTxHash());
                             intent.setType("text/plain");
                             startActivity(intent);
                         }
@@ -198,7 +199,7 @@ public class DetailActivity extends ActionBarActivity  {
                             //http://chainflyer.bitflyer.jp/Transaction/2db207f008822f90c6e67a21179a2da44b043ebef3d3854f26efb9ffde6aeef8
                             //https://www.smartbit.com.au/tx/2db207f008822f90c6e67a21179a2da44b043ebef3d3854f26efb9ffde6aeef8
 
-                            String []sites=new String[] { "Blockchain.info","Blocktrail","chainFlyer","Smartbit"};
+                            String[] sites = new String[]{"Blockchain.info", "Blocktrail", "chainFlyer", "Smartbit"};
                             AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this);
                             builder.setItems(sites, new DialogInterface.OnClickListener() {
 
@@ -243,15 +244,15 @@ public class DetailActivity extends ActionBarActivity  {
                             TextView txtText = (TextView) dialogView.findViewById(R.id.txtText);
                             txtText.setText("This message has been viewed " + mMessage.getView() + " times of which " + mMessage.getWeekView() + " in the last seven days.");
 
-                            long integer= Math.round(mMessage.getValue() * 1000);
-                            Double doubled = Double.valueOf(integer)/1000;
+                            long integer = Math.round(mMessage.getValue() * 1000);
+                            Double doubled = Double.valueOf(integer) / 1000;
 
                             txtValue.setText(doubled.toString());
-                            if (mMessage.getRank()==1)
+                            if (mMessage.getRank() == 1)
                                 txtRank.setText("top");
-                            else if (mMessage.getRank()==2)
+                            else if (mMessage.getRank() == 2)
                                 txtRank.setText("middle");
-                            else if (mMessage.getRank()==3)
+                            else if (mMessage.getRank() == 3)
                                 txtRank.setText("low");
                             dialogBuilder.setCancelable(true);
                             dialogBuilder.show();
@@ -262,7 +263,7 @@ public class DetailActivity extends ActionBarActivity  {
                         @Override
                         public void onClick(View v) {
 
-                            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(DetailActivity.this);
+                            /*AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(DetailActivity.this);
                             LayoutInflater inflater = DetailActivity.this.getLayoutInflater();
                             View dialogView = inflater.inflate(R.layout.dialog_likes, null);
                             dialogBuilder.setView(dialogView);
@@ -273,12 +274,14 @@ public class DetailActivity extends ActionBarActivity  {
                             TextView txtQr = (TextView) dialogView.findViewById(R.id.txtQr);
                             txtQr.setText(mMessage.getMessageId());
 
-                            Bitmap bitmap=generateQRCode(mMessage.getMessageId());
-                            if(bitmap!=null)
+                            Bitmap bitmap = generateQRCode(mMessage.getMessageId());
+                            if (bitmap != null)
                                 imgQr.setImageBitmap(bitmap);
 
                             dialogBuilder.setCancelable(true);
-                            dialogBuilder.show();
+                            dialogBuilder.show();*/
+                            address=mMessage.getMessageId();
+                            SendLike();
                         }
                     });
                     btnReplies.setOnClickListener(new View.OnClickListener() {
@@ -290,26 +293,23 @@ public class DetailActivity extends ActionBarActivity  {
                         }
                     });
 
-                    if(replies != null && !replies.isEmpty()) {
+                    if (replies != null && !replies.isEmpty()) {
                         replies.addAll(mReplies);
                         final MessageListAdapter messageListAdapter = (MessageListAdapter) repliesMessages.getAdapter();
                         messageListAdapter.notifyDataSetChanged();
-                    }
-                    else {
+                    } else {
                         replies.addAll(mReplies);
                         repliesMessages.setAdapter(new MessageListAdapter(DetailActivity.this, R.layout.item_message, mReplies, 0, null));
                     }
-                    if(answers != null && !answers.isEmpty()) {
+                    if (answers != null && !answers.isEmpty()) {
                         answers.addAll(mAnswers);
                         final MessageListAdapter messageListAdapter = (MessageListAdapter) answersMessages.getAdapter();
                         messageListAdapter.notifyDataSetChanged();
-                    }
-                    else {
+                    } else {
                         answers.addAll(mAnswers);
                         answersMessages.setAdapter(new MessageListAdapter(DetailActivity.this, R.layout.item_message, mAnswers, 0, null));
                     }
-                }
-                else {
+                } else {
                     //succhia!
                     Toast.makeText(DetailActivity.this, getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
 
@@ -318,8 +318,8 @@ public class DetailActivity extends ActionBarActivity  {
 
             @Override
             protected Object doInBackground(Object[] params) {
-                Optional<String> json = Http.get("http://eternitywall.it/m/"+hash+"?format=json");
-                if(json.isPresent()) {
+                Optional<String> json = Http.get("http://eternitywall.it/m/" + hash + "?format=json");
+                if (json.isPresent()) {
                     try {
                         String jstring = json.get();
                         JSONObject jo = new JSONObject(jstring);
@@ -329,29 +329,28 @@ public class DetailActivity extends ActionBarActivity  {
                         // build list of replies messages
                         try {
                             JSONArray jReplies = jo.getJSONArray("replies");
-                            mReplies=new ArrayList<Message>();
-                            for (int i=0;i<jReplies.length();i++){
+                            mReplies = new ArrayList<Message>();
+                            for (int i = 0; i < jReplies.length(); i++) {
                                 Message reply = Message.buildFromJson(jReplies.getJSONObject(i));
-                                mReplies.add( reply );
+                                mReplies.add(reply);
                             }
                         } catch (JSONException e) {
-                            mReplies=new ArrayList<Message>();
+                            mReplies = new ArrayList<Message>();
                         } //optional
 
                         // build list of answers messages
                         try {
                             JSONObject jAnswer = jo.getJSONObject("replyFrom");
-                            mAnswers=new ArrayList<Message>();
+                            mAnswers = new ArrayList<Message>();
                             Message answer = Message.buildFromJson(jAnswer);
-                            mAnswers.add( answer );
+                            mAnswers.add(answer);
                         } catch (JSONException e) {
-                            mAnswers=new ArrayList<Message>();
+                            mAnswers = new ArrayList<Message>();
                         } //optional
 
 
                         ok = true;
-                    }
-                    catch (Exception ex) {
+                    } catch (Exception ex) {
                         ex.printStackTrace();
                     }
                 }
@@ -361,4 +360,68 @@ public class DetailActivity extends ActionBarActivity  {
         t.execute();
     }
 
+
+    // Send a like
+    String address;
+
+    void SendLike() {
+        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("bitcoin:17uPJEkDU3WtQp83oDuiQbnMnneA3Yfksc"));
+        if (!isAvailable(i)) {
+            AlertDialog d = new AlertDialog.Builder(DetailActivity.this)
+                    .setTitle(getString(R.string.app_name))
+                    .setMessage("There are no bitcoin wallet app installed, do you want to install GreenBits?")
+                    .setNegativeButton("No, thanks", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setPositiveButton("Yes" + "!", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + "com.greenaddress.greenbits_android_wallet")));
+                        }
+                    })
+                    .create();
+            d.show();
+            return;
+        }
+
+        if (address!=null) {
+            String value="0.0001";
+            final String uriString = "bitcoin:" + address + "?amount=" + value/*+"&message=Payment&label=Satoshi&extra=other-param"*/;
+            Log.i(TAG, "uriString=(" + uriString + ")");
+            final Uri uri = Uri.parse(uriString);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivityForResult(Intent.createChooser(intent, getString(R.string.ask_choose_wallet)), REQ_CODE);
+        } else {
+            Toast.makeText(DetailActivity.this, getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+
+    private boolean isAvailable(Intent intent) {
+        final PackageManager mgr = getPackageManager();
+        List<ResolveInfo> list =
+                mgr.queryIntentActivities(intent,
+                        PackageManager.MATCH_DEFAULT_ONLY);
+        return list.size() > 0;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQ_CODE && address != null  /*&& data != null /*&& resultCode != RESULT_CANCELED*/) {
+
+            //TODO: debug RESULT_CODE on wallet application
+
+            Log.d(TAG, "requestCode=" + requestCode + " resultCode=" + resultCode + " data=" + data);
+
+            Intent i = new Intent(this, ThxActivity.class);
+            i.putExtra("address", address);
+            startActivity(i);
+            finish();
+        }
+    }
 }
