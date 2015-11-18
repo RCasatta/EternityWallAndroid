@@ -88,17 +88,22 @@ public class Bitcoin {
     }
 
     public static DeterministicKey keyFromMnemonic(String mnemonic) {
-        final byte[] mySeed = MnemonicCode.toSeed(split(mnemonic), "");
+        final byte[] mySeed = getSeedFromPassphrase(mnemonic);
         final DeterministicKey deterministicKey = HDKeyDerivation.createMasterPrivateKey(mySeed);
 
         return deterministicKey;
 
     }
 
+    public static byte[] getSeedFromPassphrase(String mnemonic) {
+        return MnemonicCode.toSeed(split(mnemonic), "");
+    }
+
     public static String keyToStringAddress(ECKey key) {
 
         return key.toAddress(MainNetParams.get()).toString();
     }
+
 
     public static byte[] fromHex(String s) {
         if (s != null) {
