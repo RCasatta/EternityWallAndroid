@@ -23,6 +23,7 @@
     <style name="MyActionBar" parent="Widget.AppCompat.Light.ActionBar">
         <item name="android:background">@color/action_bar_background</item>
         <item name="android:titleTextStyle">@style/MyActionBarTitleText</item>
+
     </style>
 
     <!-- ActionBar title text -->

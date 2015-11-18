@@ -38,7 +38,8 @@
             android:id="@+id/txtMessage"
             style="@style/TextAppearance.AppCompat.Large"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="#000000" />
 
         <TextView
             style="@style/TextAppearance.AppCompat.Small"

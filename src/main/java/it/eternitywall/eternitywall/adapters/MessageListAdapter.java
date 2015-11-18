@@ -80,6 +80,7 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
         }else if (m.getRank()==3){
             h.txtMessage.setTextAppearance(getContext(), android.R.style.TextAppearance_Small );
         }
+        h.txtMessage.setTextColor(getContext().getResources().getColor(android.R.color.black));
         h.txtStatus.setVisibility(View.GONE);
         h.txtStatus.setText("");
 
