@@ -3,6 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" tools:context=".MainActivity">
 
+    <TextView
+        android:id="@+id/txtHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="12dp"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/primaryText"
+        android:visibility="gone"
+        android:paddingLeft="@dimen/padding_high"
+        android:paddingRight="@dimen/padding_high"
+        android:text="No eternity messages found" />
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/activity_main_swipe_refresh_layout"
         android:layout_width="match_parent"
@@ -13,6 +27,7 @@
         android:divider="@android:color/transparent"
         android:layout_height="match_parent" />
     </android.support.v4.widget.SwipeRefreshLayout>
+
     <ProgressBar
         android:id="@+id/progress"
         android:indeterminate="true"

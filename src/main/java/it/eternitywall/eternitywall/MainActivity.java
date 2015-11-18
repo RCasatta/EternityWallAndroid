@@ -193,7 +193,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
 */
 
         //SearchManager searchManager = (SearchManager)         getSystemService(Context.SEARCH_SERVICE);
-        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+        final MenuItem searchMenuItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
         searchView.setOnQueryTextListener(this);
         searchView.setOnCloseListener(this);
@@ -201,6 +201,22 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
         //searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         //searchView.setSubmitButtonEnabled(true);
         //searchView.setOnQueryTextListener(this);
+
+        MenuItemCompat.setOnActionExpandListener(searchMenuItem, new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                // Return true to expand action view
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                // Write your code here
+                onClose();
+                // Return true to collapse action view
+                return true;
+            }
+        });
 
         return true;
     }
@@ -239,11 +255,13 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
         AsyncTask t = new AsyncTask() {
 
             private boolean ok = false;
+            private String statusMessage=null;
             private List<Message> mMessages = new ArrayList<>();
 
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
+                ((TextView)findViewById(R.id.txtHeader)).setVisibility(View.GONE);
                 // don't refresh if there are messages on sortby or search mode
                 if ((sortby!=null || search!=null) && (messages!=null && !messages.isEmpty()))
                     progress.setVisibility(View.INVISIBLE);//nothing
@@ -257,6 +275,12 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
                 super.onPostExecute(o);
                 progress.setVisibility(View.INVISIBLE);
                 swipe.setRefreshing(false);
+
+                if (messages.size()==0)
+                    ((TextView)findViewById(R.id.txtHeader)).setVisibility(View.VISIBLE);
+                else
+                    ((TextView)findViewById(R.id.txtHeader)).setVisibility(View.GONE);
+
                 if(ok) {
                     if(messages != null && !messages.isEmpty()) {
                         MessageListAdapter messageListAdapter = (MessageListAdapter) lstMessages.getAdapter();
@@ -277,7 +301,10 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
                 }
                 else {
                     //succhia!
-                    Toast.makeText(MainActivity.this, getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
+                    if (statusMessage!=null)
+                        Toast.makeText(MainActivity.this, statusMessage, Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(MainActivity.this, getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -306,11 +333,21 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
                         JSONObject jo = new JSONObject(jstring);
 
                         try {
-                            cursor = jo.getString("next");
-                            if (jo.has("messagesInQueue")) {
-                                inQueue = jo.getInt("messagesInQueue");
+                            String status = jo.getString("status");
+                            if (status.equals("ko")) {
+                                statusMessage= jo.getString("statusMessage");
+                                return null;
+                            } else {
+                                cursor = jo.getString("next");
+                                if (jo.has("messagesInQueue")) {
+                                    inQueue = jo.getInt("messagesInQueue");
+                                }
                             }
                         } catch (Exception ex){
+
+
+
+
                             cursor=null;
                             ex.printStackTrace();
                         }
