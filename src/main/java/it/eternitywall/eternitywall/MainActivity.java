@@ -276,7 +276,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
                 progress.setVisibility(View.INVISIBLE);
                 swipe.setRefreshing(false);
 
-                if (messages.size()==0)
+                if (messages.size()==0 && mMessages.size()==0)
                     ((TextView)findViewById(R.id.txtHeader)).setVisibility(View.VISIBLE);
                 else
                     ((TextView)findViewById(R.id.txtHeader)).setVisibility(View.GONE);
@@ -344,10 +344,6 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
                                 }
                             }
                         } catch (Exception ex){
-
-
-
-
                             cursor=null;
                             ex.printStackTrace();
                         }
@@ -360,8 +356,9 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
                             Log.i(TAG, message.toString());
                         }
 
-                        //sort by reverse timestamp (optional?)
-                        Collections.sort(mMessages);
+                        //sort by reverse timestamp only on main messages without parsing
+                        if (search==null && sortby == null)
+                            Collections.sort(mMessages);
                         ok = true;
                     }
                     catch (Exception ex) {
