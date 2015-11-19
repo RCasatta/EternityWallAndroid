@@ -1,4 +1,4 @@
-package it.eternitywall.other;
+package it.eternitywall.eternitywall.bitcoin;
 
 import org.bitcoinj.crypto.ChildNumber;
 import org.bitcoinj.crypto.DeterministicKey;
