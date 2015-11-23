@@ -45,6 +45,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
     private ProgressBar progress;
     private SwipeRefreshLayout swipe;
     private SearchView searchView;
+    private MenuItem searchMenuItem;
 
     private String search;
     private String sortby;
@@ -193,7 +194,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
 */
 
         //SearchManager searchManager = (SearchManager)         getSystemService(Context.SEARCH_SERVICE);
-        final MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+        searchMenuItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
         searchView.setOnQueryTextListener(this);
         searchView.setOnCloseListener(this);
@@ -201,7 +202,6 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
         //searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         //searchView.setSubmitButtonEnabled(true);
         //searchView.setOnQueryTextListener(this);
-
         MenuItemCompat.setOnActionExpandListener(searchMenuItem, new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
@@ -408,7 +408,10 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.item_all:
+            case R.id.item_main:
+                sortby=null;
+                break;
+            case R.id.item_views:
                 sortby="alltimeviews";
                 break;
             case R.id.item_ranking:
@@ -420,7 +423,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
             case R.id.item_replies:
                 sortby="replies";
                 break;
-            case R.id.item_last7days:
+            case R.id.item_viewslast7days:
                 sortby="last7daysviews";
                 break;
         }
@@ -430,5 +433,36 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
         messages.clear();
         loadMoreData();
         return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (search!= null){
+            if(searchMenuItem.isActionViewExpanded())
+                searchMenuItem.collapseActionView();
+            sortby=null;
+            search=null;
+            cursor=null;
+            inQueue = null;
+            messages.clear();
+            loadMoreData();
+        } else if(searchMenuItem.isActionViewExpanded()){
+                searchMenuItem.collapseActionView();
+            sortby=null;
+            search=null;
+            cursor=null;
+            inQueue = null;
+            messages.clear();
+            loadMoreData();
+        } else if (sortby!= null){
+            sortby=null;
+            search=null;
+            cursor=null;
+            inQueue = null;
+            messages.clear();
+            loadMoreData();
+        } else {
+            super.onBackPressed();
+        }
     }
 }

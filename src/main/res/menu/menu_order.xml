@@ -3,30 +3,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
 
+
+    <item
+        android:id="@+id/item_main"
+        app:showAsAction="ifRoom|withText"
+        android:title="@string/order_main"
+        android:visible="true"/>
 <item
     android:id="@+id/item_ranking"
     app:showAsAction="ifRoom|withText"
-    android:title="Ranking"
+    android:title="@string/order_ranking"
     android:visible="true"/>
 <item
-    android:id="@+id/item_all"
+    android:id="@+id/item_views"
     app:showAsAction="ifRoom|withText"
-    android:title="Views"
+    android:title="@string/order_views"
     android:visible="true"/>
 <item
-    android:id="@+id/item_last7days"
+    android:id="@+id/item_viewslast7days"
     app:showAsAction="ifRoom|withText"
-    android:title="Last 7 days views"
+    android:title="@string/order_viewslast7days"
     android:visible="true"/>
 <item
         android:id="@+id/item_likes"
         app:showAsAction="ifRoom|withText"
-        android:title="Likes"
+        android:title="@string/order_likes"
         android:visible="true"/>
     <item
         android:id="@+id/item_replies"
         app:showAsAction="ifRoom|withText"
-        android:title="Replies"
+        android:title="@string/order_replies"
         android:visible="true"/>
 
 
