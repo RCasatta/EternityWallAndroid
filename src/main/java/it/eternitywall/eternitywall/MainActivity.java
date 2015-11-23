@@ -325,6 +325,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
                         ok = true;
                 } else
                     json = cursor == null ? Http.get("http://eternitywall.it/?format=json") : Http.get("http://eternitywall.it/?format=json&cursor=" + cursor);
+                    //json =  Http.get("http://www.lvaccaro.com/ew/x.html") ;
 
 
                 if(json!=null && json.isPresent()) {
@@ -337,12 +338,16 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
                             if (status.equals("ko")) {
                                 statusMessage= jo.getString("statusMessage");
                                 return null;
-                            } else {
+                            }
+                        } catch (Exception ex){
+                            ex.printStackTrace();
+                        }
+
+                        try {
                                 cursor = jo.getString("next");
                                 if (jo.has("messagesInQueue")) {
                                     inQueue = jo.getInt("messagesInQueue");
                                 }
-                            }
                         } catch (Exception ex){
                             cursor=null;
                             ex.printStackTrace();
