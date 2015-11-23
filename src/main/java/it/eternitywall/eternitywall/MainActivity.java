@@ -325,7 +325,6 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
                         ok = true;
                 } else
                     json = cursor == null ? Http.get("http://eternitywall.it/?format=json") : Http.get("http://eternitywall.it/?format=json&cursor=" + cursor);
-                    //json =  Http.get("http://www.lvaccaro.com/ew/x.html") ;
 
 
                 if(json!=null && json.isPresent()) {
