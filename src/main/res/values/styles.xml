@@ -1,11 +1,12 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
+    <style name="AppTheme" parent="Theme.AppCompat">
         <!-- Customize your theme here. -->
-        <item name="android:actionBarStyle">@style/MyActionBar</item>
-        <item name="android:actionBarTabTextStyle">@style/MyActionBarTabText</item>
-        <item name="android:actionMenuTextColor">@color/action_bar_text_color</item>
+
+        <!-- <item name="android:actionBarStyle">@style/MyActionBar</item>
+         <item name="android:actionBarTabTextStyle">@style/MyActionBarTabText</item>
+         <item name="android:actionMenuTextColor">@color/action_bar_text_color</item>-->
         <item name="android:windowBackground">@android:color/white</item>
         <item name="android:buttonStyle">@style/buttonStyle</item>
 
@@ -17,13 +18,50 @@
         <!-- colorAccent is used as the default value for colorControlActivated
         which is used to tint widgets -->
         <item name="colorAccent">@color/accent</item>
+
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <!-- Base application theme. -->
+    <style name="MainTheme" parent="Theme.AppCompat.NoActionBar">
+        <!-- Customize your theme here. -->
+
+        <item name="windowActionBar">false</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
+        <item name="popupMenuStyle">@style/PopupMenu</item>
+        <item name="actionBarPopupTheme">@style/PopupMenu</item>
+
+        <!-- <item name="android:actionBarStyle">@style/MyActionBar</item>
+         <item name="android:actionBarTabTextStyle">@style/MyActionBarTabText</item>
+         <item name="android:actionMenuTextColor">@color/action_bar_text_color</item>-->
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:buttonStyle">@style/buttonStyle</item>
+
+        <item name="colorPrimary">@color/primary</item>
+
+        <!-- colorPrimaryDark is used for the status bar -->
+        <item name="colorPrimaryDark">@color/primaryDark</item>
+
+        <!-- colorAccent is used as the default value for colorControlActivated
+        which is used to tint widgets -->
+        <item name="colorAccent">@color/accent</item>
+
+        <item name="android:textColor">@color/black</item>
     </style>
 
     <!-- ActionBar styles -->
-    <style name="MyActionBar" parent="Widget.AppCompat.Light.ActionBar">
+    <style name="MyActionBar" parent="Widget.AppCompat.ActionBar">
         <item name="android:background">@color/action_bar_background</item>
         <item name="android:titleTextStyle">@style/MyActionBarTitleText</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
+    </style>
 
+    <style name="PopupMenu" parent="Widget.AppCompat.PopupMenu">
+        <item name="android:panelBackground">@color/popupmenu_background</item>
+        <item name="panelBackground">@color/popupmenu_background</item>
+        <item name="android:popupBackground">@color/popupmenu_background</item>
+        <item name="android:colorBackground">@color/popupmenu_background</item>
     </style>
 
     <!-- ActionBar title text -->
@@ -32,8 +70,7 @@
     </style>
 
     <!-- ActionBar tabs text -->
-    <style name="MyActionBarTabText"
-        parent="@style/Widget.AppCompat.ActionBar.TabText">
+    <style name="MyActionBarTabText" parent="@style/Widget.AppCompat.ActionBar.TabText">
         <item name="android:textColor">@color/action_bar_text_color</item>
         <!-- The textColor property is backward compatible with the Support Library -->
     </style>

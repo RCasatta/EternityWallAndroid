@@ -4,20 +4,30 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.AppCompatSpinner;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -34,112 +44,105 @@ import java.util.Collections;
 import java.util.List;
 
 import it.eternitywall.eternitywall.adapters.MessageListAdapter;
+import it.eternitywall.eternitywall.fragments.AccountFragment;
+import it.eternitywall.eternitywall.fragments.ListFragment;
 
 
-public class MainActivity extends ActionBarActivity implements MessageListAdapter.MessageListAdapterManager, SearchView.OnQueryTextListener, SearchView.OnCloseListener, PopupMenu.OnMenuItemClickListener {
+public class MainActivity extends ActionBarActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, PopupMenu.OnMenuItemClickListener,
+ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener{
 
     private static final int REQUEST_CODE = 8274;
     private static final String TAG = "MainActivity";
 
-    private ListView lstMessages;
-    private ProgressBar progress;
-    private SwipeRefreshLayout swipe;
+    // ActionBar and Toolbar items
     private SearchView searchView;
     private MenuItem searchMenuItem;
+    TabLayout tabLayout;
+    Toolbar toolbar;
 
-    private String search;
-    private String sortby;
-    private String cursor;
-    private List<Message> messages;
-    private Integer inQueue;
+    // Container and Fragments
+    ViewPager viewPager;
+    ListFragment listFragment;
+    AccountFragment accountFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        lstMessages = (ListView) findViewById(R.id.lstMessages);
-        progress = (ProgressBar) findViewById(R.id.progress);
-        swipe = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);
+        // Specify that tabs should be displayed in the action bar.
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        findViewById(R.id.payButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, WriteActivity.class);
-                startActivity(i);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        setupViewPager(viewPager);
+
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+        changeTabsFont();
+    }
+
+    private void changeTabsFont() {
+        // Set typeface font inside toolbar for support font-awesome
+        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
+        ViewGroup vg = (ViewGroup) tabLayout.getChildAt(0);
+        int tabsCount = vg.getChildCount();
+        for (int j = 0; j < tabsCount; j++) {
+            ViewGroup vgTab = (ViewGroup) vg.getChildAt(j);
+            int tabChildsCount = vgTab.getChildCount();
+            for (int i = 0; i < tabChildsCount; i++) {
+                View tabViewChild = vgTab.getChildAt(i);
+                if (tabViewChild instanceof TextView) {
+                    ((TextView) tabViewChild).setTextAppearance(this,R.style.TextAppearance_AppCompat_Large);
+                    ((TextView) tabViewChild).setTypeface(font);
+                }
             }
-        });
+        }
+    }
 
-        /**
-         * EW PROTOCOL
-         *
-         * input pau the fee
-         * EWAxenoky set nick "xenoky" to first input of transaction
-         *
-         *
-         * first input is the sender
-         * other input are ignored
-         * first output is the message id (DUST value)
-         * second output (optional) if the message id answering to
-         * OP_RETURN EW message
-         * other outputs are ignored
-         *
-         * The following API endpoints are available:
+    private void setupViewPager(ViewPager viewPager) {
+        // put the fragments into container ViewPager
+        listFragment=new ListFragment();
+        accountFragment=new AccountFragment();
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(listFragment, getResources().getString(R.string.list_fragment));
+        adapter.addFragment(accountFragment, getResources().getString(R.string.account_fragment));
+        viewPager.setAdapter(adapter);
+    }
 
-         http://eternitywall.it/?format=json&cursor=[cursor]
-         returns a json with Eternity Wall messages.
-         [cursor] - Optional, if provided the message returned start from cursor (the value of cursor is provided in the json)
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
-         http://eternitywall.it/bitcoinform?format=json&text=[text]&reply=[replyid]&source=[source]
-         returns a json with a bitcoin address to pay to write on the wall.
-         [text] - The text of the message
-         [replyid] - Optional, in case of replying to a message.
-         [source] - Optional, specify source of message (your app name).
+    }
 
-         https://eternitywall.appspot.com/v1/notify?email=[email]&hash=[hash]&address=[address]&subscribe=[subscribe]&notifyreply=[notifyreply]
-         if called, user will be notified with an email when the message has been written (block confirmed) and optionally to receive notification when there are replies
-         [email] - us
-         [hash] - Not required if [address] is specified. hash of the tx containing the message
-         [address] - Not required if [hash] is specified. bitcoin address paid to write the message
-         [subscribe] - if equal to true, it will also register user to the mailing list
-         [notifyreply] - if equal to true, email receive notification also of reply to message
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
 
-         http://eternitywall.it/m/c09e8df0df522c0d7ffe027a5d8b8d94f8bc237410e8b1242b32c9967070f4e3?format=json
-         return detail info on specified message (with father message (if any), current message and answer list (if any)
+        public ViewPagerAdapter(FragmentManager manager) {
+            super(manager);
+        }
 
-         *
-         */
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
 
-        messages = new ArrayList<Message>();
-        cursor = null;
-        search = null;
-        sortby = null;
-        inQueue = null;
-        loadMoreData();
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
 
-        swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                messages = new ArrayList<Message>();
-                cursor = null;
-                //search = null;
-                //sortby = null;
-                inQueue = null;
-                loadMoreData();
-            }
+        public void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
 
-
-        });
-        Intent intent = getIntent();
-        if(intent.getAction() != null && intent.getAction().equals(Intent.ACTION_SEND) && intent.getType().equals("text/plain")) {
-
-            intent.setAction(null);
-
-            String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-            Intent i = new Intent(MainActivity.this, WriteActivity.class);
-            i.putExtra("sharedText", sharedText);
-            startActivity(i);
-
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
         }
     }
 
@@ -155,10 +158,7 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
         LayoutInflater baseInflater = (LayoutInflater)getBaseContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        // Inflate your custom view.
-
         Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
-
         TextView txtOrder=new TextView(MainActivity.this);
         txtOrder.setPadding(0, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
         txtOrder.setText(getResources().getString(R.string.action_order));
@@ -250,142 +250,15 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
         Toast.makeText(this, "requestCode=" + requestCode + " resultCode=" + resultCode + " data=" + data , Toast.LENGTH_LONG).show();
     }
 
-    @Override
-    public void loadMoreData() {
-        AsyncTask t = new AsyncTask() {
-
-            private boolean ok = false;
-            private String statusMessage=null;
-            private List<Message> mMessages = new ArrayList<>();
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                ((TextView)findViewById(R.id.txtHeader)).setVisibility(View.GONE);
-                // don't refresh if there are messages on sortby or search mode
-                if ((sortby!=null || search!=null) && (messages!=null && !messages.isEmpty()))
-                    progress.setVisibility(View.INVISIBLE);//nothing
-                else if(!swipe.isRefreshing())
-                    progress.setVisibility(View.VISIBLE);
-
-            }
-
-            @Override
-            protected void onPostExecute(Object o) {
-                super.onPostExecute(o);
-                progress.setVisibility(View.INVISIBLE);
-                swipe.setRefreshing(false);
-
-                if (messages.size()==0 && mMessages.size()==0)
-                    ((TextView)findViewById(R.id.txtHeader)).setVisibility(View.VISIBLE);
-                else
-                    ((TextView)findViewById(R.id.txtHeader)).setVisibility(View.GONE);
-
-                if(ok) {
-                    if(messages != null && !messages.isEmpty()) {
-                        MessageListAdapter messageListAdapter = (MessageListAdapter) lstMessages.getAdapter();
-                        for (int i=0;i<mMessages.size();i++) {
-                            messageListAdapter.add(mMessages.get(i));
-                            messageListAdapter.notifyDataSetChanged();
-                        }
-                    }
-                    else {
-                        MessageListAdapter messageListAdapter = new MessageListAdapter(MainActivity.this, R.layout.item_message, messages, inQueue, MainActivity.this);
-                        lstMessages.setAdapter(messageListAdapter);
-                        for (int i=0;i<mMessages.size();i++) {
-                            messageListAdapter.add(mMessages.get(i));
-                            messageListAdapter.notifyDataSetChanged();
-                        }
-
-                    }
-                }
-                else {
-                    //succhia!
-                    if (statusMessage!=null)
-                        Toast.makeText(MainActivity.this, statusMessage, Toast.LENGTH_SHORT).show();
-                    else
-                        Toast.makeText(MainActivity.this, getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            protected Object doInBackground(Object[] params) {
-                Optional<String> json=null;
-                if (search!=null) {
-                    // search api return all the values without cursor
-                    if(messages==null || messages.isEmpty())
-                        json = cursor == null ? Http.get("http://eternitywall.it/search?format=json&q=" + search) : Http.get("http://eternitywall.it/?format=json&cursor=" + cursor + "&q=" + search);
-                    else
-                        ok = true;
-                }else if (sortby!=null){
-                    // sortby api return all the values without cursor
-                    if(messages==null || messages.isEmpty())
-                        json = Http.get("http://eternitywall.it/sortby/"+sortby+"?format=json");
-                    else
-                        ok = true;
-                } else
-                    json = cursor == null ? Http.get("http://eternitywall.it/?format=json") : Http.get("http://eternitywall.it/?format=json&cursor=" + cursor);
-
-
-                if(json!=null && json.isPresent()) {
-                    try {
-                        String jstring = json.get();
-                        JSONObject jo = new JSONObject(jstring);
-
-                        try {
-                            String status = jo.getString("status");
-                            if (status.equals("ko")) {
-                                statusMessage= jo.getString("statusMessage");
-                                return null;
-                            }
-                        } catch (Exception ex){
-                            ex.printStackTrace();
-                        }
-
-                        try {
-                                cursor = jo.getString("next");
-                                if (jo.has("messagesInQueue")) {
-                                    inQueue = jo.getInt("messagesInQueue");
-                                }
-                        } catch (Exception ex){
-                            cursor=null;
-                            ex.printStackTrace();
-                        }
-
-                        JSONArray ja = jo.getJSONArray("messages");
-
-                        for(int m=0; m<ja.length(); m++) {
-                            Message message = Message.buildFromJson(ja.getJSONObject(m));
-                            mMessages.add(message);
-                            Log.i(TAG, message.toString());
-                        }
-
-                        //sort by reverse timestamp only on main messages without parsing
-                        if (search==null && sortby == null)
-                            Collections.sort(mMessages);
-                        ok = true;
-                    }
-                    catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-                return null;
-            }
-        };
-        t.execute();
-    }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
         // OnQueryTextSubmit was called twice, so clean
         searchView.setIconified(true);
         searchView.clearFocus();
-        search = query;
-        sortby=null;
-        cursor=null;
-        inQueue = null;
-        messages.clear();
-        loadMoreData();
+        listFragment.clear();
+        listFragment.setSearch(query);
+        listFragment.loadMoreData();
         return true;
     }
 
@@ -396,71 +269,52 @@ public class MainActivity extends ActionBarActivity implements MessageListAdapte
 
     @Override
     public boolean onClose() {
-        search=null;
-        sortby=null;
-        cursor=null;
-        inQueue = null;
-        messages.clear();
-        loadMoreData();
+        listFragment.clear();
+        listFragment.loadMoreData();
         return false;
     }
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
+        listFragment.clear();
         switch (item.getItemId()) {
             case R.id.item_main:
-                sortby=null;
+                ;
                 break;
             case R.id.item_views:
-                sortby="alltimeviews";
+                listFragment.setSortby("alltimeviews");
                 break;
             case R.id.item_ranking:
-                sortby="ranking";
+                listFragment.setSortby("ranking");
                 break;
             case R.id.item_likes:
-                sortby="likes";
+                listFragment.setSortby("likes");
                 break;
             case R.id.item_replies:
-                sortby="replies";
+                listFragment.setSortby("replies");
                 break;
             case R.id.item_viewslast7days:
-                sortby="last7daysviews";
+                listFragment.setSortby("last7daysviews");
                 break;
         }
-        search=null;
-        cursor=null;
-        inQueue = null;
-        messages.clear();
-        loadMoreData();
+        listFragment.loadMoreData();
         return false;
     }
 
     @Override
     public void onBackPressed() {
-        if (search!= null){
+        if (listFragment.getSearch()!= null){
             if(searchMenuItem.isActionViewExpanded())
                 searchMenuItem.collapseActionView();
-            sortby=null;
-            search=null;
-            cursor=null;
-            inQueue = null;
-            messages.clear();
-            loadMoreData();
+            listFragment.clear();
+            listFragment.loadMoreData();
         } else if(searchMenuItem.isActionViewExpanded()){
                 searchMenuItem.collapseActionView();
-            sortby=null;
-            search=null;
-            cursor=null;
-            inQueue = null;
-            messages.clear();
-            loadMoreData();
-        } else if (sortby!= null){
-            sortby=null;
-            search=null;
-            cursor=null;
-            inQueue = null;
-            messages.clear();
-            loadMoreData();
+            listFragment.clear();
+            listFragment.loadMoreData();
+        } else if (listFragment.getSortby()!= null){
+            listFragment.clear();
+            listFragment.loadMoreData();
         } else {
             super.onBackPressed();
         }

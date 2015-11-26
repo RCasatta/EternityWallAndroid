@@ -32,14 +32,15 @@
             android:id="@+id/txtDate"
             style="@style/TextAppearance.AppCompat.Small"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/primaryText" />
 
         <TextView
             android:id="@+id/txtMessage"
             style="@style/TextAppearance.AppCompat.Large"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#000000" />
+            android:textColor="@color/primaryText" />
 
         <TextView
             style="@style/TextAppearance.AppCompat.Small"
@@ -47,7 +48,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            android:layout_marginTop="4dp" />
+            android:layout_marginTop="4dp"
+            android:textColor="@color/primaryText" />
     </LinearLayout>
 
 </LinearLayout>

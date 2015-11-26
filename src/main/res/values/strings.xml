@@ -31,5 +31,8 @@
     <string name="order_main">Time</string>
     <string name="order_viewslast7days">Views last 7 days</string>
 
+    <string name="account_fragment">&#xf007;</string>
+    <string name="list_fragment">&#xf015;</string>
+
 
 </resources>
