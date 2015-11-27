@@ -27,7 +27,7 @@ android {
         applicationId "it.eternitywall.eternitywall"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 10
+        versionCode 11
         multiDexEnabled true
         versionName "1.0." + defaultConfig.getProperty("versionCode")
     }
@@ -64,7 +64,7 @@ dependencies {
     compile 'org.json:json:20090211'
     compile 'commons-lang:commons-lang:2.6'
     //compile 'org.bitcoinj:bitcoinj-core:0.12.3'
-    compile('org.bitcoinj:bitcoinj-core:0.12.3') {
+    compile('org.bitcoinj:bitcoinj-core:0.13.3') {
         exclude module: 'scrypt'
     }
     compile 'com.google.zxing:core:3.2.1'
