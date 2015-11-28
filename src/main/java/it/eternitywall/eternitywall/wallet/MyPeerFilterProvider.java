@@ -41,7 +41,7 @@ public class MyPeerFilterProvider  implements PeerFilterProvider{
     public BloomFilter getBloomFilter(int size, double falsePositiveRate, long nTweak) {
         System.out.println("size " + size + " falsePositiveRate " + falsePositiveRate + " nTweak " + nTweak);
         final BloomFilter res = new BloomFilter(size, falsePositiveRate, nTweak);
-        System.out.println("Bloom filter " + res );
+        System.out.println("BFData" + res );
         for (ECKey current : messagesId) {
             //res.insert(current);  //this way add also the public key, which I am not using to create tx
             res.insert(current.getPubKeyHash());

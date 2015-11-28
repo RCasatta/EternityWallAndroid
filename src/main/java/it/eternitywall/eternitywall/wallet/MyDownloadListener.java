@@ -16,27 +16,25 @@ public class MyDownloadListener extends DownloadProgressTracker {
     private int size=0;
     private long end;
     private long start;
-    private CountDownLatch latch;
-    private EWWallet ewWallet;
 
-    public MyDownloadListener(CountDownLatch latch, EWWallet ewWallet) {
+    private CountDownLatch latch;
+
+    public MyDownloadListener(CountDownLatch latch) {
         this.latch = latch;
-        this.ewWallet = ewWallet;
     }
 
     @Override
     protected void startDownload(int blocks) {
         super.startDownload(blocks);
-        start=System.currentTimeMillis();
+        start= System.currentTimeMillis();
     }
 
     @Override
     protected void doneDownload() {
         super.doneDownload();
-        end=System.currentTimeMillis();
-        System.out.println("Done download, it tooks " + (end-start) );
+        end= System.currentTimeMillis();
+        System.out.println("Done download, it tooks " + (end - start));
         latch.countDown();
-        ewWallet.saveWalletData();
     }
 
     public long getDownloadTime() {

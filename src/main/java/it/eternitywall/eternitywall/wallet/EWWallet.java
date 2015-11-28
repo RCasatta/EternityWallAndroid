@@ -1,6 +1,5 @@
 package it.eternitywall.eternitywall.wallet;
 
-
 import android.content.Context;
 import android.util.Log;
 
@@ -24,15 +23,14 @@ import org.bitcoinj.store.BlockStore;
 import org.bitcoinj.store.SPVBlockStore;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 
@@ -52,6 +50,12 @@ public class EWWallet implements Runnable {
     public static final String WALLET_FILE     = "wallet";
     public static final String BITCOIN_PATH    = "bitcoin";
 
+    private Map<Sha256Hash,Transaction> txMap = new HashMap<>();
+    private Map<Address, List<TransactionOutput>> utxo = new HashMap<>();
+    private Set<Address> used      = new HashSet<>();
+    private Integer nextMessageId = 0 ;
+    private Integer nextChange = 0 ;
+
     final CountDownLatch downloadLatch =new CountDownLatch(1);
 
     private String passphrase;
@@ -59,66 +63,21 @@ public class EWWallet implements Runnable {
     private List<ECKey> messagesId = new ArrayList<>();
     private List<ECKey> changes    = new ArrayList<>();
 
-    private Persisted persisted;
     private boolean isSynced = false;
     private Context context;
 
     public EWWallet(String passphrase, Context context) {
         this.passphrase = passphrase;
         this.context = context;
-        loadWalletData();
-    }
-
-    private void loadWalletData() {
-        FileInputStream fis = null;
-        try {
-            final File path = context.getDir(EWWallet.BITCOIN_PATH, Context.MODE_PRIVATE);
-            final File walletFile = new File(path, EWWallet.WALLET_FILE );
-            fis = new FileInputStream(walletFile);
-            ObjectInputStream is = new ObjectInputStream(fis);
-            persisted = (Persisted) is.readObject();
-            is.close();
-            fis.close();
-            Log.i(TAG, "WalletLoaded");
-        } catch (Exception e) {
-            Log.i(TAG, "WalletNotLoaded" + e.getMessage());
-        }
-        if(persisted==null)
-            persisted=new Persisted();
-    }
-
-    public void saveWalletData() {
-        FileOutputStream fos = null;
-        System.out.println("Saving " + persisted);
-        try {
-            final File path = context.getDir(EWWallet.BITCOIN_PATH, Context.MODE_PRIVATE);
-            final File walletFile = new File(path, EWWallet.WALLET_FILE );
-            fos = new FileOutputStream(walletFile);
-            ObjectOutputStream os = new ObjectOutputStream(fos);
-            //os.writeObject(persisted);
-            os.writeObject(persisted.getNextChange());
-            os.writeObject(persisted.getNextMessageId());
-            os.writeObject(persisted.getUsed());
-            os.writeObject(persisted.getUtxo());
-            os.writeObject(persisted.getTxMap());
-
-
-            os.close();
-            fos.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public Address getCurrent() {
         if(!isSynced)
             return null;
-        return changes.get( persisted.getNextMessageId() ).toAddress(PARAMS);
+        return changes.get( nextMessageId ).toAddress(PARAMS);
     }
 
     private EWMessageData getNextMessageData() {
-        final Integer nextChange = persisted.getNextChange();
-        final Integer nextMessageId = persisted.getNextMessageId();
         if(!isSynced || nextChange ==0)
             return null;
         isSynced=false;  //TODO
@@ -126,13 +85,13 @@ public class EWWallet implements Runnable {
         ewMessageData.setMessageId(messagesId.get(nextMessageId).toAddress(PARAMS));
         ewMessageData.setChange(changes.get(nextChange).toAddress(PARAMS));
         ewMessageData.setInput(changes.get(nextChange - 1));
-        persisted.incrementChange();
-        persisted.incrementNextMessageId();
+        nextChange++;
+        nextMessageId++;
         return ewMessageData;
     }
 
     public Sha256Hash sendMessage(String message) {
-        if(!isSynced && persisted.getNextChange()!=0)
+        if(!isSynced && nextChange!=0)
             return null;
         isSynced=false;  //TODO
 
@@ -141,7 +100,7 @@ public class EWWallet implements Runnable {
         Address inputAddress = input.toAddress(PARAMS);
         Transaction newTx = new Transaction(PARAMS);
 
-        List<TransactionOutput> transactionOutputList = persisted.getUtxo().get(inputAddress);
+        List<TransactionOutput> transactionOutputList = utxo.get(inputAddress);
         Long totalAvailable = 0L;
         for (TransactionOutput to  : transactionOutputList) {
             totalAvailable += to.getValue().getValue();
@@ -166,26 +125,25 @@ public class EWWallet implements Runnable {
         Wallet.SendRequest req = Wallet.SendRequest.forTx(newTx);
         wallet.signTransaction(req);
         final String newTxHex = Bitcoin.transactionToHex(newTx);
-        System.out.println(newTxHex);
-        saveWalletData();
+        Log.i(TAG, newTxHex);
 
         return  newTx.getHash();
     }
 
     public Sha256Hash registerAlias(String aliasName) {
-        final Integer nextChange = persisted.getNextChange();
         if(!isSynced && nextChange !=0)
             return null;
         isSynced=false;  //TODO
 
         ECKey aliasKey = changes.get(nextChange);
-        ECKey fistChange = changes.get(nextChange+1);
-        persisted.incrementChange();
-        persisted.incrementChange();
+        nextChange++;
+        ECKey fistChange = changes.get(nextChange);
+        nextChange++;
+
         Address aliasAddress = aliasKey.toAddress(PARAMS);
         Transaction newTx = new Transaction(PARAMS);
 
-        List<TransactionOutput> transactionOutputList = persisted.getUtxo().get(aliasAddress);
+        List<TransactionOutput> transactionOutputList = utxo.get(aliasAddress);
         Long totalAvailable = 0L;
         for (TransactionOutput to  : transactionOutputList) {
             totalAvailable += to.getValue().getValue();
@@ -210,8 +168,7 @@ public class EWWallet implements Runnable {
 
         final String newTxHex = Bitcoin.transactionToHex(newTx);
 
-        System.out.println(newTxHex);
-        saveWalletData();
+        Log.i(TAG, newTxHex);
 
         return  newTx.getHash();
     }
@@ -221,8 +178,13 @@ public class EWWallet implements Runnable {
         try {
             final byte[] seed = Bitcoin.getEntropyFromPassphrase(passphrase);
             final EWDerivation ewDerivation = new EWDerivation(seed);
-            final File path = context.getDir(BITCOIN_PATH, Context.MODE_PRIVATE);
+            File path;
+            if(context!=null)
+                path= context.getDir(BITCOIN_PATH, Context.MODE_PRIVATE);
+            else
+                path = new File(".");
             final File blockFile = new File(path, BLOCKCHAIN_FILE );
+            final File walletFile = new File(path, WALLET_FILE );
 
             long start = System.currentTimeMillis();
             for (int i = 0; i < PER_CHUNK; i++) {
@@ -233,66 +195,86 @@ public class EWWallet implements Runnable {
                 all.add(messageKey.toAddress(PARAMS));
                 all.add(changeKey.toAddress(PARAMS));
             }
-            final long l = System.currentTimeMillis() - start;
-            System.out.println("My messages id are " + messagesId);
-            System.out.println("My changes are " + changes);
-            System.out.println("Derivation takes " + l);
 
-            //Wallet wallet = Wallet.fromWatchingKey(params, ewDerivation.getAccount(0).getPubOnly() );
+            Wallet wallet;
+            if(walletFile.exists()) {
+                Log.i(TAG, "Wallet exist, loading from file");
+                wallet = Wallet.loadFromFile(walletFile);
+            }
+            else {
+                Log.i(TAG, "Wallet not exist, creating new");
+                List<ECKey> ecKeyList = new ArrayList<>();
+                ecKeyList.addAll(messagesId);
+                ecKeyList.addAll(changes);
+                wallet = Wallet.fromKeys(PARAMS,ecKeyList);
+            }
+
+            Log.i(TAG, "wallet bloom "+wallet.getBloomFilter(1E-5));
+            wallet.autosaveToFile(walletFile,30, TimeUnit.SECONDS, new WalletSaveListener());
+
+            final long l = System.currentTimeMillis() - start;
+            Log.i(TAG, "My messages id are " + messagesId);
+            Log.i(TAG, "My changes are " + changes);
+            Log.i(TAG, "Derivation takes " + l);
+
             final BlockStore blockStore = new SPVBlockStore(PARAMS, blockFile);
             final StoredBlock chainHead = blockStore.getChainHead();
 
             if (chainHead.getHeight() == 0) {  //first run
+                Log.i(TAG, "First run");
                 CheckpointManager.checkpoint(PARAMS, Checkpoints.getAsStream(), blockStore, EPOCH);
             }
 
-            final BlockChain chain = new BlockChain(PARAMS, blockStore);
-            final MyBlockchainListener chainListener = new MyBlockchainListener(all,persisted);
+            final BlockChain chain = new BlockChain(PARAMS, wallet, blockStore);
+            final MyBlockchainListener chainListener = new MyBlockchainListener(all,txMap,used,utxo );
             chain.addListener(chainListener);
             final PeerGroup peerGroup = new PeerGroup(PARAMS, chain);
             //peerGroup.addAddress(InetAddress.getByName("10.106.137.73"));
             //peerGroup.setMaxConnections(1);
+            //peerGroup.addWallet(wallet);
             peerGroup.addPeerDiscovery(new DnsDiscovery(PARAMS));
             peerGroup.addPeerFilterProvider(new MyPeerFilterProvider(changes, messagesId));
             peerGroup.setFastCatchupTimeSecs(EPOCH);
             peerGroup.setDownloadTxDependencies(false);
-            final MyDownloadListener downloadListener = new MyDownloadListener(downloadLatch, this);
+            final MyDownloadListener downloadListener = new MyDownloadListener(downloadLatch);
             peerGroup.startAsync();
             peerGroup.startBlockChainDownload(downloadListener);
 
             downloadLatch.await();
-            Set<Address> used = persisted.getUsed();
 
+            nextMessageId=0;
             for (ECKey current : messagesId) {
                 Address a = current.toAddress(PARAMS);
                 if (used.contains(a))
-                    persisted.incrementNextMessageId();
+                    nextMessageId++;
                 else
                     break;
             }
+            nextChange=0;
             for (ECKey current : changes) {
                 Address a = current.toAddress(PARAMS);
                 if (used.contains(a))
-                    persisted.incrementChange();
+                    nextChange++;
                 else
                     break;
             }
             isSynced = true;
-            Log.i(TAG,"peerGroup.getConnectedPeers()=" + peerGroup.getConnectedPeers());
-            Log.i(TAG,"chain.getBestChainHeight()=" + chain.getBestChainHeight());
-            Log.i(TAG,"chainHeadHeightAtBeginning=" + chainHead.getHeight());
-            Log.i(TAG,"txMap=" + persisted.getTxMap());
-            Log.i(TAG,"txMap.size()=" + persisted.getTxMap().size());
-            Log.i(TAG,"bloom matches=" + chainListener.getBloomMatches());
-            Log.i(TAG,"bloom efficencies=" + (persisted.getTxMap().size() * 1.0) / chainListener.getBloomMatches());
-            Log.i(TAG,"downloaded size=" + downloadListener.getSize() + " bytes");
-            Log.i(TAG,"used address=" + used);
-            Log.i(TAG,"utxo=" + persisted.getUtxo() );
-            Log.i(TAG,"nextMessageId=" + persisted.getNextMessageId());
-            Log.i(TAG, "nextChange=" + persisted.getNextChange());
+            Log.i(TAG, "peerGroup.getConnectedPeers()=" + peerGroup.getConnectedPeers());
+            Log.i(TAG, "chain.getBestChainHeight()=" + chain.getBestChainHeight());
+            Log.i(TAG, "chainHeadHeightAtBeginning=" + chainHead.getHeight());
+            Log.i(TAG, "txMap=" + txMap);
+            Log.i(TAG, "txMap.size()=" + txMap.size());
+            Log.i(TAG, "bloom matches=" + chainListener.getBloomMatches());
+            Log.i(TAG, "bloom efficencies=" + (txMap.size() * 1.0) / chainListener.getBloomMatches());
+            Log.i(TAG, "downloaded size=" + downloadListener.getSize() + " bytes");
+            Log.i(TAG, "used address=" + used);
+            Log.i(TAG, "utxo=" + utxo);
+            Log.i(TAG, "nextMessageId=" + nextMessageId);
+            Log.i(TAG, "nextChange=" + nextChange);
+            Log.i(TAG, "wallet=" + wallet);
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.i(TAG, e.getMessage());
         }
 
     }

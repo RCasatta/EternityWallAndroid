@@ -22,12 +22,17 @@ import java.util.Set;
  */
 public class MyBlockchainListener implements BlockChainListener {
     private Set<Address> all;
-    private Persisted persisted;
+    private Map<Address, List<TransactionOutput>> utxo;
+    private Map<Sha256Hash, Transaction> txMap;
+    private Set<Address> used;
+
     private int bloomMatches=0;
 
-    public MyBlockchainListener(Set<Address> all, Persisted persisted) {
+    public MyBlockchainListener(Set<Address> all, Map<Sha256Hash, Transaction> txMap, Set<Address> used, Map<Address, List<TransactionOutput>> utxo) {
         this.all = all;
-        this.persisted = persisted;
+        this.txMap = txMap;
+        this.used = used;
+        this.utxo = utxo;
     }
 
     @Override
@@ -49,7 +54,6 @@ public class MyBlockchainListener implements BlockChainListener {
         System.out.println("isTransactionRelevant?" + tx.getHashAsString());
         bloomMatches++;
         boolean isRelevant=false;
-        Set<Address> used = persisted.getUsed();
 
         final List<TransactionInput> inputs = tx.getInputs();
         for (TransactionInput input : inputs) {
@@ -77,8 +81,6 @@ public class MyBlockchainListener implements BlockChainListener {
     public void receiveFromBlock(Transaction tx, StoredBlock block, AbstractBlockChain.NewBlockType blockType, int relativityOffset) throws VerificationException {
         System.out.println("receiveFromBlock " + tx.getHashAsString() + " in block " + block);
 
-        final Map<Address, List<TransactionOutput>> utxo = persisted.getUtxo();
-        final Map<Sha256Hash, Transaction> txMap = persisted.getTxMap();
         txMap.put(tx.getHash(), tx);
 
         final List<TransactionInput> inputs = tx.getInputs();
