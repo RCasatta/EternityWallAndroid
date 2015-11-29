@@ -6,7 +6,8 @@ gradlew.bat
 local.properties
 .gradle/
 EternityWallAndroid.iml
-
+blockchain
+wallet
 
 EternityWallAndroid-release.apk
 
