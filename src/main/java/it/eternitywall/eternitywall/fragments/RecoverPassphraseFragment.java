@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 
@@ -79,22 +80,30 @@ public class RecoverPassphraseFragment extends Fragment {
             public void onClick(View v) {
                 final String passphrase = passphraseText.getText().toString();
                 final byte[] entropyFromPassphrase = Bitcoin.getEntropyFromPassphrase(passphrase);
-                if(entropyFromPassphrase!=null) {
+                if (entropyFromPassphrase != null) {
                     final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
                     final SharedPreferences.Editor edit = sharedPref.edit();
                     edit.putString("passphrase", passphrase);
                     edit.commit();
                     Toast.makeText(getActivity(), "Passphrase saved", Toast.LENGTH_LONG).show();
                     passphraseText.setText("");
+                    launchService();
+
+
 
                 } else {
-                    Toast.makeText(getActivity(),"Passphrase invalid",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Passphrase invalid", Toast.LENGTH_LONG).show();
 
                 }
 
             }
         });
         return view;
+    }
+
+    private void launchService() {
+        EWApplication ewApplication = (EWApplication) getActivity().getApplication();
+        ewApplication.getEwWalletService().startSync();
     }
 
     // TODO: Rename method, update argument and hook method into UI event

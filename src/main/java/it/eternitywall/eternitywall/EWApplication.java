@@ -36,10 +36,11 @@ public class EWApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.i(TAG, ".onCreate()" );
+        Log.i(TAG, ".onCreate()");
         PRNGFixes.apply();
         final Intent intent = new Intent(this, EWWalletService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        //startService(intent);
     }
 
     public EWWalletService getEwWalletService() {

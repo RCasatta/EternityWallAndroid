@@ -17,7 +17,11 @@ public class MyDownloadListener extends DownloadProgressTracker {
     private long end;
     private long start;
 
+    private CountDownLatch latch;
 
+    public MyDownloadListener(CountDownLatch latch) {
+        this.latch = latch;
+    }
 
     @Override
     protected void startDownload(int blocks) {
@@ -30,6 +34,7 @@ public class MyDownloadListener extends DownloadProgressTracker {
         super.doneDownload();
         end= System.currentTimeMillis();
         System.out.println("Done download, it tooks " + (end - start));
+        latch.countDown();
     }
 
     public long getDownloadTime() {

@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
@@ -53,6 +54,9 @@ public class EWWalletService extends Service implements SharedPreferences.OnShar
     public static final String BLOCKCHAIN_FILE = "blockchain";
     public static final String WALLET_FILE     = "wallet";
     public static final String BITCOIN_PATH    = "bitcoin";
+
+    private CountDownLatch downloadLatch = new CountDownLatch(1);
+
 
     private Set<Address> used      = new HashSet<>();
     private Integer nextMessageId = 0 ;
@@ -189,6 +193,7 @@ public class EWWalletService extends Service implements SharedPreferences.OnShar
     public IBinder onBind(final Intent intent)
     {
         Log.i(TAG, ".onBind()");
+
         return mBinder;
     }
 
@@ -201,13 +206,20 @@ public class EWWalletService extends Service implements SharedPreferences.OnShar
     @Override
     public void onCreate() {
         Log.i(TAG, ".onCreate()");
-        new Thread(this).start();
+        startSync();
 
     }
+
+    public void startSync() {
+        new Thread(this).start();
+    }
+
+
 
     @Override
     public void run() {
         try {
+            Log.i(TAG,".run()");
             final Context context = getApplicationContext();
             final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
             final String passphrase = sharedPref.getString("passphrase", null);
@@ -275,11 +287,11 @@ public class EWWalletService extends Service implements SharedPreferences.OnShar
             peerGroup.addPeerFilterProvider(new MyPeerFilterProvider(changes, messagesId));
             peerGroup.setFastCatchupTimeSecs(EPOCH);
             peerGroup.setDownloadTxDependencies(false);
-            final MyDownloadListener downloadListener = new MyDownloadListener();
+            final MyDownloadListener downloadListener = new MyDownloadListener(downloadLatch);
             peerGroup.startAsync();
             peerGroup.startBlockChainDownload(downloadListener);
 
-            //downloadLatch.await();
+            downloadLatch.await();
 
             nextMessageId=0;
             for (ECKey current : messagesId) {
@@ -317,16 +329,6 @@ public class EWWalletService extends Service implements SharedPreferences.OnShar
         }
 
     }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        Log.i(TAG, ".onSharedPreferenceChanged(" + key + ")" );
-        if("passphrase".equals(key)) {
-            Log.i(TAG,"PassphraseChanged starting sync");
-            //DELETE WALLET FILE AND BLOCKCHAIN
-            new Thread(this).start();
-
-        }
-    }
+    
 
 }
