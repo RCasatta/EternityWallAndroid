@@ -26,15 +26,14 @@ import org.bitcoinj.script.ScriptBuilder;
 import org.bitcoinj.script.ScriptOpCodes;
 import org.bitcoinj.store.BlockStore;
 import org.bitcoinj.store.SPVBlockStore;
+import org.bitcoinj.wallet.WalletTransaction;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
@@ -43,7 +42,7 @@ import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 /**
  * Created by Riccardo Casatta @RCasatta on 26/11/15.
  */
-public class EWWalletService extends Service {
+public class EWWalletService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener, Runnable {
     private static final String TAG = "EWWalletService";
 
     private final static NetworkParameters PARAMS=MainNetParams.get();
@@ -55,27 +54,19 @@ public class EWWalletService extends Service {
     public static final String WALLET_FILE     = "wallet";
     public static final String BITCOIN_PATH    = "bitcoin";
 
-    private Map<Sha256Hash,Transaction> txMap = new HashMap<>();
-    private Map<Address, List<TransactionOutput>> utxo = new HashMap<>();
     private Set<Address> used      = new HashSet<>();
     private Integer nextMessageId = 0 ;
     private Integer nextChange = 0 ;
-
-    final CountDownLatch downloadLatch =new CountDownLatch(1);
 
     private Set<Address> all       = new HashSet<>();
     private List<ECKey> messagesId = new ArrayList<>();
     private List<ECKey> changes    = new ArrayList<>();
 
     private BlockStore blockStore;
-    private File blockChainFile;
     private BlockChain blockChain;
     private PeerGroup peerGroup;
     private Wallet wallet;
-
     private boolean isSynced = false;
-    private Context context;
-
 
     public Address getCurrent() {
         if(!isSynced)
@@ -106,7 +97,7 @@ public class EWWalletService extends Service {
         Address inputAddress = input.toAddress(PARAMS);
         Transaction newTx = new Transaction(PARAMS);
 
-        List<TransactionOutput> transactionOutputList = utxo.get(inputAddress);
+        List<TransactionOutput> transactionOutputList = getMines(inputAddress);
         Long totalAvailable = 0L;
         for (TransactionOutput to  : transactionOutputList) {
             totalAvailable += to.getValue().getValue();
@@ -126,8 +117,6 @@ public class EWWalletService extends Service {
                         .build());
         newTx.addOutput(Coin.valueOf(toSend), ewMessageData.getChange());
 
-        final Wallet wallet = new Wallet(MainNetParams.get());
-        wallet.importKey(input);
         Wallet.SendRequest req = Wallet.SendRequest.forTx(newTx);
         wallet.signTransaction(req);
         final String newTxHex = Bitcoin.transactionToHex(newTx);
@@ -149,7 +138,10 @@ public class EWWalletService extends Service {
         Address aliasAddress = aliasKey.toAddress(PARAMS);
         Transaction newTx = new Transaction(PARAMS);
 
-        List<TransactionOutput> transactionOutputList = utxo.get(aliasAddress);
+
+
+
+        List<TransactionOutput> transactionOutputList = getMines(aliasAddress);
         Long totalAvailable = 0L;
         for (TransactionOutput to  : transactionOutputList) {
             totalAvailable += to.getValue().getValue();
@@ -167,8 +159,6 @@ public class EWWalletService extends Service {
                         .build());
         newTx.addOutput(Coin.valueOf(toSend), fistChange);
 
-        final Wallet wallet = new Wallet(MainNetParams.get());
-        wallet.importKey(aliasKey);
         Wallet.SendRequest req = Wallet.SendRequest.forTx(newTx);
         wallet.signTransaction(req);
 
@@ -177,6 +167,21 @@ public class EWWalletService extends Service {
         Log.i(TAG, newTxHex);
 
         return  newTx.getHash();
+    }
+
+    private List<TransactionOutput> getMines(Address address) {
+        Map<Sha256Hash, Transaction> unspent = wallet.getTransactionPool(WalletTransaction.Pool.UNSPENT);
+        List<TransactionOutput> transactionOutputList= new ArrayList<>();
+        for (Map.Entry<Sha256Hash, Transaction> entry : unspent.entrySet()) {
+            Transaction current = entry.getValue();
+            List<TransactionOutput> outputs = current.getOutputs();
+            for (TransactionOutput o : outputs) {
+                Address a = o.getAddressFromP2PKHScript(PARAMS);
+                if(address.equals(a))
+                    transactionOutputList.add(o);
+            }
+        }
+        return transactionOutputList;
     }
 
     private EWBinder mBinder= new EWBinder(this);
@@ -196,11 +201,12 @@ public class EWWalletService extends Service {
     @Override
     public void onCreate() {
         Log.i(TAG, ".onCreate()");
-        startSync();
+        new Thread(this).start();
 
     }
 
-    public void startSync() {
+    @Override
+    public void run() {
         try {
             final Context context = getApplicationContext();
             final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -259,7 +265,7 @@ public class EWWalletService extends Service {
             }
 
             blockChain = new BlockChain(PARAMS, wallet, blockStore);
-            final MyBlockchainListener chainListener = new MyBlockchainListener(all,txMap,used,utxo );
+            final MyBlockchainListener chainListener = new MyBlockchainListener(all,used );
             blockChain.addListener(chainListener);
             peerGroup = new PeerGroup(PARAMS, blockChain);
             //peerGroup.addAddress(InetAddress.getByName("10.106.137.73"));
@@ -269,11 +275,11 @@ public class EWWalletService extends Service {
             peerGroup.addPeerFilterProvider(new MyPeerFilterProvider(changes, messagesId));
             peerGroup.setFastCatchupTimeSecs(EPOCH);
             peerGroup.setDownloadTxDependencies(false);
-            final MyDownloadListener downloadListener = new MyDownloadListener(downloadLatch);
+            final MyDownloadListener downloadListener = new MyDownloadListener();
             peerGroup.startAsync();
             peerGroup.startBlockChainDownload(downloadListener);
 
-            downloadLatch.await();
+            //downloadLatch.await();
 
             nextMessageId=0;
             for (ECKey current : messagesId) {
@@ -295,21 +301,32 @@ public class EWWalletService extends Service {
             Log.i(TAG, "peerGroup.getConnectedPeers()=" + peerGroup.getConnectedPeers());
             Log.i(TAG, "chain.getBestChainHeight()=" + blockChain.getBestChainHeight());
             Log.i(TAG, "chainHeadHeightAtBeginning=" + chainHead.getHeight());
-            Log.i(TAG, "txMap=" + txMap);
-            Log.i(TAG, "txMap.size()=" + txMap.size());
             Log.i(TAG, "bloom matches=" + chainListener.getBloomMatches());
-            Log.i(TAG, "bloom efficencies=" + (txMap.size() * 1.0) / chainListener.getBloomMatches());
             Log.i(TAG, "downloaded size=" + downloadListener.getSize() + " bytes");
             Log.i(TAG, "used address=" + used);
-            Log.i(TAG, "utxo=" + utxo);
             Log.i(TAG, "nextMessageId=" + nextMessageId);
             Log.i(TAG, "nextChange=" + nextChange);
             Log.i(TAG, "wallet=" + wallet);
+
+
+            //Toast.makeText(getApplication(),"Blockchain synced",Toast.LENGTH_LONG).show();
+            Log.i(TAG,"BlockchainSynced");
 
         } catch (Exception e) {
             Log.i(TAG, e.getMessage());
         }
 
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        Log.i(TAG, ".onSharedPreferenceChanged(" + key + ")" );
+        if("passphrase".equals(key)) {
+            Log.i(TAG,"PassphraseChanged starting sync");
+            //DELETE WALLET FILE AND BLOCKCHAIN
+            new Thread(this).start();
+
+        }
     }
 
 }

@@ -1,10 +1,9 @@
-
 buildscript {
     repositories {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.2.3'
+        classpath 'com.android.tools.build:gradle:1.5.0'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -44,6 +43,7 @@ android {
     productFlavors {
         dev {
             applicationId "it.eternitywall.ewdev"
+
         }
 
         deploy {
@@ -60,20 +60,21 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.android.support:design:22.2.0'
-    compile 'com.android.support:multidex:1.0.0'
 
-    compile 'com.google.guava:guava:18.0'
-    compile 'org.json:json:20090211'
-    compile 'commons-lang:commons-lang:2.6'
     //compile 'org.bitcoinj:bitcoinj-core:0.12.3'
     compile('org.bitcoinj:bitcoinj-core:0.13.3') {
         exclude module: 'scrypt'
     }
-    compile 'com.google.zxing:core:3.2.1'
     //compile 'com.google.zxing:android-core:3.2.1'
 
     testCompile 'junit:junit:4.12'
     testCompile "org.mockito:mockito-core:1.10.19"
+    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.android.support:design:22.2.1'
+    compile 'com.android.support:multidex:1.0.0'
+    compile 'com.google.guava:guava:18.0'
+    compile 'org.json:json:20090211'
+    compile 'commons-lang:commons-lang:2.6'
+    compile 'com.google.zxing:core:3.2.1'
+    compile 'com.android.support:support-v4:22.2.1'
 }

@@ -29,10 +29,11 @@ import java.util.List;
 
 import it.eternitywall.eternitywall.fragments.AccountFragment;
 import it.eternitywall.eternitywall.fragments.ListFragment;
+import it.eternitywall.eternitywall.fragments.RecoverPassphraseFragment;
 
 
 public class MainActivity extends ActionBarActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, PopupMenu.OnMenuItemClickListener,
-ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener{
+ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener, RecoverPassphraseFragment.OnFragmentInteractionListener{
 
     private static final int REQUEST_CODE = 8274;
     private static final String TAG = "MainActivity";
@@ -47,6 +48,7 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
     ViewPager viewPager;
     ListFragment listFragment;
     AccountFragment accountFragment;
+    RecoverPassphraseFragment recoverPassphraseFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,9 +98,11 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         // put the fragments into container ViewPager
         listFragment=new ListFragment();
         accountFragment=new AccountFragment();
+        recoverPassphraseFragment= new RecoverPassphraseFragment();
+
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(listFragment, getResources().getString(R.string.list_fragment));
-        adapter.addFragment(accountFragment, getResources().getString(R.string.account_fragment));
+        adapter.addFragment(recoverPassphraseFragment, getResources().getString(R.string.account_fragment));
         viewPager.setAdapter(adapter);
     }
 

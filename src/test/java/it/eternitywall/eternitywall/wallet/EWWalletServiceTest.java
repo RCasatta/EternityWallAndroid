@@ -22,7 +22,7 @@ public class EWWalletServiceTest {
         String passphrase = Bitcoin.getNewMnemonicPassphrase();
 
         EWWalletService ewWalletService = new EWWalletService();
-        ewWalletService.startSync();
+        //ewWalletService.startSync();
     }
 
     @Test

@@ -1,0 +1,27 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="it.eternitywall.eternitywall.fragments.RecoverPassphraseFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <EditText
+            android:id="@+id/passphraseText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lines="4"
+            android:textColor="@color/primaryText"
+            />
+
+        <Button
+            android:id="@+id/savePassphrase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="SAVE"/>
+    </LinearLayout>
+
+</FrameLayout>

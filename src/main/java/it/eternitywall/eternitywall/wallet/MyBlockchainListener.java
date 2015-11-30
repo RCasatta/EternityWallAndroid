@@ -1,5 +1,7 @@
 package it.eternitywall.eternitywall.wallet;
 
+import android.util.Log;
+
 import org.bitcoinj.core.AbstractBlockChain;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.BlockChainListener;
@@ -12,27 +14,23 @@ import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.core.VerificationException;
 import org.bitcoinj.params.MainNetParams;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
  * Created by Riccardo Casatta @RCasatta on 26/11/15.
  */
 public class MyBlockchainListener implements BlockChainListener {
+    private static final String TAG = "MyBlockchainListener";
+
     private Set<Address> all;
-    private Map<Address, List<TransactionOutput>> utxo;
-    private Map<Sha256Hash, Transaction> txMap;
     private Set<Address> used;
 
     private int bloomMatches=0;
 
-    public MyBlockchainListener(Set<Address> all, Map<Sha256Hash, Transaction> txMap, Set<Address> used, Map<Address, List<TransactionOutput>> utxo) {
+    public MyBlockchainListener(Set<Address> all, Set<Address> used) {
         this.all = all;
-        this.txMap = txMap;
         this.used = used;
-        this.utxo = utxo;
     }
 
     @Override
@@ -51,7 +49,7 @@ public class MyBlockchainListener implements BlockChainListener {
 
     @Override
     public boolean isTransactionRelevant(Transaction tx) throws ScriptException {
-        System.out.println("isTransactionRelevant?" + tx.getHashAsString());
+        Log.i(TAG, "isTransactionRelevant?" + tx.getHashAsString());
         bloomMatches++;
         boolean isRelevant=false;
 
@@ -79,38 +77,12 @@ public class MyBlockchainListener implements BlockChainListener {
 
     @Override
     public void receiveFromBlock(Transaction tx, StoredBlock block, AbstractBlockChain.NewBlockType blockType, int relativityOffset) throws VerificationException {
-        System.out.println("receiveFromBlock " + tx.getHashAsString() + " in block " + block);
-
-        txMap.put(tx.getHash(), tx);
-
-        final List<TransactionInput> inputs = tx.getInputs();
-        for (TransactionInput input : inputs) {
-            input.connect(txMap, TransactionInput.ConnectMode.ABORT_ON_CONFLICT);
-            Address current = input.getScriptSig().getFromAddress(MainNetParams.get());
-            if(all.contains(current)) {
-                List<TransactionOutput> currentUtxo = utxo.get(current);
-                if(currentUtxo!=null) {
-                    currentUtxo.remove(input.getConnectedOutput());
-                }
-            }
-        }
-
-        final List<TransactionOutput> outputs = tx.getOutputs();
-        for (TransactionOutput output : outputs) {
-            Address current = output.getAddressFromP2PKHScript(MainNetParams.get());
-            if(all.contains(current)) {
-                List<TransactionOutput> currentUtxo = utxo.get(current);
-                if(currentUtxo==null)
-                    currentUtxo=new ArrayList<>();
-                currentUtxo.add(output);
-                utxo.put(current,currentUtxo);
-            }
-        }
+        Log.i(TAG, "receiveFromBlock " + tx.getHashAsString() + " in block " + block);
     }
 
     @Override
     public boolean notifyTransactionIsInBlock(Sha256Hash txHash, StoredBlock block, AbstractBlockChain.NewBlockType blockType, int relativityOffset) throws VerificationException {
-        System.out.println("notifyTransactionIsInBlock");
+        Log.i(TAG,"notifyTransactionIsInBlock");
 
         return false;
     }
