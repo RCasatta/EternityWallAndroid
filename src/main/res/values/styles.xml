@@ -101,12 +101,13 @@
     </style>
 
     <style name="buttonStyle" >
-        <item name="android:background">@drawable/style_button_background</item>
+        <!--<item name="android:background">@drawable/style_button_background</item>-->
         <item name="android:textColor">@android:color/white</item>
         <item name="android:paddingLeft">@dimen/padding_high</item>
         <item name="android:paddingRight">@dimen/padding_high</item>
         <item name="android:paddingTop">@dimen/padding_small</item>
         <item name="android:paddingBottom">@dimen/padding_small</item>
+        <item name="android:background">@color/accent</item>
     </style>
 
 
