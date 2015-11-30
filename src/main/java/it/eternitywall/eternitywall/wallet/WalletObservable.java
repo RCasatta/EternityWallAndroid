@@ -1,5 +1,6 @@
 package it.eternitywall.eternitywall.wallet;
 
+import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
 
 import java.util.Observable;
@@ -10,10 +11,11 @@ import java.util.Observable;
 public class WalletObservable extends Observable {
     private Coin walletBalance = Coin.ZERO;
     private State state= State.NOT_STARTED;
+    private Address current;
 
     public enum State
     {
-        NOT_STARTED, STARTED, NULL_PASSPHRASE, SYNCING, SYNCED
+        NOT_STARTED, STARTED, NULL_PASSPHRASE, SYNCING, DONWLOADED, SYNCED
     }
 
     public Coin getWalletBalance() {
@@ -36,11 +38,22 @@ public class WalletObservable extends Observable {
         notifyObservers();
     }
 
+    public Address getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(Address current) {
+        this.current = current;
+        setChanged();
+        notifyObservers();
+    }
+
     @Override
     public String toString() {
         return "WalletObservable{" +
-                "state=" + state +
+                "current=" + current +
                 ", walletBalance=" + walletBalance +
+                ", state=" + state +
                 '}';
     }
 }

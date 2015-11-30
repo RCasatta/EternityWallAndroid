@@ -7,6 +7,7 @@ import org.bitcoinj.core.Peer;
 import org.bitcoinj.core.PeerAddress;
 
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Created by Riccardo Casatta @RCasatta on 26/11/15.
@@ -15,6 +16,12 @@ public class MyDownloadListener extends DownloadProgressTracker {
     private int size=0;
     private long end;
     private long start;
+
+    private CountDownLatch latch;
+
+    public MyDownloadListener(CountDownLatch latch) {
+        this.latch = latch;
+    }
 
     @Override
     protected void startDownload(int blocks) {
@@ -27,6 +34,7 @@ public class MyDownloadListener extends DownloadProgressTracker {
         super.doneDownload();
         end= System.currentTimeMillis();
         System.out.println("Done download, it tooks " + (end - start));
+        latch.countDown();
     }
 
     public long getDownloadTime() {

@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
@@ -67,14 +68,14 @@ public class EWWalletService extends Service implements Runnable, Observer {
     private MyBlockchainListener chainListener;
     private MyDownloadListener downloadListener;
     private StoredBlock chainHead;
-
     private BlockStore blockStore;
     private BlockChain blockChain;
     private PeerGroup peerGroup;
     private Wallet wallet;
     private boolean isSynced = false;
+    private CountDownLatch downloadLatch= new CountDownLatch(1);
 
-    public Address getCurrent() {
+    private Address getCurrent() {  //watch observable
         if(!isSynced)
             return null;
         return changes.get( nextMessageId ).toAddress(PARAMS);
@@ -291,11 +292,11 @@ public class EWWalletService extends Service implements Runnable, Observer {
             peerGroup.addPeerFilterProvider(new MyPeerFilterProvider(changes, messagesId));
             peerGroup.setFastCatchupTimeSecs(EPOCH);
             peerGroup.setDownloadTxDependencies(false);
-            downloadListener = new MyDownloadListener();
+            downloadListener = new MyDownloadListener(downloadLatch);
             peerGroup.startAsync();
             walletObservable.setState(WalletObservable.State.SYNCING);
             peerGroup.startBlockChainDownload(downloadListener);
-
+            downloadLatch.await();
             nextMessageId=0;
             for (ECKey current : messagesId) {
                 Address a = current.toAddress(PARAMS);
@@ -314,9 +315,7 @@ public class EWWalletService extends Service implements Runnable, Observer {
             }
             isSynced = true;
             walletObservable.setState(WalletObservable.State.SYNCED);
-
-
-
+            walletObservable.setCurrent(getCurrent());
 
         } catch (Exception e) {
             Log.i(TAG, e.getMessage());
@@ -339,5 +338,7 @@ public class EWWalletService extends Service implements Runnable, Observer {
             Log.i(TAG, "nextChange=" + nextChange);
             Log.i(TAG, "wallet=" + wallet);
         }
+
+
     }
 }

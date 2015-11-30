@@ -11,6 +11,9 @@ import java.util.Observer;
 public class WalletObserver implements Observer {
     private static final String TAG = "WalletObserver";
 
+    public WalletObserver() {
+    }
+
     @Override
     public void update(Observable observable, Object data) {
         WalletObservable walletObservable= (WalletObservable) observable;

@@ -26,16 +26,13 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import it.eternitywall.eternitywall.fragments.AccountFragment;
 import it.eternitywall.eternitywall.fragments.ListFragment;
 import it.eternitywall.eternitywall.fragments.RecoverPassphraseFragment;
-import it.eternitywall.eternitywall.wallet.WalletObservable;
 
 
-public class MainActivity extends ActionBarActivity implements Observer, SearchView.OnQueryTextListener, SearchView.OnCloseListener, PopupMenu.OnMenuItemClickListener,
+public class MainActivity extends ActionBarActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, PopupMenu.OnMenuItemClickListener,
 ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener, RecoverPassphraseFragment.OnFragmentInteractionListener{
 
     private static final int REQUEST_CODE = 8274;
@@ -71,8 +68,6 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         tabLayout.setupWithViewPager(viewPager);
         changeTabsFont();
 
-        EWApplication ewApplication = (EWApplication) getApplication();
-        ewApplication.getWalletObservable().addObserver(this);
     }
 
     private void changeTabsFont() {
@@ -314,11 +309,5 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         }
     }
 
-    @Override
-    public void update(Observable observable, Object data) {
-        WalletObservable walletObservable= (WalletObservable) observable;
-        if(walletObservable.getState()== WalletObservable.State.SYNCED) {
-            Toast.makeText(this,"Blockchain synced", Toast.LENGTH_LONG).show();
-        }
-    }
+
 }
