@@ -9,9 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 
 import it.eternitywall.eternitywall.MainActivity;
 import it.eternitywall.eternitywall.R;
+import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -70,13 +72,16 @@ public class CreateFragment extends Fragment {
         // Inflate the layout for this fragment
         View v= inflater.inflate(R.layout.fragment_create, container, false);
 
-        /*((Button)v.findViewById(R.id.btnCreate)).setOnClickListener(new View.OnClickListener() {
+        ((Button)v.findViewById(R.id.btnRefresh)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).setAccountTabViewPager(new CreateFragment());
+                EditText etPassword = (EditText) v.findViewById(R.id.etPassword);
+                etPassword.setText(Bitcoin.getNewMnemonicPassphrase());
             }
-        });*/
+        });
 
+        EditText etPassword = (EditText) v.findViewById(R.id.etPassword);
+        etPassword.setText(Bitcoin.getNewMnemonicPassphrase()  );
 
         return v;
 
