@@ -186,6 +186,8 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
 
             @Override
             protected void onPostExecute(Object o) {
+                if (getActivity().isFinishing())
+                    return;
                 super.onPostExecute(o);
                 progress.setVisibility(View.INVISIBLE);
                 swipe.setRefreshing(false);

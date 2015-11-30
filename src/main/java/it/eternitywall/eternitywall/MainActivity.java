@@ -9,7 +9,9 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.PopupMenu;
@@ -28,12 +30,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.eternitywall.eternitywall.fragments.AccountFragment;
+import it.eternitywall.eternitywall.fragments.CreateFragment;
+import it.eternitywall.eternitywall.fragments.HelloFragment;
 import it.eternitywall.eternitywall.fragments.ListFragment;
 import it.eternitywall.eternitywall.fragments.RecoverPassphraseFragment;
 
 
 public class MainActivity extends ActionBarActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, PopupMenu.OnMenuItemClickListener,
-ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener, RecoverPassphraseFragment.OnFragmentInteractionListener{
+ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener, RecoverPassphraseFragment.OnFragmentInteractionListener, CreateFragment.OnFragmentInteractionListener,HelloFragment.OnFragmentInteractionListener{
 
     private static final int REQUEST_CODE = 8274;
     private static final String TAG = "MainActivity";
@@ -47,8 +51,6 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
     // Container and Fragments
     ViewPager viewPager;
     ListFragment listFragment;
-    AccountFragment accountFragment;
-    RecoverPassphraseFragment recoverPassphraseFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,21 +99,20 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
     private void setupViewPager(ViewPager viewPager) {
         // put the fragments into container ViewPager
         listFragment=new ListFragment();
-        accountFragment=new AccountFragment();
-        recoverPassphraseFragment= new RecoverPassphraseFragment();
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(listFragment, getResources().getString(R.string.list_fragment));
-        adapter.addFragment(recoverPassphraseFragment, getResources().getString(R.string.account_fragment));
+        adapter.addFragment(new AccountFragment(), getResources().getString(R.string.account_fragment));
         viewPager.setAdapter(adapter);
     }
+
 
     @Override
     public void onFragmentInteraction(Uri uri) {
 
     }
 
-    class ViewPagerAdapter extends FragmentPagerAdapter {
+    class ViewPagerAdapter extends FragmentStatePagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
 
@@ -134,9 +135,16 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
             mFragmentTitleList.add(title);
         }
 
+        public void delFragment( String title) {
+            int position=mFragmentTitleList.indexOf(title);
+            mFragmentTitleList.remove(position);
+            mFragmentList.remove( position );
+
+        }
+
         @Override
         public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
+            return  mFragmentTitleList.get(position);
         }
     }
 

@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import it.eternitywall.eternitywall.MainActivity;
 import it.eternitywall.eternitywall.R;
 
 /**
@@ -65,7 +68,19 @@ public class AccountFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_account, container, false);
+        View v= inflater.inflate(R.layout.fragment_account, container, false);
+
+        FragmentTransaction transaction = getFragmentManager()
+                .beginTransaction();
+		/*
+		 * When this container fragment is created, we fill it with our first
+		 * "real" fragment
+		 */
+        transaction.replace(R.id.root_frame, new HelloFragment());
+
+        transaction.commit();
+
+        return v;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

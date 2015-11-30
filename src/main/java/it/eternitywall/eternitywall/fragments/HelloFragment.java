@@ -1,10 +1,10 @@
 package it.eternitywall.eternitywall.fragments;
 
 import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +16,12 @@ import it.eternitywall.eternitywall.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link CreateFragment.OnFragmentInteractionListener} interface
+ * {@link HelloFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link CreateFragment#newInstance} factory method to
+ * Use the {@link HelloFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CreateFragment extends Fragment {
+public class HelloFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -39,11 +39,11 @@ public class CreateFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment CreateFragment.
+     * @return A new instance of fragment AccountFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static CreateFragment newInstance(String param1, String param2) {
-        CreateFragment fragment = new CreateFragment();
+    public static HelloFragment newInstance(String param1, String param2) {
+        HelloFragment fragment = new HelloFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -51,7 +51,7 @@ public class CreateFragment extends Fragment {
         return fragment;
     }
 
-    public CreateFragment() {
+    public HelloFragment() {
         // Required empty public constructor
     }
 
@@ -68,16 +68,29 @@ public class CreateFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v= inflater.inflate(R.layout.fragment_create, container, false);
+        View v= inflater.inflate(R.layout.fragment_hello, container, false);
 
-        /*((Button)v.findViewById(R.id.btnCreate)).setOnClickListener(new View.OnClickListener() {
+        ((Button)v.findViewById(R.id.btnCreate)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).setAccountTabViewPager(new CreateFragment());
+                FragmentTransaction trans = getFragmentManager().beginTransaction();
+                trans.replace(R.id.root_frame, new CreateFragment());
+                trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                trans.addToBackStack(null);
+                trans.commit();
             }
-        });*/
+        });
+        ((Button)v.findViewById(R.id.btnRecover)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction trans = getFragmentManager().beginTransaction();
+                trans.replace(R.id.root_frame, new RecoverPassphraseFragment());
+                trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                trans.addToBackStack(null);
+                trans.commit();
+            }
+        });
         return v;
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event

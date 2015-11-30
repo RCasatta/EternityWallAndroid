@@ -12,23 +12,26 @@
 
     <color name="primaryText">#111</color>
 
+        <color name="button_dark_blue">#2e6da4</color>
+        <color name="button_blue">#337ab7</color>
+
 
     -->
 
         <color name="action_bar_background">#607D8B</color>
-        <color name="action_bar_text_color">#FFFFFF</color>
+        <color name="action_bar_text_color">#000000</color>
         <color name="black">#000000</color>
         <color name="popupmenu_background">#FFFFFF</color>
 
-        <color name="button_dark_blue">#2e6da4</color>
-        <color name="button_blue">#337ab7</color>
+        <color name="button_dark">#FFC107</color>
+        <color name="button">#FFC107</color>
 
         <color name="primary">#607D8B</color>
         <color name="primaryDark">#455A64</color>
         <color name="primaryLight">#CFD8DC</color>
-        <color name="accent">#448AFF</color>
+        <color name="accent">#FFC107</color>
         <color name="primaryText">#212121</color>
         <color name="secondaryText">#727272</color>
-        <color name="icons">#FFFFFF</color>
+        <color name="icons">#000000</color>
         <color name="divider">#B6B6B6</color>
     </resources>
