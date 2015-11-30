@@ -35,4 +35,15 @@
     <string name="list_fragment">&#xf015;</string>
 
 
+    <string name="account_fragment_title">Hello EternityWall</string>
+    <string name="account_fragment_subtitle">Sign your account and start to write</string>
+
+    <string name="btn_recover">Recover</string>
+    <string name="btn_create">Create</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+
 </resources>

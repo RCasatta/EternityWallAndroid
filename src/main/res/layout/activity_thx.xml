@@ -25,7 +25,7 @@
 
         <TextView
             android:text="@string/thanks_title"
-            style="@android:style/TextAppearance.Large"
+            style="?android:attr/textAppearanceLarge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"/>

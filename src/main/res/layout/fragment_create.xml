@@ -1,0 +1,70 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="it.eternitywall.eternitywall.fragments.CreateFragment"
+    android:padding="@dimen/activity_horizontal_margin">
+
+
+    <TextView
+        style="@style/TextAppearance.AppCompat.Large"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/primaryText"
+        android:id="@+id/txtPassword"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        style="@style/TextAppearance.AppCompat.Small"
+        android:text="Il tuo account può essere registrato unicamente tramite passphare.\nAccertati di salvarla prima di procedere. Per motivi di sicurezza, EternityWall non memorizza la passphrase sul server."
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primaryText"
+        android:id="@+id/txtDisclaimer"
+        android:layout_below="@+id/txtPassword"
+        android:layout_alignLeft="@+id/txtPassword"
+        android:layout_alignStart="@+id/txtPassword"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:gravity="center" />
+
+    <TextView
+        style="@style/TextAppearance.AppCompat.Small"
+        android:text="Usa questo PIN per visualizzare la passphrase delle preferenze"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/primaryText"
+        android:id="@+id/txtDisclaimer2"
+        android:layout_below="@+id/txtDisclaimer"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/activity_vertical_margin" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/editText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:gravity="center"
+        android:hint="PIN"
+        android:layout_below="@+id/txtDisclaimer2"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        style="@style/Base.V7.Widget.AppCompat.EditText" />
+
+    <Button
+        style="@style/buttonStyle"
+        android:id="@+id/button"
+        android:text="@string/btn_create"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:drawablePadding="@dimen/padding_small"
+        android:drawableLeft="@drawable/ic_email_white_24dp"
+        android:layout_below="@+id/editText"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
