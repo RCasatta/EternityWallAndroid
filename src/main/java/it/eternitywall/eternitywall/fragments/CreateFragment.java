@@ -10,7 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
+import it.eternitywall.eternitywall.IdenticonGenerator;
 import it.eternitywall.eternitywall.MainActivity;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
@@ -71,17 +73,23 @@ public class CreateFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v= inflater.inflate(R.layout.fragment_create, container, false);
+        final EditText etPassword = (EditText) v.findViewById(R.id.etPassword);
+        final ImageView ivIdenticon = (ImageView) v.findViewById(R.id.ivIdenticon);
 
         ((Button)v.findViewById(R.id.btnRefresh)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText etPassword = (EditText) v.findViewById(R.id.etPassword);
-                etPassword.setText(Bitcoin.getNewMnemonicPassphrase());
+                // generate password & identicon
+                String password=Bitcoin.getNewMnemonicPassphrase();
+                etPassword.setText(password);
+                ivIdenticon.setImageBitmap(IdenticonGenerator.generate(password));
             }
         });
 
-        EditText etPassword = (EditText) v.findViewById(R.id.etPassword);
-        etPassword.setText(Bitcoin.getNewMnemonicPassphrase()  );
+        // first time
+        String password=Bitcoin.getNewMnemonicPassphrase();
+        etPassword.setText(password);
+        ivIdenticon.setImageBitmap(IdenticonGenerator.generate(password));
 
         return v;
 

@@ -1,8 +1,9 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="it.eternitywall.eternitywall.fragments.CreateFragment"
-    android:padding="@dimen/activity_horizontal_margin">
+    android:padding="@dimen/activity_horizontal_margin"
+    android:orientation="vertical">
 
 
     <EditText
@@ -10,16 +11,17 @@
         android:layout_height="wrap_content"
         android:id="@+id/etPassword"
         android:textStyle="bold|italic"
-        style="@style/EditText" />
+        style="@style/EditText"
+        android:layout_gravity="center" />
 
-    <TextView
-        android:text="Il tuo account può essere registrato unicamente tramite passphare.\nAccertati di salvarla prima di procedere. Per motivi di sicurezza, EternityWall non memorizza la passphrase sul server."
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/txtDisclaimer"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:gravity="center"
-        android:layout_below="@+id/etPassword" />
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/ivIdenticon"
+        android:layout_below="@+id/etPassword"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/activity_vertical_margin" />
 
     <TextView
         android:text="Usa questo PIN per visualizzare la passphrase delle preferenze"
@@ -42,7 +44,8 @@
         android:gravity="center"
         android:hint="PIN"
         android:layout_below="@+id/txtDisclaimer2"
-        style="@style/EditText" />
+        style="@style/EditText"
+        android:layout_gravity="center" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -83,4 +86,13 @@
             android:layout_marginLeft="@dimen/activity_horizontal_margin" />
     </LinearLayout>
 
-</RelativeLayout>
+    <TextView
+        android:text="Il tuo account può essere registrato unicamente tramite passphare.\nAccertati di salvarla prima di procedere. Per motivi di sicurezza, EternityWall non memorizza la passphrase sul server."
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtDisclaimer"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:gravity="center"
+        android:layout_below="@+id/etPassword" />
+
+</LinearLayout>
