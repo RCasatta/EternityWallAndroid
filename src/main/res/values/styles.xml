@@ -32,6 +32,7 @@
         <item name="android:textColorPrimaryInverse">@color/primaryLight</item>
         <item name="android:textColorSecondaryInverse">@color/primaryLight</item>
         <item name="android:textColorTertiaryInverse">@color/primaryLight</item>
+
     </style>
 
 
@@ -106,6 +107,13 @@
         <item name="android:paddingRight">@dimen/padding_high</item>
         <item name="android:paddingTop">@dimen/padding_small</item>
         <item name="android:paddingBottom">@dimen/padding_small</item>
+    </style>
+
+
+    <style name="EditText" parent="@android:style/Widget.EditText">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/accent</item>
+        <item name="android:typeface">normal</item>
     </style>
 
 

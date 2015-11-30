@@ -76,6 +76,8 @@ public class CreateFragment extends Fragment {
                 ((MainActivity)getActivity()).setAccountTabViewPager(new CreateFragment());
             }
         });*/
+
+
         return v;
 
     }
