@@ -1,8 +1,12 @@
 package it.eternitywall.eternitywall.fragments;
 
 import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -69,15 +73,16 @@ public class AccountFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v= inflater.inflate(R.layout.fragment_account, container, false);
-
         FragmentTransaction transaction = getFragmentManager()
                 .beginTransaction();
-		/*
-		 * When this container fragment is created, we fill it with our first
-		 * "real" fragment
-		 */
-        transaction.replace(R.id.root_frame, new HelloFragment());
 
+        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String passphrase=sharedPref.getString("passphrase",null);
+        if (passphrase==null) {
+            transaction.replace(R.id.root_frame, new HelloFragment());
+        }else {
+            transaction.replace(R.id.root_frame, new WalletFragment());
+        }
         transaction.commit();
 
         return v;
