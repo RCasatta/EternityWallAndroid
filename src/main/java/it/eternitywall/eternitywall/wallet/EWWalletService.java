@@ -287,7 +287,7 @@ public class EWWalletService extends Service implements Runnable {
             wallet.addEventListener(new EWWalletEventListener(walletObservable));
 
             blockChain = new BlockChain(PARAMS, wallet, blockStore);
-            chainListener = new MyBlockchainListener( all );
+            chainListener = new MyBlockchainListener( all, walletObservable );
             blockChain.addListener(chainListener);
             peerGroup = new PeerGroup(PARAMS, blockChain);
             //peerGroup.addAddress(InetAddress.getByName("10.106.137.73"));

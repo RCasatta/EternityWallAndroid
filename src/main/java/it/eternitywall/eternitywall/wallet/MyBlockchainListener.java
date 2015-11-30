@@ -22,18 +22,19 @@ import java.util.Set;
  */
 public class MyBlockchainListener implements BlockChainListener {
     private static final String TAG = "MyBlockchainListener";
-
     private Set<Address> all;
-
     private int bloomMatches=0;
+    private WalletObservable walletObservable;
 
-    public MyBlockchainListener( Set<Address> all ) {
+    public MyBlockchainListener( Set<Address> all , WalletObservable walletObservable ) {
         this.all = all;
+        this.walletObservable = walletObservable;
     }
 
     @Override
     public void notifyNewBestBlock(StoredBlock block) throws VerificationException {
         //System.out.println("notifyNewBestBlock");
+        walletObservable.setHeight(block.getHeight());
     }
 
     @Override

@@ -21,6 +21,7 @@ public class MyDownloadListener extends DownloadProgressTracker {
 
     public MyDownloadListener(CountDownLatch latch) {
         this.latch = latch;
+
     }
 
     @Override

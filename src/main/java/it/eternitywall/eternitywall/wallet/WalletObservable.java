@@ -12,10 +12,12 @@ public class WalletObservable extends Observable {
     private Coin walletBalance = Coin.ZERO;
     private State state= State.NOT_STARTED;
     private Address current;
+    private Integer height;
+    private Long heightNotified;
 
     public enum State
     {
-        NOT_STARTED, STARTED, NULL_PASSPHRASE, SYNCING, DONWLOADED, SYNCED
+        NOT_STARTED, STARTED, NULL_PASSPHRASE, SYNCING, SYNCED
     }
 
     public Coin getWalletBalance() {
@@ -48,6 +50,25 @@ public class WalletObservable extends Observable {
         notifyObservers();
     }
 
+    public Integer getHeight() {
+        return height;
+    }
+
+    public void setHeight(Integer height) {
+        this.height = height;
+        Long now = System.currentTimeMillis();
+        if( heightNotified==null ) {
+            heightNotified = now;
+            setChanged();
+            notifyObservers();
+        } else if( now - heightNotified > 1000 ) {  //never notify more than once a second
+            heightNotified = now;
+            setChanged();
+            notifyObservers();
+        }
+
+    }
+
     public void setAll(Coin walletBalance, State state, Address current ) {
         this.current= current;
         this.walletBalance = walletBalance;
@@ -62,6 +83,7 @@ public class WalletObservable extends Observable {
                 "current=" + current +
                 ", walletBalance=" + walletBalance +
                 ", state=" + state +
+                ", height=" + height +
                 '}';
     }
 }

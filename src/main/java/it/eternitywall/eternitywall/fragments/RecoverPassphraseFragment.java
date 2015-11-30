@@ -78,7 +78,6 @@ public class RecoverPassphraseFragment extends Fragment {
         final TextView passphraseText = (TextView) view.findViewById(R.id.passphraseText);
         final EditText pin            = (EditText) view.findViewById(R.id.pin);
         final EditText confirmPin     = (EditText) view.findViewById(R.id.confirmPin);
-
         final Button button           = (Button) view.findViewById(R.id.savePassphrase);
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -89,6 +88,7 @@ public class RecoverPassphraseFragment extends Fragment {
                 final CharSequence passphraseCharSequence = passphraseText.getText();
                 if( pinText.toString().isEmpty() || confirmPinText.toString().isEmpty() || passphraseCharSequence.toString().isEmpty() ) {
                     Toast.makeText(getActivity(), "All inputs are required", Toast.LENGTH_LONG).show();
+                    return;
                 }
 
                 if(  !pinText.toString().equals(confirmPinText.toString()) ) {
@@ -100,7 +100,6 @@ public class RecoverPassphraseFragment extends Fragment {
                 final byte[] entropyFromPassphrase = Bitcoin.getEntropyFromPassphrase(passphrase);
                 if (entropyFromPassphrase == null) {
                     Toast.makeText(getActivity(), "Passphrase invalid", Toast.LENGTH_LONG).show();
-
                     return;
                 }
                 final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
