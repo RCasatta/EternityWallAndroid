@@ -19,7 +19,7 @@
     -->
 
         <color name="action_bar_background">#607D8B</color>
-        <color name="action_bar_text_color">#000000</color>
+        <color name="action_bar_text_color">#FFFFFF</color>
         <color name="black">#000000</color>
         <color name="popupmenu_background">#FFFFFF</color>
 
