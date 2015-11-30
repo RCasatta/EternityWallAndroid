@@ -1,3 +1,4 @@
+
 package it.eternitywall.eternitywall.bitcoin;
 
 import com.google.common.base.Joiner;
@@ -11,6 +12,7 @@ import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.crypto.HDKeyDerivation;
 import org.bitcoinj.crypto.MnemonicCode;
+import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
 
 import java.io.ByteArrayOutputStream;
@@ -97,6 +99,21 @@ public class Bitcoin {
 
     public static byte[] getSeedFromPassphrase(String mnemonic) {
         return MnemonicCode.toSeed(split(mnemonic), "");
+    }
+
+    public static byte[] getEntropyFromPassphrase(String mnemonic) {
+        try {
+            final MnemonicCode mnemonicCode = newMnemonicCode();
+            if(mnemonicCode!=null)
+                return mnemonicCode.toEntropy(split(mnemonic));
+        } catch (MnemonicException.MnemonicLengthException e) {
+            e.printStackTrace();
+        } catch (MnemonicException.MnemonicWordException e) {
+            e.printStackTrace();
+        } catch (MnemonicException.MnemonicChecksumException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static String keyToStringAddress(ECKey key) {
@@ -187,14 +204,13 @@ public class Bitcoin {
         return getNewMnemonicPassphrase(getRandomSeed());
     }
 
-    public static String getNewMnemonicPassphrase(byte[] randomSeed) {
+    public static MnemonicCode newMnemonicCode() {
         InputStream wordsInputStream=null;
         try {
             wordsInputStream  = Bip39WordList.getBip39WordListAsStream();
-            return Joiner.on(" ").join(
-                    new MnemonicCode(wordsInputStream,
-                            Bip39WordList.BIP39_ENGLISH_SHA256)
-                            .toMnemonic(randomSeed));
+            //return new MnemonicCode(wordsInputStream, Bip39WordList.BIP39_ENGLISH_SHA256);
+            return new MnemonicCode(wordsInputStream, Bip39WordList.BIP39_ENGLISH_SHA256);
+
         } catch (Exception e) {
             System.err.println(e.getMessage());
         } finally {
@@ -203,6 +219,20 @@ public class Bitcoin {
                     wordsInputStream.close();
                 } catch (IOException e) {
                 }
+        }
+        return null;
+    }
+
+    public static String getNewMnemonicPassphrase(byte[] randomSeed) {
+        try {
+            MnemonicCode mnemonicCode = newMnemonicCode();
+            if(mnemonicCode!=null) {
+                return Joiner.on(" ").join(
+                        mnemonicCode
+                                .toMnemonic(randomSeed));
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
         }
         return null;
     }

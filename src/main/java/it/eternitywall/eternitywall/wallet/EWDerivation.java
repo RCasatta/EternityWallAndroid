@@ -1,4 +1,4 @@
-package it.eternitywall.eternitywall.bitcoin;
+package it.eternitywall.eternitywall.wallet;
 
 import org.bitcoinj.crypto.ChildNumber;
 import org.bitcoinj.crypto.DeterministicKey;
@@ -29,12 +29,12 @@ public class EWDerivation {
 
     public EWDerivation(byte[] seed) {
         deterministicKey   = HDKeyDerivation.createMasterPrivateKey(seed);
-        ewMaster           = HDKeyDerivation.deriveChildKey(deterministicKey , new ChildNumber(EW_DERIVATION, true));   // /m/4544288'/
-        bitcoinMaster      = HDKeyDerivation.deriveChildKey(ewMaster         , new ChildNumber(0,true) );  // /m/4544288'/0'
-        firstAccountMaster = HDKeyDerivation.deriveChildKey(bitcoinMaster    , new ChildNumber(0,true) );  // /m/4544288'/0'/0'
+        ewMaster           = HDKeyDerivation.deriveChildKey(deterministicKey, new ChildNumber(EW_DERIVATION, true));   // /m/4544288'/
+        bitcoinMaster      = HDKeyDerivation.deriveChildKey(ewMaster, new ChildNumber(0, true));  // /m/4544288'/0'
+        firstAccountMaster = HDKeyDerivation.deriveChildKey(bitcoinMaster, new ChildNumber(0, true));  // /m/4544288'/0'/0'
 
-        changesMaster      = HDKeyDerivation.deriveChildKey(firstAccountMaster, new ChildNumber(0,false) );  // /m/4544288'/0'/0'/0
-        messagesMaster     = HDKeyDerivation.deriveChildKey(firstAccountMaster, new ChildNumber(1,false) );  // /m/4544288'/0'/0'/1
+        changesMaster      = HDKeyDerivation.deriveChildKey(firstAccountMaster, new ChildNumber(0, false));  // /m/4544288'/0'/0'/0
+        messagesMaster     = HDKeyDerivation.deriveChildKey(firstAccountMaster, new ChildNumber(1, false));  // /m/4544288'/0'/0'/1
 
         /*
         //Anonymous derivation are probably not needed
@@ -49,15 +49,15 @@ public class EWDerivation {
     }
 
     public DeterministicKey getChanges(int i) {
-        return HDKeyDerivation.deriveChildKey(changesMaster , new ChildNumber(i, false));  // /m/4544288'/0'/0'/0/i
+        return HDKeyDerivation.deriveChildKey(changesMaster, new ChildNumber(i, false));  // /m/4544288'/0'/0'/0/i
     }
 
     public DeterministicKey getMessages(int j) {
-        return HDKeyDerivation.deriveChildKey(messagesMaster , new ChildNumber(j, false));  // /m/4544288'/0'/0'/0/j
+        return HDKeyDerivation.deriveChildKey(messagesMaster, new ChildNumber(j, false));  // /m/4544288'/0'/0'/0/j
     }
 
     public DeterministicKey getAccount(int k) {
-        return HDKeyDerivation.deriveChildKey(bitcoinMaster , new ChildNumber(0,true) );  // /m/4544288'/0'/0'
+        return HDKeyDerivation.deriveChildKey(bitcoinMaster, new ChildNumber(0, true));  // /m/4544288'/0'/0'
     }
 
 

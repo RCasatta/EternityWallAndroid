@@ -1,9 +1,12 @@
-package it.eternitywall.eternitywall.bitcoin;
+package it.eternitywall;
 
 import org.bitcoinj.crypto.ChildNumber;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.crypto.HDKeyDerivation;
+import org.junit.Test;
 import org.spongycastle.util.encoders.Hex;
+
+import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -13,6 +16,8 @@ import static junit.framework.TestCase.assertEquals;
 public class BitcoinTest {
 
 
+
+    @Test
     public void testing() {
         final String passphrase = Bitcoin.getNewMnemonicPassphrase(Bitcoin.getLongRandomSeed());
 

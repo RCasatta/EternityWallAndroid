@@ -1,55 +1,39 @@
 package it.eternitywall.eternitywall;
 
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.common.base.Optional;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import it.eternitywall.eternitywall.adapters.MessageListAdapter;
 import it.eternitywall.eternitywall.fragments.AccountFragment;
 import it.eternitywall.eternitywall.fragments.ListFragment;
+import it.eternitywall.eternitywall.fragments.RecoverPassphraseFragment;
 
 
 public class MainActivity extends ActionBarActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, PopupMenu.OnMenuItemClickListener,
-ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener{
+ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener, RecoverPassphraseFragment.OnFragmentInteractionListener{
 
     private static final int REQUEST_CODE = 8274;
     private static final String TAG = "MainActivity";
@@ -64,6 +48,7 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
     ViewPager viewPager;
     ListFragment listFragment;
     AccountFragment accountFragment;
+    RecoverPassphraseFragment recoverPassphraseFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +67,13 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         changeTabsFont();
+
+        /*
+        String passphrase = Bitcoin.getNewMnemonicPassphrase();
+        EWWallet ewWallet = new EWWallet( passphrase ,  getApplicationContext());
+        Thread thread = new Thread(ewWallet);
+        thread.start();
+        */
     }
 
     private void changeTabsFont() {
@@ -106,9 +98,11 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         // put the fragments into container ViewPager
         listFragment=new ListFragment();
         accountFragment=new AccountFragment();
+        recoverPassphraseFragment= new RecoverPassphraseFragment();
+
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(listFragment, getResources().getString(R.string.list_fragment));
-        adapter.addFragment(accountFragment, getResources().getString(R.string.account_fragment));
+        adapter.addFragment(recoverPassphraseFragment, getResources().getString(R.string.account_fragment));
         viewPager.setAdapter(adapter);
     }
 
