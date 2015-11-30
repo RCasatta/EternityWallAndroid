@@ -48,6 +48,14 @@ public class WalletObservable extends Observable {
         notifyObservers();
     }
 
+    public void setAll(Coin walletBalance, State state, Address current ) {
+        this.current= current;
+        this.walletBalance = walletBalance;
+        this.state =state;
+        setChanged();
+        notifyObservers();
+    }
+
     @Override
     public String toString() {
         return "WalletObservable{" +
