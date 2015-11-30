@@ -4,91 +4,94 @@
     android:layout_height="match_parent"
     tools:context="it.eternitywall.eternitywall.fragments.RecoverPassphraseFragment">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp"
-        >
-
-        <TextView
+        android:layout_height="match_parent">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Recover account"
-            android:textSize="24sp"
-            android:gravity="center"
-            android:textColor="@color/primaryText"
-            />
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/inputLayoutPassphrase"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:layout_marginTop="10dp"
-
+            android:orientation="vertical"
+            android:padding="20dp"
             >
-            <EditText
-                android:id="@+id/passphraseText"
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:lines="3"
+                android:text="Recover account"
+                android:textSize="24sp"
+                android:gravity="center"
                 android:textColor="@color/primaryText"
-                android:hint="passphrase"
-                android:gravity="center|bottom"
-                style="@style/EditText" />
-        </android.support.design.widget.TextInputLayout>
+                />
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/inputLayoutPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:layout_marginTop="10dp"
-
-            >
-            <EditText
-                android:id="@+id/pin"
-                android:layout_width="fill_parent"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/inputLayoutPassphrase"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="PIN"
-                android:inputType="numberPassword"
+                android:layout_gravity="center"
                 android:gravity="center"
-                android:password="true"
-                android:textSize="18sp"
-                style="@style/EditText" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_marginTop="10dp"
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:layout_marginTop="10dp"
+                >
+                <EditText
+                    android:id="@+id/passphraseText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lines="3"
+                    android:textColor="@color/primaryText"
+                    android:hint="passphrase"
+                    android:gravity="center|bottom"
+                    style="@style/EditText" />
+            </android.support.design.widget.TextInputLayout>
 
-            style="@style/EditText">
-            <EditText
-                android:id="@+id/confirmPin"
-                android:layout_width="fill_parent"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/inputLayoutPassword"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Confirm PIN"
-                android:inputType="numberPassword"
+                android:layout_gravity="center"
                 android:gravity="center"
-                android:password="true"
-                android:textSize="18sp"
-                style="@style/EditText" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_marginTop="10dp"
 
-        <Button
-            android:id="@+id/savePassphrase"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
-            android:text="OK"/>
-    </LinearLayout>
+                >
+                <EditText
+                    android:id="@+id/pin"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="PIN"
+                    android:inputType="numberPassword"
+                    android:gravity="center"
+                    android:password="true"
+                    android:textSize="18sp"
+                    style="@style/EditText" />
+            </android.support.design.widget.TextInputLayout>
 
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_layout_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+
+                style="@style/EditText">
+                <EditText
+                    android:id="@+id/confirmPin"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Confirm PIN"
+                    android:inputType="numberPassword"
+                    android:gravity="center"
+                    android:password="true"
+                    android:textSize="18sp"
+                    style="@style/EditText" />
+            </android.support.design.widget.TextInputLayout>
+
+            <Button
+                android:id="@+id/savePassphrase"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:text="OK"/>
+        </LinearLayout>
+    </ScrollView>
 </FrameLayout>

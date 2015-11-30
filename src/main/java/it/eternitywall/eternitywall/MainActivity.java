@@ -8,10 +8,8 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.PopupMenu;
@@ -34,10 +32,12 @@ import it.eternitywall.eternitywall.fragments.CreateFragment;
 import it.eternitywall.eternitywall.fragments.HelloFragment;
 import it.eternitywall.eternitywall.fragments.ListFragment;
 import it.eternitywall.eternitywall.fragments.RecoverPassphraseFragment;
+import it.eternitywall.eternitywall.fragments.WalletFragment;
 
 
 public class MainActivity extends ActionBarActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, PopupMenu.OnMenuItemClickListener,
-ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener, RecoverPassphraseFragment.OnFragmentInteractionListener, CreateFragment.OnFragmentInteractionListener,HelloFragment.OnFragmentInteractionListener{
+ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener, RecoverPassphraseFragment.OnFragmentInteractionListener,
+        CreateFragment.OnFragmentInteractionListener,HelloFragment.OnFragmentInteractionListener,WalletFragment.OnFragmentInteractionListener{
 
     private static final int REQUEST_CODE = 8274;
     private static final String TAG = "MainActivity";
@@ -138,7 +138,7 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         public void delFragment( String title) {
             int position=mFragmentTitleList.indexOf(title);
             mFragmentTitleList.remove(position);
-            mFragmentList.remove( position );
+            mFragmentList.remove(position);
 
         }
 
