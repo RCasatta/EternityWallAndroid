@@ -18,6 +18,7 @@ import org.bitcoinj.core.PeerGroup;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.StoredBlock;
 import org.bitcoinj.core.Transaction;
+import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.core.Wallet;
 import org.bitcoinj.net.discovery.DnsDiscovery;
@@ -43,20 +44,17 @@ import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 /**
  * Created by Riccardo Casatta @RCasatta on 26/11/15.
  */
-public class EWWalletService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener, Runnable {
+public class EWWalletService extends Service implements Runnable {
     private static final String TAG = "EWWalletService";
 
     private final static NetworkParameters PARAMS=MainNetParams.get();
     private final static int EPOCH     = 1447891200;  //19 Novembre 2015 00:00 first EWA 5f362444d23dd258ae1c2b60b1d79cb2c5231fc50df50713a415e13502fc1da9
     private final static int PER_CHUNK = 100;
-    public static final Long DUST      =  1000L ;
-    public static final Long FEE       =  11000L ;
+    public static final Long DUST      = 1000L ;
+    public static final Long FEE       = 11000L ;
     public static final String BLOCKCHAIN_FILE = "blockchain";
     public static final String WALLET_FILE     = "wallet";
     public static final String BITCOIN_PATH    = "bitcoin";
-
-    private CountDownLatch downloadLatch = new CountDownLatch(1);
-
 
     private Set<Address> used      = new HashSet<>();
     private Integer nextMessageId = 0 ;
@@ -66,16 +64,26 @@ public class EWWalletService extends Service implements SharedPreferences.OnShar
     private List<ECKey> messagesId = new ArrayList<>();
     private List<ECKey> changes    = new ArrayList<>();
 
+    private MyBlockchainListener chainListener;
+    private MyDownloadListener downloadListener;
+    private StoredBlock chainHead;
     private BlockStore blockStore;
     private BlockChain blockChain;
     private PeerGroup peerGroup;
     private Wallet wallet;
     private boolean isSynced = false;
+    private CountDownLatch downloadLatch= new CountDownLatch(1);
 
-    public Address getCurrent() {
-        if(!isSynced)
+    private Address getCurrent() {  //watch observable
+        if(!isSynced && nextChange==0)
             return null;
-        return changes.get( nextMessageId ).toAddress(PARAMS);
+        return changes.get( nextChange-1 ).toAddress(PARAMS);
+    }
+
+    private Address getNext() {  //watch observable
+        if(!isSynced && nextChange==0)
+            return null;
+        return changes.get( nextChange ).toAddress(PARAMS);
     }
 
     private EWMessageData getNextMessageData() {
@@ -188,12 +196,11 @@ public class EWWalletService extends Service implements SharedPreferences.OnShar
         return transactionOutputList;
     }
 
-    private EWBinder mBinder= new EWBinder(this);
+    private WalletObservable walletObservable = new WalletObservable();
+    private EWBinder mBinder= new EWBinder(this, walletObservable);
     @Override
-    public IBinder onBind(final Intent intent)
-    {
-        Log.i(TAG, ".onBind()");
-
+    public IBinder onBind(final Intent intent) {
+        Log.i(TAG, ".onBind() " + intent);
         return mBinder;
     }
 
@@ -219,12 +226,14 @@ public class EWWalletService extends Service implements SharedPreferences.OnShar
     @Override
     public void run() {
         try {
+            walletObservable.setState(WalletObservable.State.STARTED);
             Log.i(TAG,".run()");
             final Context context = getApplicationContext();
             final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
             final String passphrase = sharedPref.getString("passphrase", null);
             if(passphrase==null) {
                 Log.i(TAG,"PassphraseIsNull, cannot sync");
+                walletObservable.setState(WalletObservable.State.NULL_PASSPHRASE);
                 return;
             }
             final byte[] seed = Bitcoin.getEntropyFromPassphrase(passphrase);
@@ -269,15 +278,16 @@ public class EWWalletService extends Service implements SharedPreferences.OnShar
             Log.i(TAG, "Derivation takes " + l);
 
             blockStore = new SPVBlockStore(PARAMS, blockFile);
-            final StoredBlock chainHead = blockStore.getChainHead();
+            chainHead = blockStore.getChainHead();
 
             if (chainHead.getHeight() == 0) {  //first run
                 Log.i(TAG, "First run");
                 CheckpointManager.checkpoint(PARAMS, Checkpoints.getAsStream(), blockStore, EPOCH);
             }
+            wallet.addEventListener(new EWWalletEventListener(walletObservable));
 
             blockChain = new BlockChain(PARAMS, wallet, blockStore);
-            final MyBlockchainListener chainListener = new MyBlockchainListener(all,used );
+            chainListener = new MyBlockchainListener( all );
             blockChain.addListener(chainListener);
             peerGroup = new PeerGroup(PARAMS, blockChain);
             //peerGroup.addAddress(InetAddress.getByName("10.106.137.73"));
@@ -287,11 +297,32 @@ public class EWWalletService extends Service implements SharedPreferences.OnShar
             peerGroup.addPeerFilterProvider(new MyPeerFilterProvider(changes, messagesId));
             peerGroup.setFastCatchupTimeSecs(EPOCH);
             peerGroup.setDownloadTxDependencies(false);
-            final MyDownloadListener downloadListener = new MyDownloadListener(downloadLatch);
+            downloadListener = new MyDownloadListener(downloadLatch);
             peerGroup.startAsync();
+            walletObservable.setState(WalletObservable.State.SYNCING);
             peerGroup.startBlockChainDownload(downloadListener);
-
             downloadLatch.await();
+
+            List<Transaction> allTx = wallet.getTransactionsByTime();
+            Log.i(TAG, "allTx.size()=" + allTx.size());
+            for (Transaction tx : allTx) {
+                Log.i(TAG,"tx=" + tx);
+                final List<TransactionInput> inputs = tx.getInputs();
+                for (TransactionInput input : inputs) {
+                    Address current = input.getScriptSig().getFromAddress(MainNetParams.get());
+                    if(all.contains(current)) {
+                        used.add(current);
+                    }
+                }
+
+                final List<TransactionOutput> outputs = tx.getOutputs();
+                for (TransactionOutput output : outputs) {
+                    Address current = output.getAddressFromP2PKHScript(MainNetParams.get());
+                    if(all.contains(current)) {
+                        used.add(current);
+                    }
+                }
+            }
 
             nextMessageId=0;
             for (ECKey current : messagesId) {
@@ -310,6 +341,7 @@ public class EWWalletService extends Service implements SharedPreferences.OnShar
                     break;
             }
             isSynced = true;
+
             Log.i(TAG, "peerGroup.getConnectedPeers()=" + peerGroup.getConnectedPeers());
             Log.i(TAG, "chain.getBestChainHeight()=" + blockChain.getBestChainHeight());
             Log.i(TAG, "chainHeadHeightAtBeginning=" + chainHead.getHeight());
@@ -320,15 +352,29 @@ public class EWWalletService extends Service implements SharedPreferences.OnShar
             Log.i(TAG, "nextChange=" + nextChange);
             Log.i(TAG, "wallet=" + wallet);
 
+            walletObservable.setAll(wallet.getBalance(), WalletObservable.State.SYNCED, getCurrent());
 
-            //Toast.makeText(getApplication(),"Blockchain synced",Toast.LENGTH_LONG).show();
-            Log.i(TAG,"BlockchainSynced");
 
         } catch (Exception e) {
             Log.i(TAG, e.getMessage());
         }
 
     }
-    
 
+    /*
+    @Override
+    public void update(Observable observable, Object data) {
+        WalletObservable walletObservable= (WalletObservable) observable;
+        if(walletObservable.getState()== WalletObservable.State.SYNCED) {
+            Log.i(TAG, "peerGroup.getConnectedPeers()=" + peerGroup.getConnectedPeers());
+            Log.i(TAG, "chain.getBestChainHeight()=" + blockChain.getBestChainHeight());
+            Log.i(TAG, "chainHeadHeightAtBeginning=" + chainHead.getHeight());
+            Log.i(TAG, "bloom matches=" + chainListener.getBloomMatches());
+            Log.i(TAG, "downloaded size=" + downloadListener.getSize() + " bytes");
+            Log.i(TAG, "used address=" + used);
+            Log.i(TAG, "nextMessageId=" + nextMessageId);
+            Log.i(TAG, "nextChange=" + nextChange);
+            Log.i(TAG, "wallet=" + wallet);
+        }
+    }*/
 }

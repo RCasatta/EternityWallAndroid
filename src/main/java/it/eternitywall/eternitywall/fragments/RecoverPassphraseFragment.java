@@ -6,10 +6,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,27 +76,40 @@ public class RecoverPassphraseFragment extends Fragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_recover_passphrase, container, false);
         final TextView passphraseText = (TextView) view.findViewById(R.id.passphraseText);
-        Button button = (Button) view.findViewById(R.id.savePassphrase);
+        final EditText pin            = (EditText) view.findViewById(R.id.pin);
+        final EditText confirmPin     = (EditText) view.findViewById(R.id.confirmPin);
+
+        final Button button           = (Button) view.findViewById(R.id.savePassphrase);
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String passphrase = passphraseText.getText().toString();
+                final Editable pinText = pin.getText();
+                final Editable confirmPinText = confirmPin.getText();
+                final CharSequence passphraseCharSequence = passphraseText.getText();
+                if( pinText.toString().isEmpty() || confirmPinText.toString().isEmpty() || passphraseCharSequence.toString().isEmpty() ) {
+                    Toast.makeText(getActivity(), "All inputs are required", Toast.LENGTH_LONG).show();
+                }
+
+                if(  !pinText.toString().equals(confirmPinText.toString()) ) {
+                    Toast.makeText(getActivity(), "PIN are not the same", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                final String passphrase = passphraseCharSequence.toString();
                 final byte[] entropyFromPassphrase = Bitcoin.getEntropyFromPassphrase(passphrase);
-                if (entropyFromPassphrase != null) {
-                    final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                    final SharedPreferences.Editor edit = sharedPref.edit();
-                    edit.putString("passphrase", passphrase);
-                    edit.commit();
-                    Toast.makeText(getActivity(), "Passphrase saved", Toast.LENGTH_LONG).show();
-                    passphraseText.setText("");
-                    launchService();
-
-
-
-                } else {
+                if (entropyFromPassphrase == null) {
                     Toast.makeText(getActivity(), "Passphrase invalid", Toast.LENGTH_LONG).show();
 
+                    return;
                 }
+                final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                final SharedPreferences.Editor edit = sharedPref.edit();
+                edit.putString("passphrase", passphrase);
+                edit.commit();
+                Toast.makeText(getActivity(), "Passphrase saved", Toast.LENGTH_LONG).show();
+                passphraseText.setText("");
+                launchService();
 
             }
         });

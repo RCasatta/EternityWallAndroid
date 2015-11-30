@@ -24,13 +24,11 @@ public class MyBlockchainListener implements BlockChainListener {
     private static final String TAG = "MyBlockchainListener";
 
     private Set<Address> all;
-    private Set<Address> used;
 
     private int bloomMatches=0;
 
-    public MyBlockchainListener(Set<Address> all, Set<Address> used) {
+    public MyBlockchainListener( Set<Address> all ) {
         this.all = all;
-        this.used = used;
     }
 
     @Override
@@ -57,17 +55,14 @@ public class MyBlockchainListener implements BlockChainListener {
         for (TransactionInput input : inputs) {
             Address current = input.getScriptSig().getFromAddress(MainNetParams.get());
             if(all.contains(current)) {
-                used.add(current);
                 isRelevant = true;
             }
-
         }
 
         final List<TransactionOutput> outputs = tx.getOutputs();
         for (TransactionOutput output : outputs) {
             Address current = output.getAddressFromP2PKHScript(MainNetParams.get());
             if(all.contains(current)) {
-                used.add(current);
                 isRelevant = true;
             }
         }
