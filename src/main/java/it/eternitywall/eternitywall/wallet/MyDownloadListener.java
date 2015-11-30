@@ -16,18 +16,34 @@ public class MyDownloadListener extends DownloadProgressTracker {
     private int size=0;
     private long end;
     private long start;
+    private int originalBlocksLeft = -1;
+    private int lastPercent = 0;
 
     private CountDownLatch latch;
+    private WalletObservable walletObservable;
 
-    public MyDownloadListener(CountDownLatch latch) {
+    public MyDownloadListener(CountDownLatch latch , WalletObservable walletObservable) {
         this.latch = latch;
+        this.walletObservable = walletObservable;
+    }
 
+    @Override
+    public void onChainDownloadStarted(Peer peer, int blocksLeft) {
+        super.onChainDownloadStarted(peer, blocksLeft);
+
+        System.out.println("onChainDownloadStarted blocksLeft=" + blocksLeft);
+
+        if (originalBlocksLeft == -1)
+            originalBlocksLeft = blocksLeft;
+        if(blocksLeft==0)
+            doneDownload();
     }
 
     @Override
     protected void startDownload(int blocks) {
         super.startDownload(blocks);
         start= System.currentTimeMillis();
+
     }
 
     @Override
@@ -42,14 +58,26 @@ public class MyDownloadListener extends DownloadProgressTracker {
         return end-start;
     }
 
+
     @Override
     public void onBlocksDownloaded(Peer peer, Block block, FilteredBlock filteredBlock, int blocksLeft) {
         super.onBlocksDownloaded(peer, block, filteredBlock, blocksLeft);
          size+=block.getMessageSize();
+
+        double pct = 100.0 - (100.0 * (blocksLeft / (double) originalBlocksLeft));
+        if ((int) pct != lastPercent) {
+            lastPercent = (int) pct;
+            walletObservable.setPercSync(lastPercent);
+        }
     }
+
 
     public int getSize() {
         return size;
+    }
+
+    public int getLastPercent() {
+        return lastPercent;
     }
 
     @Override

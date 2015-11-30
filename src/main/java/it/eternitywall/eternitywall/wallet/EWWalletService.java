@@ -297,11 +297,12 @@ public class EWWalletService extends Service implements Runnable {
             peerGroup.addPeerFilterProvider(new MyPeerFilterProvider(changes, messagesId));
             peerGroup.setFastCatchupTimeSecs(EPOCH);
             peerGroup.setDownloadTxDependencies(false);
-            downloadListener = new MyDownloadListener(downloadLatch);
+            downloadListener = new MyDownloadListener(downloadLatch,walletObservable);
             peerGroup.startAsync();
             walletObservable.setState(WalletObservable.State.SYNCING);
             peerGroup.startBlockChainDownload(downloadListener);
-            downloadLatch.await();
+            Log.i(TAG,"waiting on download");
+            downloadLatch.await();  //TODO RACE CONDITION HERE IF NO DOWNLOAD NEEDED
 
             List<Transaction> allTx = wallet.getTransactionsByTime();
             Log.i(TAG, "allTx.size()=" + allTx.size());

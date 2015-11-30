@@ -4,11 +4,21 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import java.util.Observable;
+import java.util.Observer;
+
+import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.R;
+import it.eternitywall.eternitywall.wallet.WalletObservable;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,6 +29,13 @@ import it.eternitywall.eternitywall.R;
  * create an instance of this fragment.
  */
 public class WalletFragment extends Fragment {
+    private RelativeLayout syncingLayout;
+    private LinearLayout syncedLayout;
+    private TextView syncingText;
+    private TextView balanceText;
+    private TextView currentAddressText;
+    private ImageView currentQrCode;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -55,17 +72,59 @@ public class WalletFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
+    public void serviceConnected() {
+        EWApplication ewApplication = (EWApplication) getActivity().getApplication();
+        final WalletObservable walletObservable = ewApplication.getWalletObservable();
+        walletObservable.addObserver(new Observer() {
+            @Override
+            public void update(Observable observable, Object data) {
+                final FragmentActivity activity = getActivity();
+                if (activity == null)
+                    return;
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (walletObservable.getState() == WalletObservable.State.SYNCED) {
+                            syncedLayout.setVisibility(View.VISIBLE);
+                            syncingLayout.setVisibility(View.GONE);
+                            balanceText.setText(walletObservable.getWalletBalance().toPlainString());
+                            currentAddressText.setText(walletObservable.getCurrent().toString());
+
+                        } else if (walletObservable.getState() == WalletObservable.State.SYNCING) {
+                            syncedLayout.setVisibility(View.GONE);
+                            syncingLayout.setVisibility(View.VISIBLE);
+                            if (walletObservable.getPercSync() != null)
+                                syncingText.setText(String.format("Syncing (%d%%)", walletObservable.getPercSync()));
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_wallet, container, false);
+        final View view = inflater.inflate(R.layout.fragment_wallet, container, false);
+
+        syncingLayout = (RelativeLayout) view.findViewById(R.id.syncingLayout);
+        syncedLayout = (LinearLayout) view.findViewById(R.id.syncedLayout);
+        syncingText = (TextView) view.findViewById(R.id.syncingText);
+        balanceText = (TextView) view.findViewById(R.id.balance);
+        currentAddressText = (TextView) view.findViewById(R.id.currentAddress);
+        currentQrCode = (ImageView) view.findViewById(R.id.currentQrCode);
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

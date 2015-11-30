@@ -13,6 +13,8 @@ public class WalletObservable extends Observable {
     private State state= State.NOT_STARTED;
     private Address current;
     private Integer height;
+    private Integer percSync;
+
     private Long heightNotified;
 
     public enum State
@@ -73,6 +75,16 @@ public class WalletObservable extends Observable {
         this.current= current;
         this.walletBalance = walletBalance;
         this.state =state;
+        setChanged();
+        notifyObservers();
+    }
+
+    public Integer getPercSync() {
+        return percSync;
+    }
+
+    public void setPercSync(Integer percSync) {
+        this.percSync = percSync;
         setChanged();
         notifyObservers();
     }
