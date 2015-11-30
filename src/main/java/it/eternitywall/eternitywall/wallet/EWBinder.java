@@ -7,8 +7,10 @@ import android.os.Binder;
  */
 public class EWBinder extends Binder {
     public EWWalletService ewWalletService;
+    public WalletObservable walletObservable;
 
-    public EWBinder(EWWalletService ewWalletService) {
+    public EWBinder(EWWalletService ewWalletService, WalletObservable walletObservable ) {
         this.ewWalletService = ewWalletService;
+        this.walletObservable = walletObservable;
     }
 }

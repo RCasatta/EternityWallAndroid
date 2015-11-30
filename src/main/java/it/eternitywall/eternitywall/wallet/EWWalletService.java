@@ -33,8 +33,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
@@ -43,20 +44,17 @@ import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 /**
  * Created by Riccardo Casatta @RCasatta on 26/11/15.
  */
-public class EWWalletService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener, Runnable {
+public class EWWalletService extends Service implements Runnable, Observer {
     private static final String TAG = "EWWalletService";
 
     private final static NetworkParameters PARAMS=MainNetParams.get();
     private final static int EPOCH     = 1447891200;  //19 Novembre 2015 00:00 first EWA 5f362444d23dd258ae1c2b60b1d79cb2c5231fc50df50713a415e13502fc1da9
     private final static int PER_CHUNK = 100;
-    public static final Long DUST      =  1000L ;
-    public static final Long FEE       =  11000L ;
+    public static final Long DUST      = 1000L ;
+    public static final Long FEE       = 11000L ;
     public static final String BLOCKCHAIN_FILE = "blockchain";
     public static final String WALLET_FILE     = "wallet";
     public static final String BITCOIN_PATH    = "bitcoin";
-
-    private CountDownLatch downloadLatch = new CountDownLatch(1);
-
 
     private Set<Address> used      = new HashSet<>();
     private Integer nextMessageId = 0 ;
@@ -65,6 +63,10 @@ public class EWWalletService extends Service implements SharedPreferences.OnShar
     private Set<Address> all       = new HashSet<>();
     private List<ECKey> messagesId = new ArrayList<>();
     private List<ECKey> changes    = new ArrayList<>();
+
+    private MyBlockchainListener chainListener;
+    private MyDownloadListener downloadListener;
+    private StoredBlock chainHead;
 
     private BlockStore blockStore;
     private BlockChain blockChain;
@@ -188,12 +190,11 @@ public class EWWalletService extends Service implements SharedPreferences.OnShar
         return transactionOutputList;
     }
 
-    private EWBinder mBinder= new EWBinder(this);
+    private WalletObservable walletObservable = new WalletObservable();
+    private EWBinder mBinder= new EWBinder(this, walletObservable);
     @Override
-    public IBinder onBind(final Intent intent)
-    {
-        Log.i(TAG, ".onBind()");
-
+    public IBinder onBind(final Intent intent) {
+        Log.i(TAG, ".onBind() " + intent);
         return mBinder;
     }
 
@@ -219,12 +220,14 @@ public class EWWalletService extends Service implements SharedPreferences.OnShar
     @Override
     public void run() {
         try {
+            walletObservable.setState(WalletObservable.State.STARTED);
             Log.i(TAG,".run()");
             final Context context = getApplicationContext();
             final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
             final String passphrase = sharedPref.getString("passphrase", null);
             if(passphrase==null) {
                 Log.i(TAG,"PassphraseIsNull, cannot sync");
+                walletObservable.setState(WalletObservable.State.NULL_PASSPHRASE);
                 return;
             }
             final byte[] seed = Bitcoin.getEntropyFromPassphrase(passphrase);
@@ -269,15 +272,16 @@ public class EWWalletService extends Service implements SharedPreferences.OnShar
             Log.i(TAG, "Derivation takes " + l);
 
             blockStore = new SPVBlockStore(PARAMS, blockFile);
-            final StoredBlock chainHead = blockStore.getChainHead();
+            chainHead = blockStore.getChainHead();
 
             if (chainHead.getHeight() == 0) {  //first run
                 Log.i(TAG, "First run");
                 CheckpointManager.checkpoint(PARAMS, Checkpoints.getAsStream(), blockStore, EPOCH);
             }
+            wallet.addEventListener(new EWWalletEventListener(walletObservable));
 
             blockChain = new BlockChain(PARAMS, wallet, blockStore);
-            final MyBlockchainListener chainListener = new MyBlockchainListener(all,used );
+            chainListener = new MyBlockchainListener(all,used );
             blockChain.addListener(chainListener);
             peerGroup = new PeerGroup(PARAMS, blockChain);
             //peerGroup.addAddress(InetAddress.getByName("10.106.137.73"));
@@ -287,11 +291,10 @@ public class EWWalletService extends Service implements SharedPreferences.OnShar
             peerGroup.addPeerFilterProvider(new MyPeerFilterProvider(changes, messagesId));
             peerGroup.setFastCatchupTimeSecs(EPOCH);
             peerGroup.setDownloadTxDependencies(false);
-            final MyDownloadListener downloadListener = new MyDownloadListener(downloadLatch);
+            downloadListener = new MyDownloadListener();
             peerGroup.startAsync();
+            walletObservable.setState(WalletObservable.State.SYNCING);
             peerGroup.startBlockChainDownload(downloadListener);
-
-            downloadLatch.await();
 
             nextMessageId=0;
             for (ECKey current : messagesId) {
@@ -310,6 +313,22 @@ public class EWWalletService extends Service implements SharedPreferences.OnShar
                     break;
             }
             isSynced = true;
+            walletObservable.setState(WalletObservable.State.SYNCED);
+
+
+
+
+        } catch (Exception e) {
+            Log.i(TAG, e.getMessage());
+        }
+
+    }
+
+
+    @Override
+    public void update(Observable observable, Object data) {
+        WalletObservable walletObservable= (WalletObservable) observable;
+        if(walletObservable.getState()== WalletObservable.State.SYNCED) {
             Log.i(TAG, "peerGroup.getConnectedPeers()=" + peerGroup.getConnectedPeers());
             Log.i(TAG, "chain.getBestChainHeight()=" + blockChain.getBestChainHeight());
             Log.i(TAG, "chainHeadHeightAtBeginning=" + chainHead.getHeight());
@@ -319,16 +338,6 @@ public class EWWalletService extends Service implements SharedPreferences.OnShar
             Log.i(TAG, "nextMessageId=" + nextMessageId);
             Log.i(TAG, "nextChange=" + nextChange);
             Log.i(TAG, "wallet=" + wallet);
-
-
-            //Toast.makeText(getApplication(),"Blockchain synced",Toast.LENGTH_LONG).show();
-            Log.i(TAG,"BlockchainSynced");
-
-        } catch (Exception e) {
-            Log.i(TAG, e.getMessage());
         }
-
     }
-    
-
 }
