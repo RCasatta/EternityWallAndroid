@@ -49,32 +49,31 @@
             android:gravity="center_horizontal">
 
             <Button
-                style="@style/buttonStyle"
                 android:id="@+id/btnRecover"
                 android:text="@string/btn_recover"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:drawablePadding="@dimen/padding_small"
-                android:drawableLeft="@drawable/ic_email_white_24dp"
+                android:drawableLeft="@android:drawable/ic_menu_help"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_marginRight="@dimen/activity_horizontal_margin" />
 
             <Button
-                style="@style/buttonStyle"
                 android:id="@+id/btnCreate"
                 android:text="@string/btn_create"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:drawablePadding="@dimen/padding_small"
-                android:drawableLeft="@drawable/ic_email_white_24dp"
+                android:drawableLeft="@android:drawable/ic_media_play"
                 android:layout_alignParentTop="true"
                 android:layout_toRightOf="@+id/btnRecover"
                 android:layout_toEndOf="@+id/btnRecover"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin" />
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:elegantTextHeight="false" />
 
         </LinearLayout>
 

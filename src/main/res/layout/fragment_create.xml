@@ -2,97 +2,107 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="it.eternitywall.eternitywall.fragments.CreateFragment"
-    android:padding="@dimen/activity_horizontal_margin"
     android:orientation="vertical">
 
 
-    <EditText
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/etPassword"
-        android:textStyle="bold|italic"
-        style="@style/EditText"
-        android:layout_gravity="center" />
+        android:layout_height="match_parent"
+        android:id="@+id/scrollView" >
 
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:id="@+id/ivIdenticon"
-        android:layout_below="@+id/etPassword"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/activity_vertical_margin" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/activity_horizontal_margin">
 
-    <TextView
-        android:text="Usa questo PIN per visualizzare la passphrase delle preferenze"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:id="@+id/txtDisclaimer2"
-        android:layout_below="@+id/txtDisclaimer"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/activity_vertical_margin" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/etPassword"
+                android:textStyle="bold|italic"
+                style="@style/EditText"
+                android:layout_gravity="center" />
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
-        android:id="@+id/editText"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:gravity="center"
-        android:hint="PIN"
-        android:layout_below="@+id/txtDisclaimer2"
-        style="@style/EditText"
-        android:layout_gravity="center" />
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:id="@+id/ivIdenticon"
+                android:layout_below="@+id/etPassword"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/activity_vertical_margin" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center"
-        android:gravity="center_horizontal"
-        android:layout_below="@+id/editText"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/activity_vertical_margin">
+            <TextView
+                android:text="Usa questo PIN per visualizzare la passphrase delle preferenze"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:id="@+id/txtDisclaimer2"
+                android:layout_below="@+id/txtDisclaimer"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/activity_vertical_margin" />
 
-        <Button
-            style="@style/buttonStyle"
-            android:id="@+id/btnRefresh"
-            android:text="@string/btn_refresh"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:drawablePadding="@dimen/padding_small"
-            android:drawableLeft="@drawable/ic_email_white_24dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginRight="@dimen/activity_horizontal_margin" />
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:id="@+id/editText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:gravity="center"
+                android:hint="PIN"
+                android:layout_below="@+id/txtDisclaimer2"
+                style="@style/EditText"
+                android:layout_gravity="center" />
 
-        <Button
-            style="@style/buttonStyle"
-            android:id="@+id/btnConfirm"
-            android:text="@string/btn_confirm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:drawablePadding="@dimen/padding_small"
-            android:drawableLeft="@drawable/ic_email_white_24dp"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/btnRefresh"
-            android:layout_toEndOf="@+id/btnRefresh"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin" />
-    </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:gravity="center_horizontal"
+                android:layout_below="@+id/editText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/activity_vertical_margin">
 
-    <TextView
-        android:text="Il tuo account può essere registrato unicamente tramite passphare.\nAccertati di salvarla prima di procedere. Per motivi di sicurezza, EternityWall non memorizza la passphrase sul server."
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/txtDisclaimer"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:gravity="center"
-        android:layout_below="@+id/etPassword" />
+                <Button
+                    android:id="@+id/btnRefresh"
+                    android:text="@string/btn_refresh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:drawablePadding="@dimen/padding_small"
+                    android:drawableLeft="@android:drawable/ic_menu_rotate"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin" />
+
+                <Button
+                    android:id="@+id/btnConfirm"
+                    android:text="@string/btn_confirm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:drawablePadding="@dimen/padding_small"
+                    android:drawableLeft="@android:drawable/ic_media_play"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/btnRefresh"
+                    android:layout_toEndOf="@+id/btnRefresh"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin" />
+            </LinearLayout>
+
+            <TextView
+                android:text="Il tuo account può essere registrato unicamente tramite passphare.\nAccertati di salvarla prima di procedere. Per motivi di sicurezza, EternityWall non memorizza la passphrase sul server."
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtDisclaimer"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:gravity="center"
+                android:layout_below="@+id/etPassword" />
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

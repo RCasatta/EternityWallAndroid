@@ -87,11 +87,18 @@
 
             <Button
                 android:id="@+id/savePassphrase"
+                android:text="Confirm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="20dp"
-                android:text="OK"/>
+                android:gravity="center_vertical|center_horizontal"
+                android:drawablePadding="@dimen/padding_small"
+                android:drawableLeft="@android:drawable/ic_media_play"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/btnRecover"
+                android:layout_toEndOf="@+id/btnRecover"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:elegantTextHeight="false"
+                android:layout_gravity="center_horizontal" />
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

@@ -114,9 +114,10 @@
         <item name="android:paddingRight">@dimen/padding_high</item>
         <item name="android:paddingTop">@dimen/padding_small</item>
         <item name="android:paddingBottom">@dimen/padding_small</item>
+        <item name="elevation">4dp</item>
         <item name="android:background">@color/accent</item>
-    </style>
 
+    </style>
 
     <style name="EditText" parent="@android:style/Widget.EditText">
         <item name="android:textColor">@color/black</item>
@@ -124,7 +125,20 @@
         <item name="android:textColorLink">@color/primaryLight</item>
         <item name="android:textColorHighlight">@color/accent</item>
         <item name="android:typeface">normal</item>
-    </style>
 
+        <item name="colorControlNormal">@color/primaryLight</item>
+        <item name="colorControlActivated">@color/accent</item>
+        <item name="colorControlHighlight">@color/accent</item>
+
+        <item name="android:color">@color/accent</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:statusBarColor">@color/accent</item>
+
+
+
+        <item name="android:colorControlNormal">@color/primaryLight</item>
+        <item name="android:colorControlActivated">@color/accent</item>
+        <item name="android:colorControlHighlight">@color/accent</item>
+    </style>
 
 </resources>
