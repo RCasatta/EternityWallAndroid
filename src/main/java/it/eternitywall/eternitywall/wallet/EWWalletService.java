@@ -35,7 +35,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
@@ -72,7 +71,6 @@ public class EWWalletService extends Service implements Runnable {
     private PeerGroup peerGroup;
     private Wallet wallet;
     private boolean isSynced = false;
-    private CountDownLatch downloadLatch= new CountDownLatch(1);
 
     private Address getCurrent() {  //watch observable
         if(!isSynced && nextChange==0)
@@ -297,63 +295,15 @@ public class EWWalletService extends Service implements Runnable {
             peerGroup.addPeerFilterProvider(new MyPeerFilterProvider(changes, messagesId));
             peerGroup.setFastCatchupTimeSecs(EPOCH);
             peerGroup.setDownloadTxDependencies(false);
-            downloadListener = new MyDownloadListener(downloadLatch,walletObservable);
+            downloadListener = new MyDownloadListener(walletObservable);
             peerGroup.startAsync();
             walletObservable.setState(WalletObservable.State.SYNCING);
+
+            Log.i(TAG, "starting download");
             peerGroup.startBlockChainDownload(downloadListener);
-            Log.i(TAG,"waiting on download");
-            downloadLatch.await();  //TODO RACE CONDITION HERE IF NO DOWNLOAD NEEDED
+            Log.i(TAG, "download started");
 
-            List<Transaction> allTx = wallet.getTransactionsByTime();
-            Log.i(TAG, "allTx.size()=" + allTx.size());
-            for (Transaction tx : allTx) {
-                Log.i(TAG,"tx=" + tx);
-                final List<TransactionInput> inputs = tx.getInputs();
-                for (TransactionInput input : inputs) {
-                    Address current = input.getScriptSig().getFromAddress(MainNetParams.get());
-                    if(all.contains(current)) {
-                        used.add(current);
-                    }
-                }
 
-                final List<TransactionOutput> outputs = tx.getOutputs();
-                for (TransactionOutput output : outputs) {
-                    Address current = output.getAddressFromP2PKHScript(MainNetParams.get());
-                    if(all.contains(current)) {
-                        used.add(current);
-                    }
-                }
-            }
-
-            nextMessageId=0;
-            for (ECKey current : messagesId) {
-                Address a = current.toAddress(PARAMS);
-                if (used.contains(a))
-                    nextMessageId++;
-                else
-                    break;
-            }
-            nextChange=0;
-            for (ECKey current : changes) {
-                Address a = current.toAddress(PARAMS);
-                if (used.contains(a))
-                    nextChange++;
-                else
-                    break;
-            }
-            isSynced = true;
-
-            Log.i(TAG, "peerGroup.getConnectedPeers()=" + peerGroup.getConnectedPeers());
-            Log.i(TAG, "chain.getBestChainHeight()=" + blockChain.getBestChainHeight());
-            Log.i(TAG, "chainHeadHeightAtBeginning=" + chainHead.getHeight());
-            Log.i(TAG, "bloom matches=" + chainListener.getBloomMatches());
-            Log.i(TAG, "downloaded size=" + downloadListener.getSize() + " bytes");
-            Log.i(TAG, "used address=" + used);
-            Log.i(TAG, "nextMessageId=" + nextMessageId);
-            Log.i(TAG, "nextChange=" + nextChange);
-            Log.i(TAG, "wallet=" + wallet);
-
-            walletObservable.setAll(wallet.getBalance(), WalletObservable.State.SYNCED, getCurrent());
 
 
         } catch (Exception e) {
@@ -362,20 +312,59 @@ public class EWWalletService extends Service implements Runnable {
 
     }
 
-    /*
-    @Override
-    public void update(Observable observable, Object data) {
-        WalletObservable walletObservable= (WalletObservable) observable;
-        if(walletObservable.getState()== WalletObservable.State.SYNCED) {
-            Log.i(TAG, "peerGroup.getConnectedPeers()=" + peerGroup.getConnectedPeers());
-            Log.i(TAG, "chain.getBestChainHeight()=" + blockChain.getBestChainHeight());
-            Log.i(TAG, "chainHeadHeightAtBeginning=" + chainHead.getHeight());
-            Log.i(TAG, "bloom matches=" + chainListener.getBloomMatches());
-            Log.i(TAG, "downloaded size=" + downloadListener.getSize() + " bytes");
-            Log.i(TAG, "used address=" + used);
-            Log.i(TAG, "nextMessageId=" + nextMessageId);
-            Log.i(TAG, "nextChange=" + nextChange);
-            Log.i(TAG, "wallet=" + wallet);
+    public void onSynced() {
+
+        List<Transaction> allTx = wallet.getTransactionsByTime();
+        Log.i(TAG, "allTx.size()=" + allTx.size());
+        for (Transaction tx : allTx) {
+            Log.i(TAG,"tx=" + tx);
+            final List<TransactionInput> inputs = tx.getInputs();
+            for (TransactionInput input : inputs) {
+                Address current = input.getScriptSig().getFromAddress(MainNetParams.get());
+                if(all.contains(current)) {
+                    used.add(current);
+                }
+            }
+
+            final List<TransactionOutput> outputs = tx.getOutputs();
+            for (TransactionOutput output : outputs) {
+                Address current = output.getAddressFromP2PKHScript(MainNetParams.get());
+                if(all.contains(current)) {
+                    used.add(current);
+                }
+            }
         }
-    }*/
+
+        nextMessageId=0;
+        for (ECKey current : messagesId) {
+            Address a = current.toAddress(PARAMS);
+            if (used.contains(a))
+                nextMessageId++;
+            else
+                break;
+        }
+        nextChange=0;
+        for (ECKey current : changes) {
+            Address a = current.toAddress(PARAMS);
+            if (used.contains(a))
+                nextChange++;
+            else
+                break;
+        }
+        isSynced = true;
+
+        Log.i(TAG, "peerGroup.getConnectedPeers()=" + peerGroup.getConnectedPeers());
+        Log.i(TAG, "chain.getBestChainHeight()=" + blockChain.getBestChainHeight());
+        Log.i(TAG, "chainHeadHeightAtBeginning=" + chainHead.getHeight());
+        Log.i(TAG, "bloom matches=" + chainListener.getBloomMatches());
+        Log.i(TAG, "downloaded size=" + downloadListener.getSize() + " bytes");
+        Log.i(TAG, "used address=" + used);
+        Log.i(TAG, "nextMessageId=" + nextMessageId);
+        Log.i(TAG, "nextChange=" + nextChange);
+        Log.i(TAG, "wallet=" + wallet);
+
+        walletObservable.setAll(wallet.getBalance(), WalletObservable.State.SYNCED, getCurrent(), blockChain.getBestChainHeight() );
+    }
+
+
 }

@@ -1,8 +1,13 @@
 package it.eternitywall.eternitywall.fragments;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
@@ -18,6 +23,7 @@ import java.util.Observer;
 
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.R;
+import it.eternitywall.eternitywall.wallet.EWWalletService;
 import it.eternitywall.eternitywall.wallet.WalletObservable;
 
 /**
@@ -77,37 +83,54 @@ public class WalletFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        final FragmentActivity activity = getActivity();
+        if(activity!=null) {
+            final Intent intent = new Intent(activity, EWWalletService.class);
+            activity.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        }
+
     }
+    private final ServiceConnection mConnection = new ServiceConnection() {
 
-    public void serviceConnected() {
-        EWApplication ewApplication = (EWApplication) getActivity().getApplication();
-        final WalletObservable walletObservable = ewApplication.getWalletObservable();
-        walletObservable.addObserver(new Observer() {
-            @Override
-            public void update(Observable observable, Object data) {
-                final FragmentActivity activity = getActivity();
-                if (activity == null)
-                    return;
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (walletObservable.getState() == WalletObservable.State.SYNCED) {
-                            syncedLayout.setVisibility(View.VISIBLE);
-                            syncingLayout.setVisibility(View.GONE);
-                            balanceText.setText(walletObservable.getWalletBalance().toPlainString());
-                            currentAddressText.setText(walletObservable.getCurrent().toString());
+        @Override
+        public void onServiceConnected(final ComponentName className,
+                                       final IBinder service) {
+            EWApplication ewApplication = (EWApplication) getActivity().getApplication();
+            final WalletObservable walletObservable = ewApplication.getWalletObservable();
+            walletObservable.addObserver(new Observer() {
+                @Override
+                public void update(Observable observable, Object data) {
+                    final FragmentActivity activity = getActivity();
+                    if (activity == null)
+                        return;
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (walletObservable.getState() == WalletObservable.State.SYNCED) {
+                                syncedLayout.setVisibility(View.VISIBLE);
+                                syncingLayout.setVisibility(View.GONE);
+                                balanceText.setText(walletObservable.getWalletBalance().toPlainString());
+                                currentAddressText.setText(walletObservable.getCurrent().toString());
 
-                        } else if (walletObservable.getState() == WalletObservable.State.SYNCING) {
-                            syncedLayout.setVisibility(View.GONE);
-                            syncingLayout.setVisibility(View.VISIBLE);
-                            if (walletObservable.getPercSync() != null)
-                                syncingText.setText(String.format("Syncing (%d%%)", walletObservable.getPercSync()));
+                            } else if (walletObservable.getState() == WalletObservable.State.SYNCING) {
+                                syncedLayout.setVisibility(View.GONE);
+                                syncingLayout.setVisibility(View.VISIBLE);
+                                if (walletObservable.getPercSync() != null)
+                                    syncingText.setText(String.format("Syncing (%d%%)", walletObservable.getPercSync()));
+                            }
                         }
-                    }
-                });
-            }
-        });
-    }
+                    });
+                }
+            });
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+
+    };
 
 
 

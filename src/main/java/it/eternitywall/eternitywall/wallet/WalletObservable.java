@@ -19,7 +19,7 @@ public class WalletObservable extends Observable {
 
     public enum State
     {
-        NOT_STARTED, STARTED, NULL_PASSPHRASE, SYNCING, SYNCED
+        NOT_STARTED, STARTED, NULL_PASSPHRASE, SYNCING, DOWNLOADED, SYNCED
     }
 
     public Coin getWalletBalance() {
@@ -38,8 +38,8 @@ public class WalletObservable extends Observable {
 
     public void setState(State state) {
         this.state = state;
-        setChanged();
-        notifyObservers();
+        setChangedAndNotify();
+
     }
 
     public Address getCurrent() {
@@ -48,8 +48,8 @@ public class WalletObservable extends Observable {
 
     public void setCurrent(Address current) {
         this.current = current;
-        setChanged();
-        notifyObservers();
+        setChangedAndNotify();
+
     }
 
     public Integer getHeight() {
@@ -59,22 +59,22 @@ public class WalletObservable extends Observable {
     public void setHeight(Integer height) {
         this.height = height;
         Long now = System.currentTimeMillis();
-        if( heightNotified==null ) {
+        if( heightNotified==null || (now - heightNotified > 1000)  ) { //never notify more than once a second
             heightNotified = now;
-            setChanged();
-            notifyObservers();
-        } else if( now - heightNotified > 1000 ) {  //never notify more than once a second
-            heightNotified = now;
-            setChanged();
-            notifyObservers();
+            setChangedAndNotify();
         }
-
     }
 
-    public void setAll(Coin walletBalance, State state, Address current ) {
+    public void setAll(Coin walletBalance, State state, Address current, Integer height ) {
         this.current= current;
         this.walletBalance = walletBalance;
         this.state =state;
+        this.height = height;
+        setChangedAndNotify();
+
+    }
+
+    private void setChangedAndNotify() {
         setChanged();
         notifyObservers();
     }
@@ -85,8 +85,7 @@ public class WalletObservable extends Observable {
 
     public void setPercSync(Integer percSync) {
         this.percSync = percSync;
-        setChanged();
-        notifyObservers();
+        setChangedAndNotify();
     }
 
     @Override

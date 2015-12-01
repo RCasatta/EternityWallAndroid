@@ -10,13 +10,20 @@ import java.util.Observer;
  */
 public class WalletObserver implements Observer {
     private static final String TAG = "WalletObserver";
+    private EWWalletService ewWalletService;
 
-    public WalletObserver() {
+    public WalletObserver(EWWalletService ewWalletService) {
+        this.ewWalletService = ewWalletService;
     }
 
     @Override
     public void update(Observable observable, Object data) {
         WalletObservable walletObservable= (WalletObservable) observable;
         Log.i(TAG, "" + walletObservable);
+
+        if(walletObservable.getState()== WalletObservable.State.DOWNLOADED) {
+            Log.i(TAG,"calling on sync");
+            ewWalletService.onSynced();
+        }
     }
 }

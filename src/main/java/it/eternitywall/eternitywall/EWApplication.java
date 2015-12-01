@@ -28,7 +28,7 @@ public class EWApplication extends MultiDexApplication {
             final EWBinder binder = (EWBinder) service;
             ewWalletService = binder.ewWalletService;
             walletObservable = binder.walletObservable;
-            walletObservable.addObserver(new WalletObserver() );
+            walletObservable.addObserver(new WalletObserver(ewWalletService) );
 
             Log.i(TAG,".onServiceConnected() " + ewWalletService);
         }
@@ -45,7 +45,6 @@ public class EWApplication extends MultiDexApplication {
         Log.i(TAG, ".onCreate()");
         PRNGFixes.apply();
         final Intent intent = new Intent(this, EWWalletService.class);
-
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         //startService(intent);
     }
