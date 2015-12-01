@@ -1,16 +1,20 @@
 package it.eternitywall.eternitywall.fragments;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import it.eternitywall.eternitywall.IdenticonGenerator;
 import it.eternitywall.eternitywall.R;
@@ -98,6 +102,24 @@ public class CreateFragment extends Fragment {
                 ivIdenticon.setImageBitmap(identicon);
             }
         });
+        ((Button)v.findViewById(R.id.btnConfirm)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // save password
+                final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                final SharedPreferences.Editor edit = sharedPref.edit();
+                edit.putString("passphrase", passphrase);
+                edit.commit();
+                Toast.makeText(getActivity(), "Passphrase saved", Toast.LENGTH_LONG).show();
+
+                FragmentTransaction trans = getFragmentManager().beginTransaction();
+                trans.replace(R.id.root_frame, new WalletFragment());
+                trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                trans.addToBackStack(null);
+                trans.commit();
+            }
+        });
+
 
         newPassphrase();
         etPassword.setText(passphrase);
