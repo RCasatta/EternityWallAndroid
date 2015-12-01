@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.List;
 
 import it.eternitywall.eternitywall.Http;
-import it.eternitywall.eternitywall.MainActivity;
 import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.WriteActivity;
@@ -186,7 +185,7 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
 
             @Override
             protected void onPostExecute(Object o) {
-                if (getActivity().isFinishing())
+                if (getActivity().isFinishing())  //exception will null pointer happened here, checking getActivity is null or use isAdded()????
                     return;
                 super.onPostExecute(o);
                 progress.setVisibility(View.INVISIBLE);

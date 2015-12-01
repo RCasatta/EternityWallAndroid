@@ -1,7 +1,7 @@
 package it.eternitywall.eternitywall.fragments;
 
 import android.app.Activity;
-import android.app.FragmentTransaction;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,9 +13,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import it.eternitywall.eternitywall.IdenticonGenerator;
-import it.eternitywall.eternitywall.MainActivity;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
+import it.eternitywall.eternitywall.wallet.EWDerivation;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -68,6 +68,19 @@ public class CreateFragment extends Fragment {
         }
     }
 
+    private byte[] seed;
+    private String passphrase;
+    private EWDerivation ewDerivation;
+    private String alias;
+    private Bitmap identicon;
+    private void newPassphrase() {
+        seed=Bitcoin.getRandomSeed();
+        passphrase=Bitcoin.getNewMnemonicPassphrase(seed);
+        ewDerivation=new EWDerivation(seed);
+        alias= Bitcoin.keyToStringAddress(ewDerivation.getAlias());
+        identicon=IdenticonGenerator.generate(alias);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -80,16 +93,15 @@ public class CreateFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // generate password & identicon
-                String password=Bitcoin.getNewMnemonicPassphrase();
-                etPassword.setText(password);
-                ivIdenticon.setImageBitmap(IdenticonGenerator.generate(password));
+                newPassphrase();
+                etPassword.setText(passphrase);
+                ivIdenticon.setImageBitmap(identicon);
             }
         });
 
-        // first time
-        String password=Bitcoin.getNewMnemonicPassphrase();
-        etPassword.setText(password);
-        ivIdenticon.setImageBitmap(IdenticonGenerator.generate(password));
+        newPassphrase();
+        etPassword.setText(passphrase);
+        ivIdenticon.setImageBitmap(identicon);
 
         return v;
 
