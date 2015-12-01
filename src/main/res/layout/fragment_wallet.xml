@@ -33,68 +33,84 @@
 
     </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/syncedLayout"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-
-        >
-        <RelativeLayout
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/syncedLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/identicon"
+                    android:layout_width="63dp"
+                    android:layout_height="63dp"
+                    android:src="@drawable/identicon_placeholder"
+                    />
+                <TextView
+                    android:id="@+id/aliasName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="aliasName"
+                    android:layout_toRightOf="@id/identicon"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="16sp"
+
+                    />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+                <TextView
+                    android:id="@+id/balance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:text="Balance"/>
+                <it.eternitywall.eternitywall.components.CurrencyView
+                    android:id="@+id/btcBalance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    blrfl:textSizeSp="16"
+                    blrfl:type="mBTC"
+                    blrfl:units="0"
+                    android:layout_alignParentRight="true"
+                    />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="240dp"
+                android:layout_height="240dp"
+                android:layout_gravity="center"
+                >
             <ImageView
-                android:id="@+id/identicon"
-                android:layout_width="63dp"
-                android:layout_height="63dp"
-                android:src="@drawable/identicon_placeholder"
+                android:id="@+id/currentQrCode"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/qrcode_placeholder"
+                android:padding="40dp"
+                android:gravity="center"
                 />
+            </RelativeLayout>
+
             <TextView
-                android:id="@+id/aliasName"
-                android:layout_width="wrap_content"
+                android:id="@+id/currentAddress"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="aliasName"
-                android:layout_toRightOf="@id/identicon"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="10dp"
+                android:gravity="center"
                 android:textSize="16sp"
+                android:text="currentAddress"/>
 
-                />
-        </RelativeLayout>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
-            <TextView
-                android:id="@+id/balance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:text="Balance"/>
-            <it.eternitywall.eternitywall.components.CurrencyView
-                android:id="@+id/btcBalance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                blrfl:textSizeSp="16"
-                blrfl:type="mBTC"
-                blrfl:units="0"
-                android:layout_alignParentRight="true"
-                />
-
-        </RelativeLayout>
-        <TextView
-            android:id="@+id/currentAddress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:textSize="16sp"
-            android:text="currentAddress"/>
-        <ImageView
-            android:id="@+id/currentQrCode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
+        </LinearLayout>
+    </ScrollView>
 </FrameLayout>

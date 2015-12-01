@@ -1,5 +1,7 @@
 package it.eternitywall.eternitywall.wallet;
 
+import android.graphics.Bitmap;
+
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
 
@@ -14,7 +16,13 @@ public class WalletObservable extends Observable {
     private Address current;
     private Integer height;
     private Integer percSync;
+    private String alias;
+    private String aliasName;
+    private Bitmap currentQrCode;
+    private Bitmap currentIdenticon;
 
+    private String currentQrCodeSource;     //which data has been used to create the qrcode bitmap
+    private String currentIdenticonSource;  //which data has been used to create the identicon bitmap
     private Long heightNotified;
 
     public enum State
@@ -28,8 +36,8 @@ public class WalletObservable extends Observable {
 
     public void setWalletBalance(Coin walletBalance) {
         this.walletBalance = walletBalance;
-        setChanged();
-        notifyObservers();
+        setChangedAndNotify();
+
     }
 
     public State getState() {
@@ -71,7 +79,6 @@ public class WalletObservable extends Observable {
         this.state =state;
         this.height = height;
         setChangedAndNotify();
-
     }
 
     private void setChangedAndNotify() {
@@ -88,13 +95,64 @@ public class WalletObservable extends Observable {
         setChangedAndNotify();
     }
 
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
+        setChangedAndNotify();
+    }
+
+    public String getAliasName() {
+        return aliasName;
+    }
+
+    public void setAliasName(String aliasName) {
+        this.aliasName = aliasName;
+        setChangedAndNotify();
+    }
+
+    public String getCurrentQrCodeSource() {
+        return currentQrCodeSource;
+    }
+
+    public Bitmap getCurrentIdenticon() {
+        return currentIdenticon;
+    }
+
+    public void setCurrentIdenticon(Bitmap currentIdenticon, String currentIdenticonSource) {
+        this.currentIdenticon = currentIdenticon;
+        this.currentIdenticonSource = currentIdenticonSource;
+        setChangedAndNotify();
+    }
+
+    public String getCurrentIdenticonSource() {
+        return currentIdenticonSource;
+    }
+
+    public Bitmap getCurrentQrCode() {
+        return currentQrCode;
+    }
+
+    public void setCurrentQrCode(Bitmap currentQrCode, String currentQrCodeSource) {
+        this.currentQrCode = currentQrCode;
+        this.currentQrCodeSource = currentQrCodeSource;
+        setChangedAndNotify();
+    }
+
     @Override
     public String toString() {
         return "WalletObservable{" +
-                "current=" + current +
+                "alias='" + alias + '\'' +
                 ", walletBalance=" + walletBalance +
                 ", state=" + state +
+                ", current=" + current +
                 ", height=" + height +
+                ", percSync=" + percSync +
+                ", aliasName='" + aliasName + '\'' +
+                ", currentQrCodeSource='" + currentQrCodeSource + '\'' +
+                ", currentIdenticonSource='" + currentIdenticonSource + '\'' +
                 '}';
     }
 }

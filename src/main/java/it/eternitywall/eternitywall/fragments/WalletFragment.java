@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -47,7 +48,9 @@ public class WalletFragment extends Fragment {
     private TextView balanceText;
     private TextView currentAddressText;
     private ImageView currentQrCode;
+    private ImageView identicon;
     private CurrencyView btcBalance;
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -115,15 +118,19 @@ public class WalletFragment extends Fragment {
                         @Override
                         public void run() {
                             if (walletObservable.getState() == WalletObservable.State.SYNCED) {
+                                Log.i(TAG, android.os.Process.myTid() + " TID UI : Refreshing wallet fragment");
                                 final Coin walletBalance = walletObservable.getWalletBalance();
                                 final String units = String.valueOf(walletBalance.getValue());
-                                Log.i(TAG, "Setting balance to " + units + " satoshis");
+                                final Bitmap QrCodeBitmap = walletObservable.getCurrentQrCode();
+                                final Bitmap IdenticonBitmap = walletObservable.getCurrentIdenticon();
+
                                 syncedLayout.setVisibility(View.VISIBLE);
                                 syncingLayout.setVisibility(View.GONE);
                                 currentAddressText.setText(walletObservable.getCurrent().toString());
-
                                 btcBalance.setUnits(units);
                                 btcBalance.refreshUI();
+                                if(QrCodeBitmap!=null) currentQrCode.setImageBitmap(QrCodeBitmap);
+                                if(IdenticonBitmap!=null) identicon.setImageBitmap(IdenticonBitmap);
 
                             } else if (walletObservable.getState() == WalletObservable.State.SYNCING) {
                                 syncedLayout.setVisibility(View.GONE);
@@ -158,6 +165,7 @@ public class WalletFragment extends Fragment {
         balanceText = (TextView) view.findViewById(R.id.balance);
         currentAddressText = (TextView) view.findViewById(R.id.currentAddress);
         currentQrCode = (ImageView) view.findViewById(R.id.currentQrCode);
+        identicon = (ImageView) view.findViewById(R.id.identicon);
         btcBalance = (CurrencyView) view.findViewById(R.id.btcBalance);
 
         return view;

@@ -236,6 +236,8 @@ public class EWWalletService extends Service implements Runnable {
             }
             final byte[] seed = Bitcoin.getEntropyFromPassphrase(passphrase);
             final EWDerivation ewDerivation = new EWDerivation(seed);
+            final String alias = Bitcoin.keyToStringAddress( ewDerivation.getAlias() );
+            walletObservable.setAlias(alias);
             File path;
             if(context!=null)
                 path= context.getDir(BITCOIN_PATH, Context.MODE_PRIVATE);
