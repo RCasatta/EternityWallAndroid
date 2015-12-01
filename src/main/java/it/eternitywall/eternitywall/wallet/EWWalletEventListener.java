@@ -22,11 +22,14 @@ public class EWWalletEventListener implements WalletEventListener {
     @Override
     public void onCoinsReceived(Wallet wallet, Transaction tx, Coin prevBalance, Coin newBalance) {
         walletObservable.setWalletBalance(wallet.getBalance());
+        walletObservable.notifyObservers();
+
     }
 
     @Override
     public void onCoinsSent(Wallet wallet, Transaction tx, Coin prevBalance, Coin newBalance) {
         walletObservable.setWalletBalance(wallet.getBalance());
+        walletObservable.notifyObservers();
     }
 
     @Override

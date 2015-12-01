@@ -7,8 +7,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.IBinder;
+import android.os.*;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -106,49 +105,57 @@ public class WalletFragment extends Fragment {
         @Override
         public void onServiceConnected(final ComponentName className,
                                        final IBinder service) {
+            Log.i(TAG,".onServiceConnected()");
             EWApplication ewApplication = (EWApplication) getActivity().getApplication();
-            final WalletObservable walletObservable = ewApplication.getWalletObservable();
-            walletObservable.addObserver(new Observer() {
-                @Override
-                public void update(Observable observable, Object data) {
-                    final FragmentActivity activity = getActivity();
-                    if (activity == null)
-                        return;
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (walletObservable.getState() == WalletObservable.State.SYNCED) {
-                                Log.i(TAG, android.os.Process.myTid() + " TID UI : Refreshing wallet fragment");
-                                final Coin walletBalance = walletObservable.getWalletBalance();
-                                final String units = String.valueOf(walletBalance.getValue());
-                                final Bitmap QrCodeBitmap = walletObservable.getCurrentQrCode();
-                                final Bitmap IdenticonBitmap = walletObservable.getCurrentIdenticon();
-
-                                syncedLayout.setVisibility(View.VISIBLE);
-                                syncingLayout.setVisibility(View.GONE);
-                                currentAddressText.setText(walletObservable.getCurrent().toString());
-                                btcBalance.setUnits(units);
-                                btcBalance.refreshUI();
-                                if(QrCodeBitmap!=null) currentQrCode.setImageBitmap(QrCodeBitmap);
-                                if(IdenticonBitmap!=null) identicon.setImageBitmap(IdenticonBitmap);
-
-                            } else if (walletObservable.getState() == WalletObservable.State.SYNCING) {
-                                syncedLayout.setVisibility(View.GONE);
-                                syncingLayout.setVisibility(View.VISIBLE);
-                                if (walletObservable.getPercSync() != null)
-                                    syncingText.setText(String.format("Syncing (%d%%)", walletObservable.getPercSync()));
-                            }
-                        }
-                    });
-                }
-            });
+            walletObservable = ewApplication.getWalletObservable();
+            walletObservable.addObserver(updateUI);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-
+            Log.i(TAG,".onServiceDisconnected()");
+            walletObservable.deleteObserver(updateUI);
         }
 
+    };
+
+    private WalletObservable walletObservable;
+    private Observer updateUI = new Observer() {
+        @Override
+        public void update(Observable observable, Object data) {
+            Log.i(TAG, "update");
+            final FragmentActivity activity = getActivity();
+            if (activity == null)
+                return;
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.i(TAG, android.os.Process.myTid() + " TID UI : Refreshing wallet fragment");
+                    if (walletObservable.getState() == WalletObservable.State.SYNCED) {
+                        final Coin walletBalance = walletObservable.getWalletBalance();
+                        final String units = String.valueOf(walletBalance.getValue());
+                        final Bitmap QrCodeBitmap = walletObservable.getCurrentQrCode();
+                        final Bitmap IdenticonBitmap = walletObservable.getCurrentIdenticon();
+
+                        syncedLayout.setVisibility(View.VISIBLE);
+                        syncingLayout.setVisibility(View.GONE);
+                        currentAddressText.setText(walletObservable.getCurrent().toString());
+                        btcBalance.setUnits(units);
+                        btcBalance.refreshUI();
+                        if (QrCodeBitmap != null)
+                            currentQrCode.setImageBitmap(QrCodeBitmap);
+                        if (IdenticonBitmap != null)
+                            identicon.setImageBitmap(IdenticonBitmap);
+
+                    } else if (walletObservable.getState() == WalletObservable.State.SYNCING) {
+                        syncedLayout.setVisibility(View.GONE);
+                        syncingLayout.setVisibility(View.VISIBLE);
+                        if (walletObservable.getPercSync() != null)
+                            syncingText.setText(String.format("Syncing (%d%%)", walletObservable.getPercSync()));
+                    }
+                }
+            });
+        }
     };
 
 

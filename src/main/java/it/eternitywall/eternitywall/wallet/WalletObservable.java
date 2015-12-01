@@ -14,8 +14,8 @@ public class WalletObservable extends Observable {
     private Coin walletBalance = Coin.ZERO;
     private State state= State.NOT_STARTED;
     private Address current;
-    private Integer height;
     private Integer percSync;
+    private Integer height;
     private String alias;
     private String aliasName;
     private Bitmap currentQrCode;
@@ -23,76 +23,10 @@ public class WalletObservable extends Observable {
 
     private String currentQrCodeSource;     //which data has been used to create the qrcode bitmap
     private String currentIdenticonSource;  //which data has been used to create the identicon bitmap
-    private Long heightNotified;
 
     public enum State
     {
         NOT_STARTED, STARTED, NULL_PASSPHRASE, SYNCING, DOWNLOADED, SYNCED
-    }
-
-    public Coin getWalletBalance() {
-        return walletBalance;
-    }
-
-    public void setWalletBalance(Coin walletBalance) {
-        this.walletBalance = walletBalance;
-        setChangedAndNotify();
-
-    }
-
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State state) {
-        this.state = state;
-        setChangedAndNotify();
-
-    }
-
-    public Address getCurrent() {
-        return current;
-    }
-
-    public void setCurrent(Address current) {
-        this.current = current;
-        setChangedAndNotify();
-
-    }
-
-    public Integer getHeight() {
-        return height;
-    }
-
-    public void setHeight(Integer height) {
-        this.height = height;
-        Long now = System.currentTimeMillis();
-        if( heightNotified==null || (now - heightNotified > 1000)  ) { //never notify more than once a second
-            heightNotified = now;
-            setChangedAndNotify();
-        }
-    }
-
-    public void setAll(Coin walletBalance, State state, Address current, Integer height ) {
-        this.current= current;
-        this.walletBalance = walletBalance;
-        this.state =state;
-        this.height = height;
-        setChangedAndNotify();
-    }
-
-    private void setChangedAndNotify() {
-        setChanged();
-        notifyObservers();
-    }
-
-    public Integer getPercSync() {
-        return percSync;
-    }
-
-    public void setPercSync(Integer percSync) {
-        this.percSync = percSync;
-        setChangedAndNotify();
     }
 
     public String getAlias() {
@@ -101,7 +35,7 @@ public class WalletObservable extends Observable {
 
     public void setAlias(String alias) {
         this.alias = alias;
-        setChangedAndNotify();
+        setChanged();
     }
 
     public String getAliasName() {
@@ -110,35 +44,88 @@ public class WalletObservable extends Observable {
 
     public void setAliasName(String aliasName) {
         this.aliasName = aliasName;
-        setChangedAndNotify();
+        setChanged();
     }
 
-    public String getCurrentQrCodeSource() {
-        return currentQrCodeSource;
+    public Address getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(Address current) {
+        this.current = current;
+        setChanged();
     }
 
     public Bitmap getCurrentIdenticon() {
         return currentIdenticon;
     }
 
-    public void setCurrentIdenticon(Bitmap currentIdenticon, String currentIdenticonSource) {
+    public void setCurrentIdenticon(Bitmap currentIdenticon) {
         this.currentIdenticon = currentIdenticon;
-        this.currentIdenticonSource = currentIdenticonSource;
-        setChangedAndNotify();
+        setChanged();
     }
 
     public String getCurrentIdenticonSource() {
         return currentIdenticonSource;
     }
 
+    public void setCurrentIdenticonSource(String currentIdenticonSource) {
+        this.currentIdenticonSource = currentIdenticonSource;
+        setChanged();
+    }
+
     public Bitmap getCurrentQrCode() {
         return currentQrCode;
     }
 
-    public void setCurrentQrCode(Bitmap currentQrCode, String currentQrCodeSource) {
+    public void setCurrentQrCode(Bitmap currentQrCode) {
         this.currentQrCode = currentQrCode;
+        setChanged();
+    }
+
+    public String getCurrentQrCodeSource() {
+        return currentQrCodeSource;
+    }
+
+    public void setCurrentQrCodeSource(String currentQrCodeSource) {
         this.currentQrCodeSource = currentQrCodeSource;
-        setChangedAndNotify();
+        setChanged();
+    }
+
+    public Integer getPercSync() {
+        return percSync;
+    }
+
+    public void setPercSync(Integer percSync) {
+        this.percSync = percSync;
+        setChanged();
+    }
+
+    public Integer getHeight() {
+        return height;
+    }
+
+    public void setHeight(Integer height) {
+        this.height = height;
+        setChanged();
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+        setChanged();
+    }
+
+    public Coin getWalletBalance() {
+        return walletBalance;
+    }
+
+    public void setWalletBalance(Coin walletBalance) {
+        this.walletBalance = walletBalance;
+        setChanged();
     }
 
     @Override
@@ -148,7 +135,6 @@ public class WalletObservable extends Observable {
                 ", walletBalance=" + walletBalance +
                 ", state=" + state +
                 ", current=" + current +
-                ", height=" + height +
                 ", percSync=" + percSync +
                 ", aliasName='" + aliasName + '\'' +
                 ", currentQrCodeSource='" + currentQrCodeSource + '\'' +

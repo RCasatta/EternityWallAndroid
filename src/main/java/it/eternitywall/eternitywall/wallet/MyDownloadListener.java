@@ -1,5 +1,7 @@
 package it.eternitywall.eternitywall.wallet;
 
+import android.util.Log;
+
 import org.bitcoinj.core.Block;
 import org.bitcoinj.core.DownloadProgressTracker;
 import org.bitcoinj.core.FilteredBlock;
@@ -12,6 +14,8 @@ import java.util.Set;
  * Created by Riccardo Casatta @RCasatta on 26/11/15.
  */
 public class MyDownloadListener extends DownloadProgressTracker {
+    private static final String TAG = "DownloadProgressTracker";
+
     private int size=0;
     private long end;
     private long start;
@@ -27,13 +31,14 @@ public class MyDownloadListener extends DownloadProgressTracker {
     @Override
     public void onChainDownloadStarted(Peer peer, int blocksLeft) {
         super.onChainDownloadStarted(peer, blocksLeft);
+        start= System.currentTimeMillis();
 
-        System.out.println("onChainDownloadStarted blocksLeft=" + blocksLeft);
+        Log.i(TAG, "onChainDownloadStarted blocksLeft=" + blocksLeft);
 
         if (originalBlocksLeft == -1)
             originalBlocksLeft = blocksLeft;
-        if(blocksLeft==0)
-            doneDownload();
+        /*if(blocksLeft==0)
+            doneDownload();*/
     }
 
     @Override
@@ -45,10 +50,13 @@ public class MyDownloadListener extends DownloadProgressTracker {
 
     @Override
     protected void doneDownload() {
-        super.doneDownload();
         end= System.currentTimeMillis();
-        System.out.println("Done download, it tooks " + (end - start));
-        walletObservable.setState(WalletObservable.State.DOWNLOADED);
+        Log.i(TAG,"Done download, it tooks " + (end - start));
+        if(walletObservable.getState()!=WalletObservable.State.DOWNLOADED && walletObservable.getState()!= WalletObservable.State.SYNCED) {
+            Log.i(TAG, "Setting to DOWNLOADED");
+            walletObservable.setState(WalletObservable.State.DOWNLOADED);
+            walletObservable.notifyObservers();
+        }
 
     }
 
@@ -66,6 +74,7 @@ public class MyDownloadListener extends DownloadProgressTracker {
         if ((int) pct != lastPercent) {
             lastPercent = (int) pct;
             walletObservable.setPercSync(lastPercent);
+            walletObservable.notifyObservers();
         }
     }
 

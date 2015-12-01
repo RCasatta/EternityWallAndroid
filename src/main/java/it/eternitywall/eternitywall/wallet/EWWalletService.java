@@ -72,6 +72,10 @@ public class EWWalletService extends Service implements Runnable {
     private Wallet wallet;
     private boolean isSynced = false;
 
+    private Address getAlias() {  //watch observable
+        return changes.get( 0 ).toAddress(PARAMS);
+    }
+
     private Address getCurrent() {  //watch observable
         if(!isSynced && nextChange==0)
             return null;
@@ -225,6 +229,8 @@ public class EWWalletService extends Service implements Runnable {
     public void run() {
         try {
             walletObservable.setState(WalletObservable.State.STARTED);
+            walletObservable.notifyObservers();
+
             Log.i(TAG,".run()");
             final Context context = getApplicationContext();
             final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -232,12 +238,15 @@ public class EWWalletService extends Service implements Runnable {
             if(passphrase==null) {
                 Log.i(TAG,"PassphraseIsNull, cannot sync");
                 walletObservable.setState(WalletObservable.State.NULL_PASSPHRASE);
+                walletObservable.notifyObservers();
                 return;
             }
             final byte[] seed = Bitcoin.getEntropyFromPassphrase(passphrase);
             final EWDerivation ewDerivation = new EWDerivation(seed);
             final String alias = Bitcoin.keyToStringAddress( ewDerivation.getAlias() );
             walletObservable.setAlias(alias);
+            walletObservable.notifyObservers();
+
             File path;
             if(context!=null)
                 path= context.getDir(BITCOIN_PATH, Context.MODE_PRIVATE);
@@ -300,6 +309,7 @@ public class EWWalletService extends Service implements Runnable {
             downloadListener = new MyDownloadListener(walletObservable);
             peerGroup.startAsync();
             walletObservable.setState(WalletObservable.State.SYNCING);
+            walletObservable.notifyObservers();
 
             Log.i(TAG, "starting download");
             peerGroup.startBlockChainDownload(downloadListener);
@@ -363,9 +373,20 @@ public class EWWalletService extends Service implements Runnable {
         Log.i(TAG, "used address=" + used);
         Log.i(TAG, "nextMessageId=" + nextMessageId);
         Log.i(TAG, "nextChange=" + nextChange);
-        Log.i(TAG, "wallet=" + wallet);
 
-        walletObservable.setAll(wallet.getBalance(), WalletObservable.State.SYNCED, getCurrent(), blockChain.getBestChainHeight() );
+        //Log.i(TAG, "wallet=" + wallet);
+        walletObservable.setState(WalletObservable.State.SYNCED);
+        Log.i(TAG, "Changed state");
+        walletObservable.setWalletBalance(wallet.getBalance());
+        Log.i(TAG, "Changed wallet balance");
+        final Address current = nextChange==0 ? getAlias() : getCurrent();
+        walletObservable.setCurrent(current);
+        Log.i(TAG, "Changed current");
+
+        Log.i(TAG, "Notifying");
+        walletObservable.notifyObservers();
+        Log.i(TAG, "Ending...");
+
     }
 
 

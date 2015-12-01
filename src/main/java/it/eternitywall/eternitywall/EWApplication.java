@@ -20,22 +20,26 @@ public class EWApplication extends MultiDexApplication {
     private static final String TAG = "EWApplication";
     private EWWalletService ewWalletService;
     private WalletObservable walletObservable;
+    private WalletObserver walletObserver;
     private final ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(final ComponentName className,
                                        final IBinder service) {
+            Log.i(TAG,".onServiceConnected()");
+
             final EWBinder binder = (EWBinder) service;
             ewWalletService = binder.ewWalletService;
             walletObservable = binder.walletObservable;
-            walletObservable.addObserver(new WalletObserver(ewWalletService) );
+            walletObserver = new WalletObserver(ewWalletService);
+            walletObservable.addObserver(walletObserver);
 
-            Log.i(TAG,".onServiceConnected() " + ewWalletService);
         }
 
         @Override
         public void onServiceDisconnected(final ComponentName arg0) {
             Log.i(TAG,".onServiceDisconnected()");
+            walletObservable.deleteObserver(walletObserver);
         }
     };
 

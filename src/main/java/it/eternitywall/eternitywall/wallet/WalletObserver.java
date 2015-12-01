@@ -16,6 +16,7 @@ import it.eternitywall.eternitywall.IdenticonGenerator;
 public class WalletObserver implements Observer {
     private static final String TAG = "WalletObserver";
     private EWWalletService ewWalletService;
+    private WalletObservable.State was;
 
     public WalletObserver(EWWalletService ewWalletService) {
         this.ewWalletService = ewWalletService;
@@ -23,28 +24,36 @@ public class WalletObserver implements Observer {
 
     @Override
     public void update(Observable observable, Object data) {
-        WalletObservable walletObservable= (WalletObservable) observable;
-        Log.i(TAG, android.os.Process.myTid() + " TID :" + walletObservable);
+        final WalletObservable walletObservable= (WalletObservable) observable;
+        Log.i(TAG, android.os.Process.myTid() + " TID :" + walletObservable+ " was: " + was);
 
-        if(walletObservable.getState()== WalletObservable.State.DOWNLOADED) {
+        final WalletObservable.State currentState = walletObservable.getState();
+        if(was==WalletObservable.State.SYNCING && currentState == WalletObservable.State.DOWNLOADED) {
             Log.i(TAG,"calling on sync");
+            was= currentState;
             ewWalletService.onSynced();
+        } else if(currentState == WalletObservable.State.SYNCED) {
+            final String alias = walletObservable.getAlias();
+            if (alias != null && !alias.equals(walletObservable.getCurrentIdenticonSource())) {
+                Log.i(TAG, "CreateOrRefreshingIdenticon");
+                Bitmap identicon = IdenticonGenerator.generate(alias);
+                walletObservable.setCurrentIdenticon(identicon);
+                walletObservable.setCurrentIdenticonSource(alias);
+                walletObservable.notifyObservers();
+            }
+
+            final Address currentAddress = walletObservable.getCurrent();
+            if (currentAddress != null && !currentAddress.toString().equals(walletObservable.getCurrentQrCodeSource())) {
+                Log.i(TAG, "CreateOrRefreshingQrcode");
+                final String current = currentAddress.toString();
+                Bitmap bitmap = QrBitmap.toBitmap(current);
+                walletObservable.setCurrentQrCode(bitmap);
+                walletObservable.setCurrentQrCodeSource(current);
+                walletObservable.notifyObservers();
+            }
         }
 
-        final String alias = walletObservable.getAlias();
-        if(alias!=null && !alias.equals(walletObservable.getCurrentIdenticonSource())) {
-            Log.i(TAG,"CreateOrRefreshingIdenticon");
-            Bitmap identicon = IdenticonGenerator.generate(alias);
-            walletObservable.setCurrentIdenticon(identicon,alias);
-        }
-
-        final Address currentAddress = walletObservable.getCurrent();
-        if(currentAddress!=null && !currentAddress.toString().equals(walletObservable.getCurrentQrCodeSource())) {
-            Log.i(TAG, "CreateOrRefreshingIdenticon");
-            final String current = currentAddress.toString();
-            Bitmap bitmap = QrBitmap.toBitmap(current);
-            walletObservable.setCurrentQrCode(bitmap, current);
-        }
+        was= currentState;
 
     }
 }

@@ -12,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:visibility="gone"
         >
         <ProgressBar
             android:id="@+id/loadingBar"
@@ -28,6 +27,7 @@
             android:layout_below="@id/loadingBar"
             android:layout_centerHorizontal="true"
             android:textSize="20sp"
+            android:layout_marginTop="10dp"
             android:text="Syncing"/>
 
 
@@ -61,6 +61,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
                     android:textSize="16sp"
+
 
                     />
             </RelativeLayout>
