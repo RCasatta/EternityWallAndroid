@@ -16,12 +16,13 @@
             android:layout_height="match_parent"
             android:padding="@dimen/activity_horizontal_margin">
 
-            <EditText
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/etPassword"
                 android:textStyle="bold|italic"
-                style="@style/EditText"
+                android:textSize="20sp"
+                android:lines="3"
                 android:layout_gravity="center" />
 
             <ImageView
@@ -34,28 +35,58 @@
                 android:layout_marginTop="@dimen/activity_vertical_margin" />
 
             <TextView
-                android:text="Usa questo PIN per visualizzare la passphrase delle preferenze"
+                android:text="Use this PIN to view your passphrase from preference settings and confirm sending messages."
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:id="@+id/txtDisclaimer2"
                 android:layout_below="@+id/txtDisclaimer"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/activity_vertical_margin" />
 
-            <EditText
-                android:layout_width="wrap_content"
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:ems="10"
-                android:id="@+id/editText"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:gravity="center"
-                android:hint="PIN"
-                android:layout_below="@+id/txtDisclaimer2"
-                style="@style/EditText"
-                android:layout_gravity="center" />
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                >
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/inputLayoutPassword"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+                    <EditText
+                        android:id="@+id/pin"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="PIN"
+                        android:inputType="numberPassword"
+                        android:password="true"
+                        android:textSize="18sp"
+                        style="@style/EditText" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/input_layout_password"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+                    <EditText
+                        android:id="@+id/confirmPin"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Confirm PIN"
+                        android:inputType="numberPassword"
+                        android:password="true"
+                        android:textSize="18sp"
+                        style="@style/EditText" />
+                </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -72,12 +103,7 @@
                     android:text="@string/btn_refresh"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:drawablePadding="@dimen/padding_small"
-                    android:drawableLeft="@android:drawable/ic_menu_rotate"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
+                    android:textColor="@color/alphaText"
                     android:layout_marginRight="@dimen/activity_horizontal_margin" />
 
                 <Button
@@ -85,22 +111,16 @@
                     android:text="@string/btn_confirm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:drawablePadding="@dimen/padding_small"
-                    android:drawableLeft="@android:drawable/ic_media_play"
-                    android:layout_alignParentTop="true"
-                    android:layout_toRightOf="@+id/btnRefresh"
-                    android:layout_toEndOf="@+id/btnRefresh"
+                    android:textColor="@color/alphaText"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin" />
             </LinearLayout>
 
             <TextView
-                android:text="Il tuo account può essere registrato unicamente tramite passphare.\nAccertati di salvarla prima di procedere. Per motivi di sicurezza, EternityWall non memorizza la passphrase sul server."
+                android:text="Your account can only be restored using the above passphrase. Make sure you save it before proceeding. For safety reasons, the passphrase is stored only on your device and not on the servers. If you loose it without backup, is not recoverable."
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/txtDisclaimer"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:gravity="center"
                 android:layout_below="@+id/etPassword" />
         </LinearLayout>
     </ScrollView>

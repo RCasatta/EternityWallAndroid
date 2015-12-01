@@ -34,4 +34,7 @@
         <color name="secondaryText">#727272</color>
         <color name="icons">#000000</color>
         <color name="divider">#B6B6B6</color>
-    </resources>
+
+        <color name="alphaText">#b3ffffff</color>
+
+</resources>

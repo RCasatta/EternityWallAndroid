@@ -50,7 +50,6 @@
             android:layout_marginTop="8dp">
 
             <Button
-                style="@style/buttonStyle"
                 android:id="@+id/btnShare"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -64,7 +63,6 @@
                 android:layout_marginBottom="2dp" />
 
             <Button
-                style="@style/buttonStyle"
                 android:id="@+id/btnProof"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -76,7 +74,6 @@
                 android:layout_margin="2dp" />
 
             <Button
-                style="@style/buttonStyle"
                 android:id="@+id/btnRanking"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -88,7 +85,6 @@
                 android:layout_margin="2dp" />
 
             <Button
-                style="@style/buttonStyle"
                 android:id="@+id/btnTranslate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -101,7 +97,6 @@
                 android:layout_margin="2dp" />
 
             <Button
-                style="@style/buttonStyle"
                 android:id="@+id/btnLikes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -113,7 +108,6 @@
                 android:layout_margin="2dp" />
 
             <Button
-                style="@style/buttonStyle"
                 android:id="@+id/btnReply"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

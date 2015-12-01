@@ -8,14 +8,17 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.IdenticonGenerator;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
@@ -90,10 +93,13 @@ public class CreateFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v= inflater.inflate(R.layout.fragment_create, container, false);
-        final EditText etPassword = (EditText) v.findViewById(R.id.etPassword);
+        final TextView etPassword = (TextView) v.findViewById(R.id.etPassword);
         final ImageView ivIdenticon = (ImageView) v.findViewById(R.id.ivIdenticon);
 
-        ((Button)v.findViewById(R.id.btnRefresh)).setOnClickListener(new View.OnClickListener() {
+        final EditText confirmPin = (EditText) v.findViewById(R.id.confirmPin);
+        final EditText pin = (EditText) v.findViewById(R.id.pin);
+
+        ((Button) v.findViewById(R.id.btnRefresh)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // generate password & identicon
@@ -106,6 +112,18 @@ public class CreateFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // save password
+                final Editable pinText = pin.getText();
+                final Editable confirmPinText = confirmPin.getText();
+                if( pinText.toString().isEmpty() || confirmPinText.toString().isEmpty()  ) {
+                    Toast.makeText(getActivity(), "All inputs are required", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                if(  !pinText.toString().equals(confirmPinText.toString()) ) {
+                    Toast.makeText(getActivity(), "PIN are not the same", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
                 final SharedPreferences.Editor edit = sharedPref.edit();
                 edit.putString("passphrase", passphrase);
@@ -117,6 +135,8 @@ public class CreateFragment extends Fragment {
                 trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 trans.addToBackStack(null);
                 trans.commit();
+
+                launchService();
             }
         });
 
@@ -127,6 +147,11 @@ public class CreateFragment extends Fragment {
 
         return v;
 
+    }
+
+    private void launchService() {
+        EWApplication ewApplication = (EWApplication) getActivity().getApplication();
+        ewApplication.getEwWalletService().startSync();
     }
 
     // TODO: Rename method, update argument and hook method into UI event

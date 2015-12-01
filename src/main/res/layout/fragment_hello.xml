@@ -35,13 +35,15 @@
         <TextView
             android:text="@string/account_fragment_subtitle"
             style="@android:style/TextAppearance.Small"
+            android:layout_marginTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
             android:gravity="center"
-            android:textColor="@color/primaryText"/>
+            android:textColor="@color/secondaryText"/>
 
         <LinearLayout
-            android:layout_marginTop="@dimen/padding_high"
+            android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -49,31 +51,21 @@
             android:gravity="center_horizontal">
 
             <Button
-                android:id="@+id/btnRecover"
-                android:text="@string/btn_recover"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:drawablePadding="@dimen/padding_small"
-                android:drawableLeft="@android:drawable/ic_menu_help"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginRight="@dimen/activity_horizontal_margin" />
-
-            <Button
                 android:id="@+id/btnCreate"
                 android:text="@string/btn_create"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:drawablePadding="@dimen/padding_small"
-                android:drawableLeft="@android:drawable/ic_media_play"
-                android:layout_alignParentTop="true"
-                android:layout_toRightOf="@+id/btnRecover"
-                android:layout_toEndOf="@+id/btnRecover"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:elegantTextHeight="false" />
+                android:textColor="@color/alphaText"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                />
+
+            <Button
+                android:id="@+id/btnRecover"
+                android:text="@string/btn_recover"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/alphaText"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin" />
 
         </LinearLayout>
 

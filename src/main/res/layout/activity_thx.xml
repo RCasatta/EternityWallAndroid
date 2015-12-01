@@ -43,14 +43,12 @@
             android:layout_height="wrap_content">
 
             <Button
-                style="@style/buttonStyle"
                 android:id="@+id/btnNotify"
                 android:text="@string/btn_notify"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:drawablePadding="@dimen/padding_small"
-                android:drawableLeft="@drawable/ic_email_white_24dp"
+                android:textColor="@color/alphaText"
                 android:layout_centerInParent="true"/>
 
         </RelativeLayout>

@@ -35,8 +35,8 @@
     <string name="list_fragment">&#xf015;</string>
 
 
-    <string name="account_fragment_title">Hello EternityWall</string>
-    <string name="account_fragment_subtitle">Sign your account and start to write</string>
+    <string name="account_fragment_title">Welcome to Eternity Wall</string>
+    <string name="account_fragment_subtitle">Create or recover your account</string>
 
     <string name="btn_recover">Recover</string>
     <string name="btn_create">Create</string>

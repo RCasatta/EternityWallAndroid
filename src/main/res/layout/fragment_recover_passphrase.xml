@@ -43,62 +43,59 @@
                     style="@style/EditText" />
             </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/inputLayoutPassword"
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
+                android:orientation="horizontal"
                 android:layout_marginTop="10dp"
-
                 >
-                <EditText
-                    android:id="@+id/pin"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="PIN"
-                    android:inputType="numberPassword"
-                    android:gravity="center"
-                    android:password="true"
-                    android:textSize="18sp"
-                    style="@style/EditText" />
-            </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_layout_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:layout_marginTop="10dp"
-
-                style="@style/EditText">
-                <EditText
-                    android:id="@+id/confirmPin"
-                    android:layout_width="fill_parent"
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/inputLayoutPassword"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Confirm PIN"
-                    android:inputType="numberPassword"
-                    android:gravity="center"
-                    android:password="true"
-                    android:textSize="18sp"
-                    style="@style/EditText" />
-            </android.support.design.widget.TextInputLayout>
+                    >
+                    <EditText
+                        android:id="@+id/pin"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="PIN"
+                        android:inputType="numberPassword"
+                        android:password="true"
+                        android:textSize="18sp"
+                        style="@style/EditText" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/input_layout_password"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+                    <EditText
+                        android:id="@+id/confirmPin"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Confirm PIN"
+                        android:inputType="numberPassword"
+                        android:password="true"
+                        android:textSize="18sp"
+                        style="@style/EditText" />
+                </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
 
             <Button
                 android:id="@+id/savePassphrase"
-                android:text="Confirm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical|center_horizontal"
-                android:drawablePadding="@dimen/padding_small"
-                android:drawableLeft="@android:drawable/ic_media_play"
-                android:layout_alignParentTop="true"
-                android:layout_toRightOf="@+id/btnRecover"
-                android:layout_toEndOf="@+id/btnRecover"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:elegantTextHeight="false"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:text="Confirm"
+                android:textColor="@color/alphaText"
+                />
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

@@ -44,7 +44,6 @@
             android:layout_centerInParent="true"/>
 
         <Button
-            style="@style/buttonStyle"
             android:id="@+id/btnSend"
             android:text="@string/save"
             android:layout_width="wrap_content"
