@@ -136,6 +136,7 @@ public class WalletObservable extends Observable {
                 ", state=" + state +
                 ", current=" + current +
                 ", percSync=" + percSync +
+                ", height=" + height +
                 ", aliasName='" + aliasName + '\'' +
                 ", currentQrCodeSource='" + currentQrCodeSource + '\'' +
                 ", currentIdenticonSource='" + currentIdenticonSource + '\'' +
