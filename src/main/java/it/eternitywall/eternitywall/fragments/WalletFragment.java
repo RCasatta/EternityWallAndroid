@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +19,14 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.bitcoinj.core.Coin;
+
 import java.util.Observable;
 import java.util.Observer;
 
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.R;
+import it.eternitywall.eternitywall.components.CurrencyView;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
 import it.eternitywall.eternitywall.wallet.WalletObservable;
 
@@ -35,12 +39,15 @@ import it.eternitywall.eternitywall.wallet.WalletObservable;
  * create an instance of this fragment.
  */
 public class WalletFragment extends Fragment {
+    private static final String TAG = WalletFragment.class.toString();
+
     private RelativeLayout syncingLayout;
     private LinearLayout syncedLayout;
     private TextView syncingText;
     private TextView balanceText;
     private TextView currentAddressText;
     private ImageView currentQrCode;
+    private CurrencyView btcBalance;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -108,10 +115,15 @@ public class WalletFragment extends Fragment {
                         @Override
                         public void run() {
                             if (walletObservable.getState() == WalletObservable.State.SYNCED) {
+                                final Coin walletBalance = walletObservable.getWalletBalance();
+                                final String units = String.valueOf(walletBalance.getValue());
+                                Log.i(TAG, "Setting balance to " + units + " satoshis");
                                 syncedLayout.setVisibility(View.VISIBLE);
                                 syncingLayout.setVisibility(View.GONE);
-                                balanceText.setText(walletObservable.getWalletBalance().toPlainString());
                                 currentAddressText.setText(walletObservable.getCurrent().toString());
+
+                                btcBalance.setUnits(units);
+                                btcBalance.refreshUI();
 
                             } else if (walletObservable.getState() == WalletObservable.State.SYNCING) {
                                 syncedLayout.setVisibility(View.GONE);
@@ -146,6 +158,7 @@ public class WalletFragment extends Fragment {
         balanceText = (TextView) view.findViewById(R.id.balance);
         currentAddressText = (TextView) view.findViewById(R.id.currentAddress);
         currentQrCode = (ImageView) view.findViewById(R.id.currentQrCode);
+        btcBalance = (CurrencyView) view.findViewById(R.id.btcBalance);
 
         return view;
     }

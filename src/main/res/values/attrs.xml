@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CurrencyView">
+        <attr name="units"      format="string" />
+        <attr name="type"       format="string" />
+        <attr name="textSizeSp" format="integer" />
+        <attr name="onlySymbol" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="DayHoursView">
+        <attr name="edit" format="boolean" />
+        <attr name="weekDay" format="integer" />
+        <attr name="timeStart" format="string" />
+        <attr name="timeEnd"   format="string" />
+
+
+    </declare-styleable>
+</resources>

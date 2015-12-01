@@ -43,6 +43,9 @@
     <string name="btn_confirm">Confirm</string>
     <string name="btn_refresh">Refresh</string>
 
+    <string name="font_awesome_bitcoin"></string>
+
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

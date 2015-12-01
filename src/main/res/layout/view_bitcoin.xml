@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <TextView
+        android:id="@+id/bitcoinIntegerPart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        />
+    <TextView
+        android:id="@+id/bitcoinSeparator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="."
+        />
+    <TextView
+        android:id="@+id/bitcoinDecimalPart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        />
+
+    <TextView
+        android:id="@+id/bitcoinUnit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="2dp"
+        android:text="m"/>
+
+    <it.eternitywall.eternitywall.components.FontAwesomeTextView
+        android:id="@+id/currencySymbol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/font_awesome_bitcoin"/>
+
+
+</LinearLayout>
