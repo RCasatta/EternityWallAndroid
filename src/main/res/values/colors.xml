@@ -38,5 +38,6 @@
     <color name="divider">#B6B6B6</color>
 
         <color name="alphaText">#b3ffffff</color>
+    <color name="alpha">#00ffffff</color>
 
 </resources>

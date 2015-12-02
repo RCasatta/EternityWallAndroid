@@ -36,7 +36,8 @@
             style="@style/TextAppearance.AppCompat.Large"
             android:id="@+id/txtMessage"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -47,78 +48,75 @@
             android:layout_alignParentStart="true"
             android:gravity="center_horizontal"
             android:visibility="visible"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="6dp">
 
             <Button
                 android:id="@+id/btnShare"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical|center_horizontal"
-                android:drawablePadding="@dimen/padding_small"
                 android:text="@string/icon_share"
-                android:layout_centerInParent="true"
-                android:layout_weight="1"
-                android:layout_marginTop="2dp"
-                android:layout_marginRight="2dp"
-                android:layout_marginBottom="2dp" />
+                android:textSize="20sp"
+                android:textColor="@color/accent"
+                android:background="@color/alpha"
+                android:layout_weight="1" />
 
             <Button
                 android:id="@+id/btnProof"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical|center_horizontal"
-                android:drawablePadding="@dimen/padding_small"
                 android:text="@string/icon_link"
-                android:layout_centerInParent="true"
-                android:layout_weight="1"
-                android:layout_margin="2dp" />
+                android:textSize="20sp"
+                android:textColor="@color/accent"
+                android:background="@color/alpha"
+                android:layout_weight="1" />
 
             <Button
                 android:id="@+id/btnRanking"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical|center_horizontal"
-                android:drawablePadding="@dimen/padding_small"
                 android:text="@string/icon_ranking"
-                android:layout_centerInParent="true"
-                android:layout_weight="1"
-                android:layout_margin="2dp" />
+                android:textSize="20sp"
+                android:textColor="@color/accent"
+                android:background="@color/alpha"
+                android:layout_weight="1" />
 
             <Button
                 android:id="@+id/btnTranslate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical|center_horizontal"
-                android:drawablePadding="@dimen/padding_small"
                 android:text="@string/icon_translate"
-                android:layout_centerInParent="true"
-                android:visibility="gone"
-                android:layout_weight="1"
-                android:layout_margin="2dp" />
+                android:textSize="20sp"
+                android:textColor="@color/accent"
+                android:background="@color/alpha"
+                android:layout_weight="1" />
 
             <Button
                 android:id="@+id/btnLikes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical|center_horizontal"
-                android:drawablePadding="@dimen/padding_small"
                 android:text="@string/icon_likes"
-                android:layout_centerInParent="true"
+                android:textSize="20sp"
+                android:textColor="@color/accent"
+                android:background="@color/alpha"
                 android:layout_weight="1"
-                android:layout_margin="2dp" />
+                 />
 
             <Button
                 android:id="@+id/btnReply"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical|center_horizontal"
-                android:drawablePadding="@dimen/padding_small"
                 android:text="@string/icon_commenting"
-                android:layout_centerInParent="true"
+                android:textSize="20sp"
+                android:textColor="@color/accent"
+                android:background="@color/alpha"
                 android:layout_weight="1"
-                android:layout_marginLeft="2dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp" />
+                 />
 
         </LinearLayout>
 
