@@ -29,8 +29,7 @@
             style="?android:attr/textAppearanceLarge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@color/primaryText"/>
+            android:gravity="center" />
 
         <TextView
             android:text="@string/account_fragment_subtitle"
@@ -39,8 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
-            android:gravity="center"
-            android:textColor="@color/secondaryText"/>
+            android:gravity="center" />
 
         <LinearLayout
             android:layout_marginTop="20dp"

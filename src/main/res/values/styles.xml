@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
 
 
@@ -11,9 +11,9 @@
         <item name="popupMenuStyle">@style/PopupMenu</item>
         <item name="actionBarPopupTheme">@style/PopupMenu</item>
 
-        <!-- <item name="android:actionBarStyle">@style/MyActionBar</item>
+         <item name="android:actionBarStyle">@style/MyActionBar</item>
          <item name="android:actionBarTabTextStyle">@style/MyActionBarTabText</item>
-         <item name="android:actionMenuTextColor">@color/action_bar_text_color</item>-->
+         <item name="android:actionMenuTextColor">@color/action_bar_text_color</item>
         <item name="android:windowBackground">@android:color/white</item>
 
         <item name="colorPrimary">@color/primary</item>
@@ -103,7 +103,7 @@
         <item name="android:padding">@dimen/padding_high</item>
     </style>
 
-    <style name="textStyle" parent="@android:style/TextAppearance">
+    <style name="TextStyle" parent="@android:style/TextAppearance">
         <item name="android:textColor">@color/black</item>
     </style>
 
