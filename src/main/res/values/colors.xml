@@ -26,14 +26,16 @@
         <color name="button_dark">#FFC107</color>
         <color name="button">#FFC107</color>
 
-        <color name="primary">#607D8B</color>
-        <color name="primaryDark">#455A64</color>
-        <color name="primaryLight">#CFD8DC</color>
-        <color name="accent">#FFC107</color>
-        <color name="primaryText">#212121</color>
-        <color name="secondaryText">#727272</color>
-        <color name="icons">#ffffff</color>
-        <color name="divider">#B6B6B6</color>
+
+
+    <color name="primary">#2196F3</color>
+    <color name="primaryDark">#1976D2</color>
+    <color name="primaryLight">#BBDEFB</color>
+    <color name="accent">#FF9800</color>
+    <color name="primaryText">#212121</color>
+    <color name="secondaryText">#727272</color>
+    <color name="icons">#FFFFFF</color>
+    <color name="divider">#B6B6B6</color>
 
         <color name="alphaText">#b3ffffff</color>
 

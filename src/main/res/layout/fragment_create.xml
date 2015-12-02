@@ -23,6 +23,7 @@
                 android:textStyle="bold|italic"
                 android:textSize="20sp"
                 android:lines="3"
+                android:text="here will be the passphrase"
                 android:layout_gravity="center" />
 
             <ImageView
@@ -32,6 +33,7 @@
                 android:layout_below="@+id/etPassword"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_horizontal"
+                android:src="@drawable/identicon_placeholder"
                 android:layout_marginTop="@dimen/activity_vertical_margin" />
 
             <TextView
