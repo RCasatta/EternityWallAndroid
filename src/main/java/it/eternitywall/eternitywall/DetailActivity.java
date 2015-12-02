@@ -199,7 +199,7 @@ public class DetailActivity extends ActionBarActivity {
                             //http://chainflyer.bitflyer.jp/Transaction/2db207f008822f90c6e67a21179a2da44b043ebef3d3854f26efb9ffde6aeef8
                             //https://www.smartbit.com.au/tx/2db207f008822f90c6e67a21179a2da44b043ebef3d3854f26efb9ffde6aeef8
 
-                            String[] sites = new String[]{"Blockchain.info", "Blocktrail", "chainFlyer", "Smartbit"};
+                            String[] sites = new String[]{"Blockchain.info", "Blocktrail", "chainFlyer", "Smartbit", "SoChain"};
                             AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this);
                             builder.setItems(sites, new DialogInterface.OnClickListener() {
 
@@ -217,6 +217,9 @@ public class DetailActivity extends ActionBarActivity {
                                             break;
                                         case 3:
                                             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.smartbit.com.au/tx/" + mMessage.getTxHash())));
+                                            break;
+                                        case 4:
+                                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://chain.so/tx/BTC/" + mMessage.getTxHash())));
                                             break;
                                     }
 
