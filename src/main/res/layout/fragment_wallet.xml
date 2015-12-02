@@ -53,6 +53,7 @@
                     android:layout_width="63dp"
                     android:layout_height="63dp"
                     android:src="@drawable/identicon_placeholder"
+                    android:layout_marginRight="20dp"
                     />
                 <TextView
                     android:id="@+id/aliasName"
@@ -61,31 +62,37 @@
                     android:text="aliasName"
                     android:layout_toRightOf="@id/identicon"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="16sp"
+                    android:textSize="24sp"
+                    />
+
+                <Button
+                    android:id="@+id/setAlias"
+                    android:text="SET ALIAS"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/alphaText"
+                    android:layout_toRightOf="@id/identicon"
+                    android:layout_centerVertical="true"
+
 
 
                     />
+
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp">
-                <TextView
-                    android:id="@+id/balance"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:text="Balance"/>
+                android:layout_marginTop="30dp">
+
                 <it.eternitywall.eternitywall.components.CurrencyView
                     android:id="@+id/btcBalance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    blrfl:textSizeSp="16"
+                    blrfl:textSizeSp="34"
                     blrfl:type="mBTC"
                     blrfl:units="0"
-                    android:layout_alignParentRight="true"
+                    android:layout_centerHorizontal="true"
                     />
 
             </RelativeLayout>
@@ -100,7 +107,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/qrcode_placeholder"
-                android:padding="40dp"
+                android:padding="25dp"
                 android:gravity="center"
                 />
             </RelativeLayout>

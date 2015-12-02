@@ -7,17 +7,20 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.*;
+import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.bitcoinj.core.Coin;
 
@@ -44,12 +47,12 @@ public class WalletFragment extends Fragment {
     private RelativeLayout syncingLayout;
     private LinearLayout syncedLayout;
     private TextView syncingText;
-    private TextView balanceText;
     private TextView currentAddressText;
+    private TextView aliasNameText;
     private ImageView currentQrCode;
     private ImageView identicon;
     private CurrencyView btcBalance;
-
+    private Button setAliasButton;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -136,6 +139,7 @@ public class WalletFragment extends Fragment {
                         final String units = String.valueOf(walletBalance.getValue());
                         final Bitmap QrCodeBitmap = walletObservable.getCurrentQrCode();
                         final Bitmap IdenticonBitmap = walletObservable.getCurrentIdenticon();
+                        final String aliasName = walletObservable.getAliasName();
 
                         syncedLayout.setVisibility(View.VISIBLE);
                         syncingLayout.setVisibility(View.GONE);
@@ -146,6 +150,14 @@ public class WalletFragment extends Fragment {
                             currentQrCode.setImageBitmap(QrCodeBitmap);
                         if (IdenticonBitmap != null)
                             identicon.setImageBitmap(IdenticonBitmap);
+                        if(aliasName!=null) {
+                            aliasNameText.setText(aliasName);
+                            aliasNameText.setVisibility(View.VISIBLE);
+                            setAliasButton.setVisibility(View.GONE);
+                        } else {
+                            aliasNameText.setVisibility(View.GONE);
+                            setAliasButton.setVisibility(View.VISIBLE);
+                        }
 
                     } else if (walletObservable.getState() == WalletObservable.State.SYNCING) {
                         syncedLayout.setVisibility(View.GONE);
@@ -169,11 +181,19 @@ public class WalletFragment extends Fragment {
         syncingLayout = (RelativeLayout) view.findViewById(R.id.syncingLayout);
         syncedLayout = (LinearLayout) view.findViewById(R.id.syncedLayout);
         syncingText = (TextView) view.findViewById(R.id.syncingText);
-        balanceText = (TextView) view.findViewById(R.id.balance);
+        aliasNameText = (TextView) view.findViewById(R.id.aliasName);
         currentAddressText = (TextView) view.findViewById(R.id.currentAddress);
         currentQrCode = (ImageView) view.findViewById(R.id.currentQrCode);
         identicon = (ImageView) view.findViewById(R.id.identicon);
         btcBalance = (CurrencyView) view.findViewById(R.id.btcBalance);
+        setAliasButton = (Button) view.findViewById(R.id.setAlias);
+
+        setAliasButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(),"not yet implemented", Toast.LENGTH_LONG).show();
+            }
+        });
 
         return view;
     }
