@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 
 
@@ -233,7 +234,7 @@ public class EWWalletService extends Service implements Runnable {
             Log.i(TAG,".run()");
             final Context context = getApplicationContext();
             final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-            final String passphrase = sharedPref.getString("passphrase", null);
+            final String passphrase = sharedPref.getString(Preferences.PASSPHRASE, null);
             if(passphrase==null) {
                 Log.i(TAG,"PassphraseIsNull, cannot sync");
                 walletObservable.setState(WalletObservable.State.NULL_PASSPHRASE);

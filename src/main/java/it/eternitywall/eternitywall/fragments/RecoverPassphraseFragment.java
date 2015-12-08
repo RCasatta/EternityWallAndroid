@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import it.eternitywall.eternitywall.EWApplication;
+import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 
@@ -98,6 +99,7 @@ public class RecoverPassphraseFragment extends Fragment {
                 }
 
                 final String passphrase = passphraseCharSequence.toString();
+                final String pinString = pinText.toString();
                 final byte[] entropyFromPassphrase = Bitcoin.getEntropyFromPassphrase(passphrase);
                 if (entropyFromPassphrase == null) {
                     Toast.makeText(getActivity(), "Passphrase invalid", Toast.LENGTH_LONG).show();
@@ -105,7 +107,8 @@ public class RecoverPassphraseFragment extends Fragment {
                 }
                 final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
                 final SharedPreferences.Editor edit = sharedPref.edit();
-                edit.putString("passphrase", passphrase);
+                edit.putString(Preferences.PASSPHRASE, passphrase);
+                edit.putString(Preferences.PIN, pinString );
                 edit.commit();
                 Toast.makeText(getActivity(), "Passphrase saved", Toast.LENGTH_LONG).show();
                 passphraseText.setText("");

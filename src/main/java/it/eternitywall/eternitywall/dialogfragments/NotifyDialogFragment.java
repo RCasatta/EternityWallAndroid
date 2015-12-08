@@ -20,6 +20,7 @@ import com.google.common.base.Optional;
 
 import it.eternitywall.eternitywall.EmailValidation;
 import it.eternitywall.eternitywall.Http;
+import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 
 /**
@@ -62,9 +63,9 @@ public class NotifyDialogFragment extends DialogFragment {
                 //save the settings
                 SharedPreferences sp = getActivity().getSharedPreferences(Application.class.getSimpleName(), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
-                editor.putString("email", txtEmail.getText().toString());
-                editor.putBoolean("ckone", ckOne.isChecked());
-                editor.putBoolean("cktwo", ckTwo.isChecked());
+                editor.putString(Preferences.EMAIL, txtEmail.getText().toString());
+                editor.putBoolean(Preferences.CHK_ONE, ckOne.isChecked());
+                editor.putBoolean(Preferences.CHK_TWO, ckTwo.isChecked());
                 editor.commit();
 
                 //something wrong!! address should always be set...

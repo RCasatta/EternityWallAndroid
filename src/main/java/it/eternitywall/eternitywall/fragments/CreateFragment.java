@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.IdenticonGenerator;
+import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 import it.eternitywall.eternitywall.wallet.EWDerivation;
@@ -114,19 +115,21 @@ public class CreateFragment extends Fragment {
                 // save password
                 final Editable pinText = pin.getText();
                 final Editable confirmPinText = confirmPin.getText();
-                if( pinText.toString().isEmpty() || confirmPinText.toString().isEmpty()  ) {
+                final String pinString = pinText.toString();
+                if( pinString.isEmpty() || confirmPinText.toString().isEmpty()  ) {
                     Toast.makeText(getActivity(), "All inputs are required", Toast.LENGTH_LONG).show();
                     return;
                 }
 
-                if(  !pinText.toString().equals(confirmPinText.toString()) ) {
+                if(  !pinString.equals(confirmPinText.toString()) ) {
                     Toast.makeText(getActivity(), "PIN are not the same", Toast.LENGTH_LONG).show();
                     return;
                 }
 
                 final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
                 final SharedPreferences.Editor edit = sharedPref.edit();
-                edit.putString("passphrase", passphrase);
+                edit.putString(Preferences.PASSPHRASE, passphrase);
+                edit.putString(Preferences.PIN, pinString);
                 edit.commit();
                 Toast.makeText(getActivity(), "Passphrase saved", Toast.LENGTH_LONG).show();
 

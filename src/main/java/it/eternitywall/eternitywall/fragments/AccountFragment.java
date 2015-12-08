@@ -1,8 +1,6 @@
 package it.eternitywall.eternitywall.fragments;
 
 import android.app.Activity;
-import android.app.Application;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,9 +10,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
-import it.eternitywall.eternitywall.MainActivity;
+import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 
 /**
@@ -77,7 +74,7 @@ public class AccountFragment extends Fragment {
                 .beginTransaction();
 
         final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String passphrase=sharedPref.getString("passphrase",null);
+        String passphrase=sharedPref.getString(Preferences.PASSPHRASE,null);
         if (passphrase==null) {
             transaction.replace(R.id.root_frame, new HelloFragment());
         }else {

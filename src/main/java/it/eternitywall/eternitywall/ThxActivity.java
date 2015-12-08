@@ -47,7 +47,7 @@ public class ThxActivity extends ActionBarActivity {
                 }
             });
         }
-        else if(sp.getString("email", "").isEmpty()) {
+        else if(sp.getString(Preferences.EMAIL, "").isEmpty()) {
             findViewById(R.id.btnNotify).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -72,9 +72,9 @@ public class ThxActivity extends ActionBarActivity {
                     finish();
                 }
             });
-            final String email = sp.getString("email", "");
-            final boolean ckOne = sp.getBoolean("ckone", true);
-            final boolean ckTwo = sp.getBoolean("cktwo", true);
+            final String email = sp.getString(Preferences.EMAIL, "");
+            final boolean ckOne = sp.getBoolean(Preferences.CHK_ONE , true);
+            final boolean ckTwo = sp.getBoolean(Preferences.CHK_TWO , true);
 
             //and offline notify
             AsyncTask t = new AsyncTask() {
