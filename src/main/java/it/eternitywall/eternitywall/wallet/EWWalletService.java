@@ -28,8 +28,10 @@ import org.bitcoinj.script.ScriptOpCodes;
 import org.bitcoinj.store.BlockStore;
 import org.bitcoinj.store.SPVBlockStore;
 import org.bitcoinj.wallet.WalletTransaction;
+import org.spongycastle.util.encoders.Hex;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -55,9 +57,9 @@ public class EWWalletService extends Service implements Runnable {
     public static final String WALLET_FILE     = "wallet";
     public static final String BITCOIN_PATH    = "bitcoin";
 
-    private Set<Address> used      = new HashSet<>();
+    private Set<Address> used     = new HashSet<>();
     private Integer nextMessageId = 0 ;
-    private Integer nextChange = 0 ;
+    private Integer nextChange    = 0 ;
 
     private Set<Address> all       = new HashSet<>();
     private List<ECKey> messagesId = new ArrayList<>();
@@ -151,9 +153,6 @@ public class EWWalletService extends Service implements Runnable {
 
         Address aliasAddress = aliasKey.toAddress(PARAMS);
         Transaction newTx = new Transaction(PARAMS);
-
-
-
 
         List<TransactionOutput> transactionOutputList = getMines(aliasAddress);
         Long totalAvailable = 0L;
@@ -345,6 +344,8 @@ public class EWWalletService extends Service implements Runnable {
                     used.add(current);
                 }
             }
+
+            checkAlias(tx,walletObservable);
         }
 
         nextMessageId=0;
@@ -387,6 +388,45 @@ public class EWWalletService extends Service implements Runnable {
         walletObservable.notifyObservers();
         Log.i(TAG, "Ending...");
 
+    }
+
+
+    private static String EWA_PREFIX = "455741";
+    public static void checkAlias(Transaction tx, WalletObservable walletObservable) {
+        final List<TransactionOutput> outputs = tx.getOutputs();
+        for (TransactionOutput to : outputs) {
+            byte[] script = to.getScriptBytes();
+            if(script.length>0) {
+                String hexString = Hex.toHexString(script);
+                Log.i(TAG, "outputHEX: " + hexString);
+                if (hexString.startsWith("6a")) {
+                    Log.i(TAG, "outputHEX is OP_RETURN! ");
+
+                    hexString = hexString.substring(2);
+                    String aliasNameHex=null;
+                    if(hexString.startsWith(EWA_PREFIX)  ) {  //NON_STANDARD
+                        Log.i(TAG, "outputHEX is EWA NON STANDARD");
+                        aliasNameHex = hexString.substring(6);
+                    } else if (hexString.length()>2 && hexString.substring(2).startsWith(EWA_PREFIX)) {
+                        Log.i(TAG, "outputHEX is EWA WITH LENGTH");
+                        aliasNameHex = hexString.substring(8);
+                    }
+                    if(aliasNameHex!=null) {
+                        String aliasName = new String( Bitcoin.fromHex(aliasNameHex) , Charset.forName("utf-8") );
+
+                        if(aliasName!=null && aliasName.length()>0) {
+                            aliasName= aliasName.trim();
+                            if(aliasName.length()>20)
+                                aliasName=aliasName.substring(0,20);
+                            Log.i(TAG, "Found alias name!! " + aliasName);
+                            walletObservable.setAliasName(aliasName);
+                            walletObservable.notifyObservers();
+                        }
+                    }
+
+                }
+            }
+        }
     }
 
 
