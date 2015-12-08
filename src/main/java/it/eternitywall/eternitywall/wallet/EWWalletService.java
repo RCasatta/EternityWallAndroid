@@ -18,6 +18,7 @@ import org.bitcoinj.core.PeerGroup;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.StoredBlock;
 import org.bitcoinj.core.Transaction;
+import org.bitcoinj.core.TransactionBroadcast;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.core.Wallet;
@@ -139,20 +140,23 @@ public class EWWalletService extends Service implements Runnable {
         final String newTxHex = Bitcoin.transactionToHex(newTx);
         Log.i(TAG, newTxHex);
 
+
         return  newTx.getHash();
     }
 
-    public Sha256Hash registerAlias(String aliasName) {
-        if(!isSynced && nextChange !=0)
+    public TransactionBroadcast registerAlias(String aliasName) {
+        if(!isSynced && nextChange !=0) {
+            Log.i(TAG,"not synced or next change different from zero");
             return null;
+        }
         isSynced=false;  //TODO
 
-        ECKey aliasKey = changes.get(nextChange);
-        nextChange++;
-        ECKey fistChange = changes.get(nextChange);
-        nextChange++;
+        ECKey aliasKey = changes.get(0);
+        ECKey firstChange = changes.get(1);
+        nextChange=2;
 
         Address aliasAddress = aliasKey.toAddress(PARAMS);
+        Log.i(TAG,"aliasAddress is = " + aliasAddress.toString() );
         Transaction newTx = new Transaction(PARAMS);
 
         List<TransactionOutput> transactionOutputList = getMines(aliasAddress);
@@ -165,13 +169,18 @@ public class EWWalletService extends Service implements Runnable {
         if(toSend < DUST)
             return null;
 
+        final Address change = firstChange.toAddress(PARAMS);
+        Log.i(TAG, "Sending to change " + change.toString() + " " + toSend + " satoshis");
+
+        aliasName = "EWA " + aliasName;
+
         final byte[] toWrite = aliasName.getBytes();
         newTx.addOutput(Coin.ZERO,
                 new ScriptBuilder()
                         .op(ScriptOpCodes.OP_RETURN)
                         .data(toWrite)
                         .build());
-        newTx.addOutput(Coin.valueOf(toSend), fistChange);
+        newTx.addOutput(Coin.valueOf(toSend), change);
 
         Wallet.SendRequest req = Wallet.SendRequest.forTx(newTx);
         wallet.signTransaction(req);
@@ -179,8 +188,10 @@ public class EWWalletService extends Service implements Runnable {
         final String newTxHex = Bitcoin.transactionToHex(newTx);
 
         Log.i(TAG, newTxHex);
+        TransactionBroadcast transactionBroadcast = peerGroup.broadcastTransaction(newTx);
+        Log.i(TAG, "TxBroadcasted " + newTx.getHash().toString());
 
-        return  newTx.getHash();
+        return  transactionBroadcast;
     }
 
     private List<TransactionOutput> getMines(Address address) {
@@ -269,6 +280,8 @@ public class EWWalletService extends Service implements Runnable {
             if(walletFile.exists()) {
                 Log.i(TAG, "Wallet exist, loading from file");
                 wallet = Wallet.loadFromFile(walletFile);
+                Log.i(TAG,"WalletHeightAtStart " + wallet.getLastBlockSeenHeight() );
+                Log.i(TAG, "WalletTxNumberAtStart " + wallet.getTransactionsByTime());
             }
             else {
                 Log.i(TAG, "Wallet not exist, creating new");
@@ -288,6 +301,7 @@ public class EWWalletService extends Service implements Runnable {
 
             blockStore = new SPVBlockStore(PARAMS, blockFile);
             chainHead = blockStore.getChainHead();
+            Log.i(TAG,"BlockStoreAtStartHeight " + chainHead.getHeight() );
 
             if (chainHead.getHeight() == 0) {  //first run
                 Log.i(TAG, "First run");

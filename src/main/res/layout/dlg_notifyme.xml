@@ -9,6 +9,7 @@
         android:hint="insert your email..."
         android:layout_width="match_parent"
         android:background="@drawable/style_message_background"
+        android:textColor="@color/primaryText"
         android:singleLine="true"
         android:padding="@dimen/padding_high"
         android:layout_height="wrap_content" />

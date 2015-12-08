@@ -33,13 +33,13 @@ public class MyBlockchainListener implements BlockChainListener {
 
     @Override
     public void notifyNewBestBlock(StoredBlock block) throws VerificationException {
-        //System.out.println("notifyNewBestBlock");
+        Log.i(TAG, "notifyNewBestBlock");
         walletObservable.setHeight(block.getHeight());
     }
 
     @Override
     public void reorganize(StoredBlock splitPoint, List<StoredBlock> oldBlocks, List<StoredBlock> newBlocks) throws VerificationException {
-        System.out.println("reorganize");
+        Log.i(TAG, "reorganize");
     }
 
     public int getBloomMatches() {

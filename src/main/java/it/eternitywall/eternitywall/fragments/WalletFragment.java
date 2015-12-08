@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +30,9 @@ import java.util.Observer;
 
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.R;
+import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 import it.eternitywall.eternitywall.components.CurrencyView;
+import it.eternitywall.eternitywall.dialogfragments.RegAliasDialogFragment;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
 import it.eternitywall.eternitywall.wallet.WalletObservable;
 
@@ -191,7 +194,31 @@ public class WalletFragment extends Fragment {
         setAliasButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(),"not yet implemented", Toast.LENGTH_LONG).show();
+                Long walletBalance = walletObservable.getWalletBalance().longValue();
+                if( walletBalance < (EWWalletService.DUST + EWWalletService.FEE) ) {
+                    Toast.makeText(getActivity(), "You need at least 0.2 mBTC to register an alias", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                if(prev != null)
+                    ft.remove(prev);
+                ft.addToBackStack(null);
+
+                RegAliasDialogFragment frag = new RegAliasDialogFragment();
+                frag.show(ft, "dialog");
+
+            }
+        });
+
+        currentQrCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(walletObservable!=null && walletObservable.getCurrent()!=null && Bitcoin.isValidAddress( walletObservable.getCurrent().toString())) {
+                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("bitcoin:" + walletObservable.getCurrent().toString()));
+                    startActivity(i);
+                }
             }
         });
 

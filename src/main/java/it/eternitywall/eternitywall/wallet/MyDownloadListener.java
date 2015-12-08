@@ -68,7 +68,9 @@ public class MyDownloadListener extends DownloadProgressTracker {
     @Override
     public void onBlocksDownloaded(Peer peer, Block block, FilteredBlock filteredBlock, int blocksLeft) {
         super.onBlocksDownloaded(peer, block, filteredBlock, blocksLeft);
-         size+=block.getMessageSize();
+        Log.i(TAG, "onBlocksDownloaded");
+
+        size+=block.getMessageSize();
 
         double pct = 100.0 - (100.0 * (blocksLeft / (double) originalBlocksLeft));
         if ((int) pct != lastPercent) {
