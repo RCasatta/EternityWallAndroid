@@ -1,12 +1,10 @@
 package it.eternitywall.eternitywall.adapters;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -16,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import it.eternitywall.eternitywall.DetailActivity;
+import it.eternitywall.eternitywall.activity.DetailActivity;
 import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.R;
 

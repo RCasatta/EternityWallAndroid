@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:orientation="vertical"
     android:padding="@dimen/padding_high"
-    android:layout_height="match_parent" tools:context=".DetailActivity">
+    android:layout_height="match_parent" tools:context=".activity.DetailActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

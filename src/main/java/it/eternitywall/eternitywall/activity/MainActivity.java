@@ -1,4 +1,4 @@
-package it.eternitywall.eternitywall;
+package it.eternitywall.eternitywall.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +27,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.fragments.AccountFragment;
 import it.eternitywall.eternitywall.fragments.CreateFragment;
 import it.eternitywall.eternitywall.fragments.HelloFragment;

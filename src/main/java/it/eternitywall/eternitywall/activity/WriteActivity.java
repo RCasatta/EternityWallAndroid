@@ -1,4 +1,4 @@
-package it.eternitywall.eternitywall;
+package it.eternitywall.eternitywall.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -15,9 +15,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +29,13 @@ import com.google.common.base.Optional;
 import org.json.JSONObject;
 
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
+
+import it.eternitywall.eternitywall.EWApplication;
+import it.eternitywall.eternitywall.Http;
+import it.eternitywall.eternitywall.R;
+import it.eternitywall.eternitywall.wallet.WalletObservable;
 
 
 public class WriteActivity extends ActionBarActivity {
@@ -39,12 +48,15 @@ public class WriteActivity extends ActionBarActivity {
     private EditText txtMessage;
     private TextView txtCounter;
     private ProgressBar progress;
+    private Spinner spnrSender;
+    private LinearLayout lytSender;
 
     private String curmsg = "";
     private Button btnSend;
 
     private String address=null;
     private String replyFrom=null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +70,24 @@ public class WriteActivity extends ActionBarActivity {
         if(getIntent().getExtras() != null && getIntent().getStringExtra("replyFrom") != null) {
             txtMessage.setHint("reply from message id " + getIntent().getStringExtra("replyFrom"));
             replyFrom=getIntent().getStringExtra("replyFrom");
+        }
+
+        spnrSender = (Spinner) findViewById(R.id.spnrSender);
+        lytSender = (LinearLayout) findViewById(R.id.lytSender);
+
+        final WalletObservable walletObservable = ((EWApplication) getApplication()).getWalletObservable();
+        if(walletObservable!=null) {
+            final String aliasName = walletObservable.getAliasName();
+            if(aliasName!=null) {
+                List<String> list = new ArrayList<>();
+                list.add(aliasName);
+                list.add("Anonymous");
+                ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
+                        android.R.layout.simple_spinner_item, list);
+                dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spnrSender.setAdapter(dataAdapter);
+                lytSender.setVisibility(View.VISIBLE);
+            }
         }
 
         txtMessage.addTextChangedListener(new TextWatcher() {
@@ -158,7 +188,7 @@ public class WriteActivity extends ActionBarActivity {
                             String reply="";
                             if (replyFrom!=null)
                                 reply="&replyid="+replyFrom;
-                            json = Http.get("http://eternitywall.it/bitcoinform?format=json&text=" + URLEncoder.encode(curmsg, "UTF-8") + "&source=" + getApplicationContext().getPackageName()+reply);
+                            json = Http.get("http://eternitywall.it/bitcoinform?format=json&text=" + URLEncoder.encode(curmsg, "UTF-8") + "&source=" + getApplicationContext().getPackageName() + reply);
                             if (json.isPresent()) {
                                 String jstring = json.get();
                                 JSONObject jo = new JSONObject(jstring);

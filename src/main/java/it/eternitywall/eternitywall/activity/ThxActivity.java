@@ -1,4 +1,4 @@
-package it.eternitywall.eternitywall;
+package it.eternitywall.eternitywall.activity;
 
 import android.app.Application;
 import android.content.Intent;
@@ -16,6 +16,9 @@ import android.widget.Toast;
 
 import com.google.common.base.Optional;
 
+import it.eternitywall.eternitywall.Http;
+import it.eternitywall.eternitywall.Preferences;
+import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.dialogfragments.NotifyDialogFragment;
 
 
@@ -83,9 +86,9 @@ public class ThxActivity extends ActionBarActivity {
                     try {
                         //https://eternitywall.appspot.com/v1/notify?email=[email]&hash=[hash]&address=[address]&subscribe=[subscribe]&notifyreply=[notifyreply]
                         Optional<String> res = Http.get(
-                                "https://eternitywall.appspot.com/v1/notify?"+
-                                        "email="+email+"&address="+address+
-                                        (ckOne ? "&subscribe=true" : "")+
+                                "https://eternitywall.appspot.com/v1/notify?" +
+                                        "email=" + email + "&address=" + address +
+                                        (ckOne ? "&subscribe=true" : "") +
                                         (ckTwo ? "&notifyreply=true" : ""));
 
                     } catch (Exception e) {

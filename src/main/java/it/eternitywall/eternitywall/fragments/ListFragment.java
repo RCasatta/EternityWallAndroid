@@ -30,7 +30,7 @@ import java.util.List;
 import it.eternitywall.eternitywall.Http;
 import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.R;
-import it.eternitywall.eternitywall.WriteActivity;
+import it.eternitywall.eternitywall.activity.WriteActivity;
 import it.eternitywall.eternitywall.adapters.MessageListAdapter;
 
 
