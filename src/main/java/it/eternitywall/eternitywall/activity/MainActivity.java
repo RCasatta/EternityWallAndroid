@@ -48,6 +48,7 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
     private MenuItem searchMenuItem;
     TabLayout tabLayout;
     Toolbar toolbar;
+    int page_num=0;
 
     // Container and Fragments
     ViewPager viewPager;
@@ -105,6 +106,27 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         adapter.addFragment(listFragment, getResources().getString(R.string.list_fragment));
         adapter.addFragment(new AccountFragment(), getResources().getString(R.string.account_fragment));
         viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                page_num = position;
+                supportInvalidateOptionsMenu();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        page_num=0;
+        supportInvalidateOptionsMenu();
+        viewPager.setCurrentItem(page_num);
+
     }
 
 
@@ -152,77 +174,79 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        // getMenuInflater().inflate(R.menu.menu_main, menu);
-        // Inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
 
-        // Get the root inflator.
-        LayoutInflater baseInflater = (LayoutInflater)getBaseContext()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (page_num == 0) {
+            getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
-        TextView txtOrder=new TextView(MainActivity.this);
-        txtOrder.setPadding(0, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
-        txtOrder.setText(getResources().getString(R.string.action_order));
-        txtOrder.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
-        txtOrder.setTypeface(font);
-        menu.findItem(R.id.action_order).setActionView(txtOrder);
-        menu.findItem(R.id.action_order).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                PopupMenu popupMenu = new PopupMenu(MainActivity.this, item.getActionView());
-                popupMenu.setOnMenuItemClickListener(MainActivity.this);
-                popupMenu.inflate(R.menu.menu_order);
-                popupMenu.show();
-                return true;
-            }
-        });
-        txtOrder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PopupMenu popupMenu = new PopupMenu(MainActivity.this, v);
-                popupMenu.setOnMenuItemClickListener(MainActivity.this);
-                popupMenu.inflate(R.menu.menu_order);
-                popupMenu.show();
-            }
-        });
+            // Get the root inflator.
+            LayoutInflater baseInflater = (LayoutInflater) getBaseContext()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        /*TextView txtCloud=new TextView(MainActivity.this);
-        txtCloud.setPadding(0,0,(int) getResources().getDimension(R.dimen.activity_horizontal_margin),0);
-        txtCloud.setText(getResources().getString(R.string.action_cloud));
-        txtCloud.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
-        txtCloud.setTypeface(font);
-        menu.findItem(R.id.action_cloud).setActionView(txtCloud);
-*/
+            Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
+            TextView txtOrder = new TextView(MainActivity.this);
+            txtOrder.setPadding(0, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
+            txtOrder.setText(getResources().getString(R.string.action_order));
+            txtOrder.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
+            txtOrder.setTypeface(font);
+            menu.findItem(R.id.action_order).setActionView(txtOrder);
+            menu.findItem(R.id.action_order).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    PopupMenu popupMenu = new PopupMenu(MainActivity.this, item.getActionView());
+                    popupMenu.setOnMenuItemClickListener(MainActivity.this);
+                    popupMenu.inflate(R.menu.menu_order);
+                    popupMenu.show();
+                    return true;
+                }
+            });
+            txtOrder.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PopupMenu popupMenu = new PopupMenu(MainActivity.this, v);
+                    popupMenu.setOnMenuItemClickListener(MainActivity.this);
+                    popupMenu.inflate(R.menu.menu_order);
+                    popupMenu.show();
+                }
+            });
 
-        //SearchManager searchManager = (SearchManager)         getSystemService(Context.SEARCH_SERVICE);
-        searchMenuItem = menu.findItem(R.id.action_search);
-        searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
-        searchView.setOnQueryTextListener(this);
-        searchView.setOnCloseListener(this);
+            /*TextView txtCloud=new TextView(MainActivity.this);
+            txtCloud.setPadding(0,0,(int) getResources().getDimension(R.dimen.activity_horizontal_margin),0);
+            txtCloud.setText(getResources().getString(R.string.action_cloud));
+            txtCloud.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
+            txtCloud.setTypeface(font);
+            menu.findItem(R.id.action_cloud).setActionView(txtCloud);*/
 
-        //searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        //searchView.setSubmitButtonEnabled(true);
-        //searchView.setOnQueryTextListener(this);
-        MenuItemCompat.setOnActionExpandListener(searchMenuItem, new MenuItemCompat.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                // Return true to expand action view
-                return true;
-            }
+            //SearchManager searchManager = (SearchManager)         getSystemService(Context.SEARCH_SERVICE);
+            searchMenuItem = menu.findItem(R.id.action_search);
+            searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+            searchView.setOnQueryTextListener(this);
+            searchView.setOnCloseListener(this);
 
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                // Write your code here
-                onClose();
-                // Return true to collapse action view
-                return true;
-            }
-        });
+            //searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+            //searchView.setSubmitButtonEnabled(true);
+            //searchView.setOnQueryTextListener(this);
+            MenuItemCompat.setOnActionExpandListener(searchMenuItem, new MenuItemCompat.OnActionExpandListener() {
+                @Override
+                public boolean onMenuItemActionExpand(MenuItem item) {
+                    // Return true to expand action view
+                    return true;
+                }
 
+                @Override
+                public boolean onMenuItemActionCollapse(MenuItem item) {
+                    // Write your code here
+                    onClose();
+                    // Return true to collapse action view
+                    return true;
+                }
+            });
+
+        } else if (page_num == 1) {
+            getMenuInflater().inflate(R.menu.menu_profile, menu);
+        }
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
