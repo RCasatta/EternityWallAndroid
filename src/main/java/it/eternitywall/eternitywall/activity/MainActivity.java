@@ -174,15 +174,11 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
 
         if (page_num == 0) {
             getMenuInflater().inflate(R.menu.menu_main, menu);
 
-            // Get the root inflator.
-            LayoutInflater baseInflater = (LayoutInflater) getBaseContext()
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-            Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
             TextView txtOrder = new TextView(MainActivity.this);
             txtOrder.setPadding(0, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
             txtOrder.setText(getResources().getString(R.string.action_order));
@@ -206,6 +202,25 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
                     popupMenu.setOnMenuItemClickListener(MainActivity.this);
                     popupMenu.inflate(R.menu.menu_order);
                     popupMenu.show();
+                }
+            });
+            TextView txtPreferences = new TextView(MainActivity.this);
+            txtPreferences.setPadding(0, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
+            txtPreferences.setText(getResources().getString(R.string.action_preferences));
+            txtPreferences.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
+            txtPreferences.setTypeface(font);
+            menu.findItem(R.id.action_preferences).setActionView(txtPreferences);
+            menu.findItem(R.id.action_preferences).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
+                    return true;
+                }
+            });
+            txtPreferences.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
                 }
             });
 
@@ -243,6 +258,27 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
 
         } else if (page_num == 1) {
             getMenuInflater().inflate(R.menu.menu_profile, menu);
+
+            TextView txtPreferences = new TextView(MainActivity.this);
+            txtPreferences.setPadding(0, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
+            txtPreferences.setText(getResources().getString(R.string.action_preferences));
+            txtPreferences.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
+            txtPreferences.setTypeface(font);
+            menu.findItem(R.id.action_preferences).setActionView(txtPreferences);
+            menu.findItem(R.id.action_preferences).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    startActivity(new Intent(MainActivity.this,PreferencesActivity.class));
+                    return true;
+                }
+            });
+            txtPreferences.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(MainActivity.this,PreferencesActivity.class));
+                }
+            });
+
         }
         return true;
     }
@@ -265,9 +301,13 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         }else if (id == R.id.action_search) {
             //searchable element
             return true;
-        }/*else if (id == R.id.action_cloud) {
+        /*}else if (id == R.id.action_cloud) {
             return true;
         }*/
+        }else if (id == R.id.action_preferences) {
+            startActivity(new Intent(MainActivity.this,PreferencesActivity.class));
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }

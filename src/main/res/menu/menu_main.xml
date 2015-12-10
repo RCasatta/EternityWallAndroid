@@ -10,6 +10,8 @@
 
     <item android:id="@+id/action_order" android:title="@string/action_order"
         app:showAsAction="always" />
+    <item android:id="@+id/action_preferences" android:title="@string/action_preferences"
+        app:showAsAction="always" />
     <!--<item android:id="@+id/action_cloud" android:title="@string/action_cloud"
         app:showAsAction="always" />-->
 </menu>
