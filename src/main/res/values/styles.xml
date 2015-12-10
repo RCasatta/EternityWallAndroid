@@ -89,10 +89,12 @@
     </style>
 
     <style name="PopupMenu" parent="Widget.AppCompat.PopupMenu">
-        <item name="android:panelBackground">@color/popupmenu_background</item>
-        <item name="panelBackground">@color/popupmenu_background</item>
-        <item name="android:popupBackground">@color/popupmenu_background</item>
-        <item name="android:colorBackground">@color/popupmenu_background</item>
+        <!-- ??? -->
+        <item name="android:drawable">@drawable/my_menu_background</item>
+        <item name="android:panelBackground">@drawable/my_menu_background</item>
+        <item name="panelBackground">@drawable/my_menu_background</item>
+        <item name="android:popupBackground">@drawable/my_menu_background</item>
+        <item name="android:colorBackground">@drawable/my_menu_background</item>
     </style>
 
 
