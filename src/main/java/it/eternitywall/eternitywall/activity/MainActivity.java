@@ -26,8 +26,11 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
+import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.R;
+import it.eternitywall.eternitywall.TimedLogStat;
 import it.eternitywall.eternitywall.fragments.AccountFragment;
 import it.eternitywall.eternitywall.fragments.CreateFragment;
 import it.eternitywall.eternitywall.fragments.HelloFragment;
@@ -49,6 +52,9 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
     TabLayout tabLayout;
     Toolbar toolbar;
     int page_num=0;
+
+    private Timer timer;
+    private TimedLogStat timedLogStat;
 
     // Container and Fragments
     ViewPager viewPager;
@@ -78,6 +84,12 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         Thread thread = new Thread(ewWallet);
         thread.start();
         */
+
+
+        timer = new Timer();
+        final TimedLogStat timedLogStat = new TimedLogStat((EWApplication) getApplication());
+        timer.schedule(timedLogStat, 30000L , 30000L );
+
     }
 
     private void changeTabsFont() {

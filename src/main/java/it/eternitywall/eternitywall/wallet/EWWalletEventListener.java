@@ -51,6 +51,8 @@ public class EWWalletEventListener implements WalletEventListener {
     @Override
     public void onWalletChanged(Wallet wallet) {
         Log.i(TAG, "onWalletChanged");
+        walletObservable.setWalletBalance(wallet.getBalance());
+        walletObservable.notifyObservers();
     }
 
     @Override

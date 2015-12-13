@@ -330,8 +330,6 @@ public class EWWalletService extends Service implements Runnable {
             Log.i(TAG, "download started");
 
 
-
-
         } catch (Exception e) {
             Log.i(TAG, e.getMessage());
         }
@@ -444,5 +442,23 @@ public class EWWalletService extends Service implements Runnable {
         }
     }
 
+    public BlockStore getBlockStore() {
+        return blockStore;
+    }
 
+    public StoredBlock getChainHead() {
+        return chainHead;
+    }
+
+    public PeerGroup getPeerGroup() {
+        return peerGroup;
+    }
+
+    public BlockChain getBlockChain() {
+        return blockChain;
+    }
+
+    public Wallet getWallet() {
+        return wallet;
+    }
 }

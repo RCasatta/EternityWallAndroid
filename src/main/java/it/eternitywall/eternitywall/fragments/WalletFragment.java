@@ -120,7 +120,7 @@ public class WalletFragment extends Fragment {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Log.i(TAG,".onServiceDisconnected()");
-            walletObservable.deleteObserver(updateUI);
+            //walletObservable.deleteObserver(updateUI);
         }
 
     };

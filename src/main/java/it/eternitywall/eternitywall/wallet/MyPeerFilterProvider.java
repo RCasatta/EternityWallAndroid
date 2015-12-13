@@ -43,12 +43,12 @@ public class MyPeerFilterProvider  implements PeerFilterProvider{
         final BloomFilter res = new BloomFilter(size, falsePositiveRate, nTweak);
         System.out.println("BFData" + res );
         for (ECKey current : messagesId) {
-            //res.insert(current);  //this way add also the public key, which I am not using to create tx
-            res.insert(current.getPubKeyHash());
+            res.insert(current);  //this way add also the public key, which I am not using to create tx
+            //res.insert(current.getPubKeyHash());
         }
         for (ECKey current : changes) {
-            //res.insert(current);  //this way add also the public key, which I am not using to create tx
-            res.insert(current.getPubKeyHash());
+            res.insert(current);  //this way add also the public key, which I am not using to create tx
+            //res.insert(current.getPubKeyHash());
         }
         return res;
     }

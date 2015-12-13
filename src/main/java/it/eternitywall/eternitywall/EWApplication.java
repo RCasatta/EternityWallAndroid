@@ -39,7 +39,7 @@ public class EWApplication extends MultiDexApplication {
         @Override
         public void onServiceDisconnected(final ComponentName arg0) {
             Log.i(TAG,".onServiceDisconnected()");
-            walletObservable.deleteObserver(walletObserver);
+            //walletObservable.deleteObserver(walletObserver);
         }
     };
 
