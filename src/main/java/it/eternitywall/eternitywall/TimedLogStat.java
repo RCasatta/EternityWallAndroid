@@ -2,6 +2,15 @@ package it.eternitywall.eternitywall;
 
 import android.util.Log;
 
+import com.google.common.base.Joiner;
+
+import org.bitcoinj.core.PeerGroup;
+import org.bitcoinj.core.Transaction;
+import org.bitcoinj.core.Wallet;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.TimerTask;
 
 import it.eternitywall.eternitywall.wallet.EWWalletService;
@@ -26,12 +35,22 @@ public class TimedLogStat extends TimerTask {
         if(walletObservable!=null) {
             Log.i(TAG, walletObservable.toString());
             final EWWalletService ewWalletService = ewApplication.getEwWalletService();
-            if(ewWalletService.getBlockChain()!=null) Log.i(TAG, "blockchain height:" + ewWalletService.getBlockChain().getBestChainHeight() );
-            if(ewWalletService.getPeerGroup()!=null) {
-                Log.i(TAG, "peerGroup is running? " + ewWalletService.getPeerGroup().isRunning() );
-                Log.i(TAG, "peerGroup connected peers? " + ewWalletService.getPeerGroup().numConnectedPeers());
+            if(ewWalletService.getBlockChain()!=null) Log.i(TAG, "blockchain height: " + ewWalletService.getBlockChain().getBestChainHeight() );
+            final PeerGroup peerGroup = ewWalletService.getPeerGroup();
+            if(peerGroup !=null) {
+                Log.i(TAG, "peerGroup is running? " + peerGroup.isRunning());
+                Log.i(TAG, "peerGroup connected peers? " + peerGroup.numConnectedPeers());
             }
-            if(ewWalletService.getWallet()!=null) Log.i(TAG, "wallet height" + ewWalletService.getWallet().getLastBlockSeenHeight());
+            final Wallet wallet = ewWalletService.getWallet();
+            if(wallet !=null) {
+                Log.i(TAG, "wallet height: " + wallet.getLastBlockSeenHeight());
+                final Set<Transaction> transactions = wallet.getTransactions(true);
+                final List<String> hashes=new LinkedList<>();
+                for (Transaction tx : transactions) {
+                    hashes.add(tx.getHashAsString());
+                }
+                Log.i(TAG, "wallet txs: " + Joiner.on(",").join(hashes) );
+            }
         } else {
             Log.i(TAG, "WalletObservable is null ()");
         }

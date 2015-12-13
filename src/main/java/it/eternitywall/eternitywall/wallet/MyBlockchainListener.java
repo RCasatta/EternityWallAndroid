@@ -48,7 +48,7 @@ public class MyBlockchainListener implements BlockChainListener {
 
     @Override
     public boolean isTransactionRelevant(Transaction tx) throws ScriptException {
-        Log.i(TAG, "isTransactionRelevant?" + tx.getHashAsString());
+        Log.i(TAG, "starting isTransactionRelevant?" + tx.getHashAsString());
         bloomMatches++;
         boolean isRelevant=false;
 
@@ -68,6 +68,8 @@ public class MyBlockchainListener implements BlockChainListener {
             }
         }
 
+        Log.i(TAG, "ending isTransactionRelevant?" + tx.getHashAsString() + " returns " + isRelevant);
+
         return isRelevant;
     }
 
@@ -81,7 +83,7 @@ public class MyBlockchainListener implements BlockChainListener {
 
     @Override
     public boolean notifyTransactionIsInBlock(Sha256Hash txHash, StoredBlock block, AbstractBlockChain.NewBlockType blockType, int relativityOffset) throws VerificationException {
-        Log.i(TAG,"notifyTransactionIsInBlock");
+        Log.i(TAG,"notifyTransactionIsInBlock " + txHash.toString());
 
         return false;
     }

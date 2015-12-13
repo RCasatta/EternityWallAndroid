@@ -114,7 +114,7 @@ public class WalletFragment extends Fragment {
             Log.i(TAG,".onServiceConnected()");
             EWApplication ewApplication = (EWApplication) getActivity().getApplication();
             walletObservable = ewApplication.getWalletObservable();
-            walletObservable.addObserver(updateUI);
+            walletObservable.addObserver(updateUI);   //TODO nullPointerExcpetion here
         }
 
         @Override

@@ -93,8 +93,10 @@ public class EWWalletService extends Service implements Runnable {
     }
 
     private EWMessageData getNextMessageData() {
-        if(!isSynced || nextChange ==0)
+        if(!isSynced || nextChange ==0) {
+            Log.i(TAG, "getNextMessageData returning null " + isSynced + " " + nextChange);
             return null;
+        }
         isSynced=false;  //TODO
         EWMessageData ewMessageData = new EWMessageData();
         ewMessageData.setMessageId(messagesId.get(nextMessageId).toAddress(PARAMS));
@@ -105,12 +107,15 @@ public class EWWalletService extends Service implements Runnable {
         return ewMessageData;
     }
 
-    public Sha256Hash sendMessage(String message) {
-        if(!isSynced && nextChange!=0)
+    public TransactionBroadcast sendMessage(String message) {
+        Log.i(TAG,"sendMessage " +message );
+        if(!isSynced || nextChange==0) {
+            Log.i(TAG, "sendMessage returning null " + isSynced + " " + nextChange);
             return null;
+        }
+        EWMessageData ewMessageData= getNextMessageData();
         isSynced=false;  //TODO
 
-        EWMessageData ewMessageData= getNextMessageData();
         final ECKey input = ewMessageData.getInput();
         Address inputAddress = input.toAddress(PARAMS);
         Transaction newTx = new Transaction(PARAMS);
@@ -120,10 +125,14 @@ public class EWWalletService extends Service implements Runnable {
         for (TransactionOutput to  : transactionOutputList) {
             totalAvailable += to.getValue().getValue();
             newTx.addInput(to);
+            Log.i(TAG,"adding input");
         }
+        Log.i(TAG,"total available " + totalAvailable);
         Long toSend = totalAvailable-FEE-DUST;
-        if(toSend < DUST)
+        if(toSend < DUST) {
+            Log.i(TAG, "toSend is less than dust");
             return null;
+        }
 
         final byte[] toWrite = message.getBytes();
 
@@ -138,10 +147,14 @@ public class EWWalletService extends Service implements Runnable {
         Wallet.SendRequest req = Wallet.SendRequest.forTx(newTx);
         wallet.signTransaction(req);
         final String newTxHex = Bitcoin.transactionToHex(newTx);
-        Log.i(TAG, newTxHex);
 
+        Log.i(TAG, "new tx hash: " + newTx.getHash());
+        Log.i(TAG, "new tx hex: " + newTxHex);
 
-        return  newTx.getHash();
+        TransactionBroadcast transactionBroadcast = peerGroup.broadcastTransaction(newTx);
+        Log.i(TAG, "TxBroadcasted " + newTx.getHash().toString());
+
+        return transactionBroadcast;
     }
 
     public TransactionBroadcast registerAlias(String aliasName) {

@@ -34,8 +34,10 @@ public class WalletObservable extends Observable {
     }
 
     public void setAlias(String alias) {
-        this.alias = alias;
-        setChanged();
+        if(!alias.equals(this.alias)) {
+            this.alias = alias;
+            setChanged();
+        }
     }
 
     public String getAliasName() {
@@ -43,8 +45,10 @@ public class WalletObservable extends Observable {
     }
 
     public void setAliasName(String aliasName) {
-        this.aliasName = aliasName;
-        setChanged();
+        if(!aliasName.equals(this.aliasName)) {
+            this.aliasName = aliasName;
+            setChanged();
+        }
     }
 
     public Address getCurrent() {
@@ -52,8 +56,10 @@ public class WalletObservable extends Observable {
     }
 
     public void setCurrent(Address current) {
-        this.current = current;
-        setChanged();
+        if(!current.equals(this.current)) {
+            this.current = current;
+            setChanged();
+        }
     }
 
     public Bitmap getCurrentIdenticon() {
@@ -61,8 +67,11 @@ public class WalletObservable extends Observable {
     }
 
     public void setCurrentIdenticon(Bitmap currentIdenticon) {
-        this.currentIdenticon = currentIdenticon;
-        setChanged();
+        if(!currentIdenticon.equals(this.currentIdenticon)) {
+            this.currentIdenticon = currentIdenticon;
+            setChanged();
+        }
+
     }
 
     public String getCurrentIdenticonSource() {
@@ -70,8 +79,10 @@ public class WalletObservable extends Observable {
     }
 
     public void setCurrentIdenticonSource(String currentIdenticonSource) {
-        this.currentIdenticonSource = currentIdenticonSource;
-        setChanged();
+        if(!currentIdenticonSource.equals(this.currentIdenticonSource)) {
+            this.currentIdenticonSource = currentIdenticonSource;
+            setChanged();
+        }
     }
 
     public Bitmap getCurrentQrCode() {
@@ -79,8 +90,10 @@ public class WalletObservable extends Observable {
     }
 
     public void setCurrentQrCode(Bitmap currentQrCode) {
-        this.currentQrCode = currentQrCode;
-        setChanged();
+        if(!currentQrCode.equals(this.currentQrCode)) {
+            this.currentQrCode = currentQrCode;
+            setChanged();
+        }
     }
 
     public String getCurrentQrCodeSource() {
@@ -88,8 +101,10 @@ public class WalletObservable extends Observable {
     }
 
     public void setCurrentQrCodeSource(String currentQrCodeSource) {
-        this.currentQrCodeSource = currentQrCodeSource;
-        setChanged();
+        if(!currentQrCodeSource.equals(this.currentQrCodeSource)) {
+            this.currentQrCodeSource = currentQrCodeSource;
+            setChanged();
+        }
     }
 
     public Integer getPercSync() {
@@ -97,8 +112,10 @@ public class WalletObservable extends Observable {
     }
 
     public void setPercSync(Integer percSync) {
-        this.percSync = percSync;
-        setChanged();
+        if(!percSync.equals(this.percSync)) {
+            this.percSync = percSync;
+            setChanged();
+        }
     }
 
     public Integer getHeight() {
@@ -106,8 +123,10 @@ public class WalletObservable extends Observable {
     }
 
     public void setHeight(Integer height) {
-        this.height = height;
-        setChanged();
+        if(!height.equals(this.height)) {
+            this.height = height;
+            setChanged();
+        }
     }
 
     public State getState() {
@@ -115,8 +134,10 @@ public class WalletObservable extends Observable {
     }
 
     public void setState(State state) {
-        this.state = state;
-        setChanged();
+        if(!state.equals(this.state)) {
+            this.state = state;
+            setChanged();
+        }
     }
 
     public Coin getWalletBalance() {
@@ -124,8 +145,10 @@ public class WalletObservable extends Observable {
     }
 
     public void setWalletBalance(Coin walletBalance) {
-        this.walletBalance = walletBalance;
-        setChanged();
+        if(!walletBalance.equals(this.walletBalance) ) {
+            this.walletBalance = walletBalance;
+            setChanged();
+        }
     }
 
     @Override
