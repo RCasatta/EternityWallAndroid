@@ -131,14 +131,6 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
         swipe = (SwipeRefreshLayout) v.findViewById(R.id.activity_main_swipe_refresh_layout);
         txtHeader = (TextView)v.findViewById(R.id.txtHeader);
 
-        v.findViewById(R.id.payButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getActivity(), WriteActivity.class);
-                startActivity(i);
-            }
-        });
-
         messages = new ArrayList<Message>();
         cursor = null;
         search = null;

@@ -90,6 +90,13 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         final TimedLogStat timedLogStat = new TimedLogStat((EWApplication) getApplication());
         timer.schedule(timedLogStat, 30000L , 30000L );
 
+        findViewById(R.id.payButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, WriteActivity.class);
+                startActivity(i);
+            }
+        });
     }
 
     private void changeTabsFont() {
