@@ -55,10 +55,19 @@
             android:name=".activity.PreferencesActivity"
             android:label="@string/title_activity_preferences"
             android:parentActivityName=".activity.MainActivity" >
+
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity" />
+        </activity>
+        <activity
+            android:name=".activity.DebugActivity"
+            android:label="@string/title_activity_debug"
+            android:parentActivityName=".activity.PreferencesActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.eternitywall.eternitywall.activity.PreferencesActivity" />
         </activity>
     </application>
 

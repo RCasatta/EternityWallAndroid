@@ -84,6 +84,12 @@ public class PreferencesActivity extends AppCompatActivity {
 
             }
         });
+        ((LinearLayout)findViewById(R.id.llDebug)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(PreferencesActivity.this, DebugActivity.class));
+            }
+        });
     }
 
     @Override

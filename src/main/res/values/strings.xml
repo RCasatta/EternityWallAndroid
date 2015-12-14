@@ -48,6 +48,7 @@
     <string name="font_awesome_bitcoin"></string>
 
     <string name="title_activity_preferences">Preferences</string>
+    <string name="title_activity_debug">DebugActivity</string>
 
 
 
