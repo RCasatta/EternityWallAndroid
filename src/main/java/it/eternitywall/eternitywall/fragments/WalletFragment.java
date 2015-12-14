@@ -106,6 +106,14 @@ public class WalletFragment extends Fragment {
         }
 
     }
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        final FragmentActivity activity = getActivity();
+        if(activity!=null) {
+            activity.unbindService(mConnection);
+        }
+    }
     private final ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
@@ -119,7 +127,7 @@ public class WalletFragment extends Fragment {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            Log.i(TAG,".onServiceDisconnected()");
+            Log.i(TAG, ".onServiceDisconnected()");
             //walletObservable.deleteObserver(updateUI);
         }
 
