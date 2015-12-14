@@ -11,6 +11,8 @@ import android.util.Log;
 
 import com.subgraph.orchid.crypto.PRNGFixes;
 
+import java.util.Timer;
+
 import it.eternitywall.eternitywall.wallet.WalletObserver;
 import it.eternitywall.eternitywall.wallet.EWBinder;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
@@ -21,6 +23,10 @@ public class EWApplication extends MultiDexApplication {
     private EWWalletService ewWalletService;
     private WalletObservable walletObservable;
     private WalletObserver walletObserver;
+
+    private Timer timer;
+    private TimedLogStat timedLogStat;
+
     private final ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
@@ -51,6 +57,10 @@ public class EWApplication extends MultiDexApplication {
         final Intent intent = new Intent(this, EWWalletService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         //startService(intent);
+
+        timer = new Timer();
+        timedLogStat = new TimedLogStat(this);
+        timer.schedule(timedLogStat, 30000L, 30000L);
     }
 
     public EWWalletService getEwWalletService() {

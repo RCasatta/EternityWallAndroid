@@ -1,20 +1,23 @@
 package it.eternitywall.eternitywall.activity;
 
+import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+
+import org.bitcoinj.core.PeerGroup;
+import org.bitcoinj.core.Wallet;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import it.eternitywall.eternitywall.Debug;
 import it.eternitywall.eternitywall.EWApplication;
-import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.adapters.DebugListAdapter;
-import it.eternitywall.eternitywall.adapters.MessageListAdapter;
+import it.eternitywall.eternitywall.wallet.EWWalletService;
 import it.eternitywall.eternitywall.wallet.WalletObservable;
 
 public class DebugActivity extends AppCompatActivity implements DebugListAdapter.MessageListAdapterManager {
@@ -79,18 +82,25 @@ public class DebugActivity extends AppCompatActivity implements DebugListAdapter
         DebugListAdapter debugListAdapter = (DebugListAdapter) lstDebug.getAdapter();
         debugListAdapter.clear();
 
-        WalletObservable walletObservable = ((EWApplication) getApplication()).getWalletObservable();
+        final EWApplication application = (EWApplication) getApplication();
+        final EWWalletService ewWalletService = application.getEwWalletService();
+        WalletObservable walletObservable = application.getWalletObservable();
         if(walletObservable!=null) {
-            if (walletObservable.getCurrent()!=null)
-                debugListAdapter.add( new Debug( "Address" , walletObservable.getCurrent().toString() ) );
-            else
-                debugListAdapter.add( new Debug( "Address" , "" ) );
 
-            if (walletObservable.getHeight()!=null)
-                debugListAdapter.add( new Debug( "Height" , walletObservable.getHeight().toString() ) );
-            else
+            PeerGroup peerGroup = ewWalletService.getPeerGroup();
+            if (peerGroup !=null) {
+                debugListAdapter.add( new Debug( "Peer height" , "" + peerGroup.getMostCommonChainHeight()));
+                debugListAdapter.add( new Debug( "Connected peers" , "" + peerGroup.getConnectedPeers().size() ) );
 
-                debugListAdapter.add( new Debug( "Height" , "" ) );
+            }
+
+            Wallet wallet = ewWalletService.getWallet();
+            if(wallet !=null) {
+                debugListAdapter.add( new Debug( "Wallet height" , ""+ wallet.getLastBlockSeenHeight() ) );
+                debugListAdapter.add(new Debug("Txs in wallet", "" + wallet.getTransactionsByTime().size()));
+                debugListAdapter.add(new Debug("Bloom filter", "" + wallet.getBloomFilter(1E-5).toString()));
+            }
+
         }
         debugListAdapter.notifyDataSetChanged();
 

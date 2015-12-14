@@ -1,6 +1,5 @@
 package it.eternitywall.eternitywall.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -15,9 +14,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +28,6 @@ import java.util.Timer;
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.TimedLogStat;
-import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 import it.eternitywall.eternitywall.fragments.AccountFragment;
 import it.eternitywall.eternitywall.fragments.CreateFragment;
 import it.eternitywall.eternitywall.fragments.HelloFragment;
@@ -55,8 +51,7 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
     Toolbar toolbar;
     int page_num=0;
 
-    private Timer timer;
-    private TimedLogStat timedLogStat;
+
 
     // Container and Fragments
     ViewPager viewPager;
@@ -87,10 +82,6 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         thread.start();
         */
 
-
-        timer = new Timer();
-        final TimedLogStat timedLogStat = new TimedLogStat((EWApplication) getApplication());
-        timer.schedule(timedLogStat, 30000L , 30000L );
 
         findViewById(R.id.payButton).setOnClickListener(new View.OnClickListener() {
             @Override

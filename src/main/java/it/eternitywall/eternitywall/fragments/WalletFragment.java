@@ -93,6 +93,7 @@ public class WalletFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG,"onCreate");
 
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -109,6 +110,7 @@ public class WalletFragment extends Fragment {
     @Override
     public void onDestroy(){
         super.onDestroy();
+        Log.i(TAG, "onDestroy");
         final FragmentActivity activity = getActivity();
         if(activity!=null) {
             activity.unbindService(mConnection);
@@ -123,6 +125,7 @@ public class WalletFragment extends Fragment {
             EWApplication ewApplication = (EWApplication) getActivity().getApplication();
             walletObservable = ewApplication.getWalletObservable();
             walletObservable.addObserver(updateUI);   //TODO nullPointerExcpetion here
+            updateUI.update(null,null);  //Refresh UI
         }
 
         @Override
@@ -188,6 +191,7 @@ public class WalletFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_wallet, container, false);
+        Log.i(TAG, "onCreateView");
 
         syncingLayout = (RelativeLayout) view.findViewById(R.id.syncingLayout);
         syncedLayout = (LinearLayout) view.findViewById(R.id.syncedLayout);
@@ -230,6 +234,12 @@ public class WalletFragment extends Fragment {
             }
         });
 
+
+        if(walletObservable!=null && walletObservable.getState()== WalletObservable.State.SYNCED) {
+            syncedLayout.setVisibility(View.VISIBLE);
+            syncingLayout.setVisibility(View.GONE);
+        }
+
         return view;
     }
 
@@ -243,6 +253,8 @@ public class WalletFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        Log.i(TAG, "onAttach");
+
         if (activity instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) activity;
         } else {
