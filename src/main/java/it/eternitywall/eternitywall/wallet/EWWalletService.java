@@ -134,6 +134,7 @@ public class EWWalletService extends Service implements Runnable {
             return null;
         }
 
+        message = "EW " + message;
         final byte[] toWrite = message.getBytes();
 
         newTx.addOutput(Coin.valueOf(DUST), ewMessageData.getMessageId());
