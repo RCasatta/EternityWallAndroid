@@ -49,7 +49,10 @@
 
     <string name="title_activity_preferences">Preferences</string>
     <string name="title_activity_debug">DebugActivity</string>
-
+    <string name="btn_contact">CONTACT</string>
+    <string name="btn_visit">VISIT</string>
+    <string name="eternity_wall">Eternity Wall</string>
+    <string name="message_lasting_forever">Message lasting forever</string>
 
 
 </resources>

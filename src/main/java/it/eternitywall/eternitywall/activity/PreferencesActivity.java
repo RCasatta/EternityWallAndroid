@@ -36,7 +36,7 @@ public class PreferencesActivity extends AppCompatActivity {
         findViewById(R.id.llAbout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(PreferencesActivity.this,ThxActivity.class));
+                startActivity(new Intent(PreferencesActivity.this,AboutActivity.class));
             }
         });
         findViewById(R.id.llPassphrase).setOnClickListener(new View.OnClickListener() {
