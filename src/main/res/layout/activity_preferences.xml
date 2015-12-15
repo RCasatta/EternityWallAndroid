@@ -17,9 +17,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <!--not showing until we have more sections-->
             <TextView android:text="Account Preferences" android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/primary"
+                android:visibility="gone"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin" />
 

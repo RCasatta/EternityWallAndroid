@@ -2,9 +2,11 @@ package it.eternitywall.eternitywall.adapters;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -14,9 +16,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import it.eternitywall.eternitywall.activity.DetailActivity;
+import it.eternitywall.eternitywall.IdenticonGenerator;
 import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.R;
+import it.eternitywall.eternitywall.activity.DetailActivity;
 
 /**
  * Created by federicoserrelli on 26/08/15.
@@ -62,6 +65,7 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
             h.txtMessage = (TextView) row.findViewById(R.id.txtMessage);
             h.txtStatus = (TextView) row.findViewById(R.id.txtStatus);
             h.headerText = (TextView) row.findViewById(R.id.headerText);
+            h.identicon = (ImageView) row.findViewById(R.id.identicon);
             row.setTag(h);
         }
         else {
@@ -69,7 +73,6 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
         }
 
 
-        h.txtDate.setText(new SimpleDateFormat("dd MMM yyyy HH.mm").format(new Date(m.getTimestamp())));
         h.txtMessage.setText(m.getMessage());
         if (m.getRank()==1){
             h.txtMessage.setTextAppearance(getContext(), android.R.style.TextAppearance_Large);
@@ -102,6 +105,23 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
             h.txtStatus.setText(strStatus);
             h.txtStatus.setVisibility(View.VISIBLE);
         }
+
+        String dateFormatted = new SimpleDateFormat("dd MMM yyyy HH.mm").format(new Date(m.getTimestamp()));
+        if(m.getAliasName()!=null) {
+            h.txtDate.setText(m.getAliasName() + " - " + dateFormatted);
+        } else {
+            h.txtDate.setText(dateFormatted);
+        }
+
+        if(m.getAlias()!=null) {
+            Bitmap bitmap= IdenticonGenerator.generate(m.getAlias());
+            h.identicon.setImageBitmap(bitmap);
+            h.identicon.setVisibility(View.VISIBLE);
+        } else {
+            h.identicon.setVisibility(View.GONE);
+
+        }
+
         // add click listener
         h.onClickListener = new View.OnClickListener(){
             @Override
@@ -139,6 +159,7 @@ public class MessageListAdapter extends ArrayAdapter<Message> {
         protected TextView txtDate;
         protected TextView txtMessage;
         protected TextView txtStatus;
+        protected ImageView identicon;
         protected View.OnClickListener onClickListener;
     }
 

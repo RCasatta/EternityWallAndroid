@@ -27,6 +27,9 @@ public class Message implements Serializable, Comparable<Message> {
     private Integer view;
     private Integer weekView;
     private Integer retweets;
+    private String alias;
+    private String aliasName;
+    private String aliasAndTime;
 
     public Boolean getAnswer() {
         return answer;
@@ -84,6 +87,30 @@ public class Message implements Serializable, Comparable<Message> {
         this.likes = likes;
     }
 
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
+    public String getAliasAndTime() {
+        return aliasAndTime;
+    }
+
+    public void setAliasAndTime(String aliasAndTime) {
+        this.aliasAndTime = aliasAndTime;
+    }
+
+    public String getAliasName() {
+        return aliasName;
+    }
+
+    public void setAliasName(String aliasName) {
+        this.aliasName = aliasName;
+    }
+
     @Override
     public String toString() {
         return "Message{" +
@@ -122,6 +149,10 @@ public class Message implements Serializable, Comparable<Message> {
         try { m.view = jo.getInt("view");} catch (JSONException e) { m.view = 0; } //optional
         try { m.weekView = jo.getInt("weekView");} catch (JSONException e) { m.weekView = 0; } //optional
         try { m.retweets = jo.getInt("retweets");} catch (JSONException e) { m.retweets = 0; } //optional
+
+        try { m.alias = jo.getString("alias");} catch (JSONException e) {  } //optional
+        try { m.aliasName = jo.getString("aliasName");} catch (JSONException e) {  } //optional
+        try { m.aliasAndTime = jo.getString("aliasAndTime");} catch (JSONException e) {  } //optional
 
         return m;
     }
