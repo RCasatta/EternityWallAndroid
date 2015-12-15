@@ -98,7 +98,8 @@ public class DebugActivity extends AppCompatActivity implements DebugListAdapter
             if(wallet !=null) {
                 debugListAdapter.add( new Debug( "Wallet height" , ""+ wallet.getLastBlockSeenHeight() ) );
                 debugListAdapter.add(new Debug("Txs in wallet", "" + wallet.getTransactionsByTime().size()));
-                debugListAdapter.add(new Debug("Bloom filter", "" + wallet.getBloomFilter(1E-5).toString()));
+                String bloomString = wallet.getBloomFilter(1E-5).toString();
+                debugListAdapter.add(new Debug("Bloom filter", "" + bloomString.substring(bloomString.indexOf("size")) ));
             }
 
         }
