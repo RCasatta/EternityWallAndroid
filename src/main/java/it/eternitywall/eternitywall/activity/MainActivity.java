@@ -1,9 +1,11 @@
 package it.eternitywall.eternitywall.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -26,6 +28,7 @@ import java.util.List;
 import java.util.Timer;
 
 import it.eternitywall.eternitywall.EWApplication;
+import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.TimedLogStat;
 import it.eternitywall.eternitywall.fragments.AccountFragment;
@@ -82,14 +85,19 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         thread.start();
         */
 
-
-        findViewById(R.id.payButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, WriteActivity.class);
-                startActivity(i);
-            }
-        });
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        String passphrase=sharedPref.getString(Preferences.PASSPHRASE, null);
+        if (passphrase==null){
+            findViewById(R.id.payButton).setVisibility(View.GONE);
+        } else {
+            findViewById(R.id.payButton).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(MainActivity.this, WriteActivity.class);
+                    startActivity(i);
+                }
+            });
+        }
     }
 
     private void changeTabsFont() {
@@ -276,34 +284,41 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
             txtShare.setText(getResources().getString(R.string.action_share));
             txtShare.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
             txtShare.setTypeface(font);
-            menu.findItem(R.id.action_share).setActionView(txtShare);
-            menu.findItem(R.id.action_share).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    final WalletObservable walletObservable = ((EWApplication) getApplication()).getWalletObservable();
-                    if(walletObservable!=null) {
-                        Intent intent = new Intent();
-                        intent.setAction(Intent.ACTION_SEND);
-                        intent.putExtra(Intent.EXTRA_TEXT, walletObservable.getCurrent().toString() );
-                        intent.setType("text/plain");
-                        startActivity(intent);
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+            String passphrase=sharedPref.getString(Preferences.PASSPHRASE, null);
+            if (passphrase==null){
+                txtShare.setText("");
+            } else {
+
+                menu.findItem(R.id.action_share).setActionView(txtShare);
+                menu.findItem(R.id.action_share).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        final WalletObservable walletObservable = ((EWApplication) getApplication()).getWalletObservable();
+                        if (walletObservable != null) {
+                            Intent intent = new Intent();
+                            intent.setAction(Intent.ACTION_SEND);
+                            intent.putExtra(Intent.EXTRA_TEXT, walletObservable.getCurrent().toString());
+                            intent.setType("text/plain");
+                            startActivity(intent);
+                        }
+                        return true;
                     }
-                    return true;
-                }
-            });
-            txtShare.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final WalletObservable walletObservable = ((EWApplication) getApplication()).getWalletObservable();
-                    if(walletObservable!=null) {
-                        Intent intent = new Intent();
-                        intent.setAction(Intent.ACTION_SEND);
-                        intent.putExtra(Intent.EXTRA_TEXT, walletObservable.getCurrent().toString() );
-                        intent.setType("text/plain");
-                        startActivity(intent);
+                });
+                txtShare.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final WalletObservable walletObservable = ((EWApplication) getApplication()).getWalletObservable();
+                        if (walletObservable != null) {
+                            Intent intent = new Intent();
+                            intent.setAction(Intent.ACTION_SEND);
+                            intent.putExtra(Intent.EXTRA_TEXT, walletObservable.getCurrent().toString());
+                            intent.setType("text/plain");
+                            startActivity(intent);
+                        }
                     }
-                }
-            });
+                });
+            }
 
             TextView txtPreferences = new TextView(MainActivity.this);
             txtPreferences.setPadding(0, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);

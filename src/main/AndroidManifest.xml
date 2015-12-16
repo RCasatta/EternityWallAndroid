@@ -30,21 +30,31 @@
         </activity>
         <activity
             android:name=".activity.WriteActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:parentActivityName=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="text/plain" />
             </intent-filter>
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.MainActivity" />
         </activity>
         <activity
             android:name=".activity.ThxActivity"
             android:label="@string/app_name"></activity>
+
         <activity
             android:name=".activity.DetailActivity"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name"
+            android:parentActivityName=".activity.MainActivity">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.MainActivity" />
+        </activity>
 
         <service android:name=".wallet.EWWalletService" />
 
@@ -52,7 +62,6 @@
             android:name=".activity.PreferencesActivity"
             android:label="@string/title_activity_preferences"
             android:parentActivityName=".activity.MainActivity">
-
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

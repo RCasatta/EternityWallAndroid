@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:layout_height="wrap_content">
+
+
+    <TextView
+        android:id="@+id/headerText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="12dp"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/primaryText"
+        android:visibility="gone"
+
+        />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/itemMessageStyle"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/identicon"
+                android:layout_width="63dp"
+                android:layout_height="63dp"
+                android:src="@drawable/identicon_placeholder"
+                android:paddingRight="15dp"
+                android:visibility="gone"
+                android:layout_gravity="center" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_toRightOf="@id/identicon"
+                >
+
+                <TextView
+                    android:id="@+id/txtDate"
+                    style="@style/TextAppearance.AppCompat.Small"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/secondaryText" />
+
+                <TextView
+                    android:id="@+id/txtMessage"
+                    style="@style/TextAppearance.AppCompat.Large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/primaryText"
+                    android:layout_marginTop="2dp"/>
+
+                <TextView
+                    style="@style/TextAppearance.AppCompat.Small"
+                    android:id="@+id/txtStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/primaryText" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentStart="false"
+            android:gravity="center_horizontal"
+            android:visibility="visible"
+            android:layout_marginTop="6dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/identicon">
+
+            <Button
+                android:id="@+id/btnShare"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="@string/icon_share"
+                android:textSize="20sp"
+                android:textColor="@color/accent"
+                android:background="@color/alpha"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btnProof"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="@string/icon_link"
+                android:textSize="20sp"
+                android:textColor="@color/accent"
+                android:background="@color/alpha"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btnRanking"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="@string/icon_ranking"
+                android:textSize="20sp"
+                android:textColor="@color/accent"
+                android:background="@color/alpha"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btnTranslate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="@string/icon_translate"
+                android:textSize="20sp"
+                android:textColor="@color/accent"
+                android:background="@color/alpha"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btnLikes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="@string/icon_likes"
+                android:textSize="20sp"
+                android:textColor="@color/accent"
+                android:background="@color/alpha"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btnReply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="@string/icon_commenting"
+                android:textSize="20sp"
+                android:textColor="@color/accent"
+                android:background="@color/alpha"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

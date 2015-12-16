@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -39,6 +40,7 @@ import java.util.Date;
 import java.util.List;
 
 import it.eternitywall.eternitywall.Http;
+import it.eternitywall.eternitywall.IdenticonGenerator;
 import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.adapters.MessageListAdapter;
@@ -52,6 +54,7 @@ public class DetailActivity extends ActionBarActivity {
 
     private TextView txtMessage;
     private TextView txtDate;
+    private TextView txtStatus;
     private ProgressBar progress;
     private String hash = null;
     private ListView repliesMessages;
@@ -62,6 +65,7 @@ public class DetailActivity extends ActionBarActivity {
 
 
     Button btnShare, btnLikes, btnProof, btnRanking, btnReplies, btnTranslate;
+    protected ImageView identicon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,21 +73,24 @@ public class DetailActivity extends ActionBarActivity {
         setContentView(R.layout.activity_detail);
 
         Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
-        btnShare = (Button) findViewById(R.id.btnShare);
-        btnLikes = (Button) findViewById(R.id.btnLikes);
-        btnProof = (Button) findViewById(R.id.btnProof);
-        btnRanking = (Button) findViewById(R.id.btnRanking);
-        btnReplies = (Button) findViewById(R.id.btnReply);
-        btnTranslate = (Button) findViewById(R.id.btnTranslate);
+        View viewDetailMessage = findViewById(R.id.detailmessage);
+        btnShare = (Button) viewDetailMessage.findViewById(R.id.btnShare);
+        btnLikes = (Button) viewDetailMessage.findViewById(R.id.btnLikes);
+        btnProof = (Button) viewDetailMessage.findViewById(R.id.btnProof);
+        btnRanking = (Button) viewDetailMessage.findViewById(R.id.btnRanking);
+        btnReplies = (Button) viewDetailMessage.findViewById(R.id.btnReply);
+        btnTranslate = (Button) viewDetailMessage.findViewById(R.id.btnTranslate);
         btnShare.setTypeface(font);
         btnLikes.setTypeface(font);
         btnProof.setTypeface(font);
         btnRanking.setTypeface(font);
         btnReplies.setTypeface(font);
         btnTranslate.setTypeface(font);
+        txtMessage = (TextView) viewDetailMessage.findViewById(R.id.txtMessage);
+        txtDate = (TextView) viewDetailMessage.findViewById(R.id.txtDate);
+        txtStatus = (TextView) viewDetailMessage.findViewById(R.id.txtStatus);
+        identicon = (ImageView) viewDetailMessage.findViewById(R.id.identicon);
 
-        txtMessage = (TextView) findViewById(R.id.txtMessage);
-        txtDate = (TextView) findViewById(R.id.txtDate);
         progress = (ProgressBar) findViewById(R.id.progress);
         repliesMessages = (ListView) findViewById(R.id.repliesMessages);
         answersMessages = (ListView) findViewById(R.id.answersMessages);
@@ -161,7 +168,12 @@ public class DetailActivity extends ActionBarActivity {
                 progress.setVisibility(View.INVISIBLE);
 
                 if (ok) {
-                    txtDate.setText(new SimpleDateFormat("dd MMM yyyy HH.mm").format(new Date(mMessage.getTimestamp())));
+                    String dateFormatted = new SimpleDateFormat("dd MMM yyyy HH.mm").format(new Date(mMessage.getTimestamp()));
+                    if(mMessage.getAliasName()!=null) {
+                        txtDate.setText(mMessage.getAliasName() + " - " + dateFormatted);
+                    } else {
+                        txtDate.setText(dateFormatted);
+                    }
                     txtMessage.setText(mMessage.getMessage());
                     // TO DO
                     //if (mMessage.getAnswer()==true)
@@ -170,6 +182,14 @@ public class DetailActivity extends ActionBarActivity {
                     if (mMessage.getReplies() > 0)
                         btnReplies.setText(getResources().getString(R.string.icon_commenting) + " (" + String.valueOf(mMessage.getReplies()) + ")");
 
+                    if(mMessage.getAlias()!=null) {
+                        Bitmap bitmap= IdenticonGenerator.generate(mMessage.getAlias());
+                        identicon.setImageBitmap(bitmap);
+                        identicon.setVisibility(View.VISIBLE);
+                    } else {
+                        identicon.setVisibility(View.GONE);
+
+                    }
                     btnShare.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
