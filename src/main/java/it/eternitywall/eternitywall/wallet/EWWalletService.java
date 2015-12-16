@@ -352,7 +352,6 @@ public class EWWalletService extends Service implements Runnable {
             peerGroup.startBlockChainDownload(downloadListener);
             Log.i(TAG, "download started");
 
-
         } catch (Exception e) {
             Log.i(TAG, e.getMessage());
         }
@@ -484,4 +483,30 @@ public class EWWalletService extends Service implements Runnable {
     public Wallet getWallet() {
         return wallet;
     }
+
+    public void stopSync() {
+        blockChain.removeListener(chainListener);
+        blockChain.removeWallet(wallet);
+        peerGroup.stopAsync();
+        wallet.cleanup();
+        wallet.reset();
+
+        walletObservable.setState(WalletObservable.State.NOT_STARTED);
+        walletObservable.notifyObservers();
+
+        messagesId.clear();
+        changes.clear();
+
+        final Context context = getApplicationContext();
+        File path;
+        if(context!=null)
+            path= context.getDir(BITCOIN_PATH, Context.MODE_PRIVATE);
+        else
+            path = new File("./data/");
+        final File blockFile = new File(path, BLOCKCHAIN_FILE );
+        final File walletFile = new File(path, WALLET_FILE );
+        blockFile.delete();
+        walletFile.delete();
+    }
+
 }

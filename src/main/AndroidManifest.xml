@@ -75,7 +75,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.eternitywall.eternitywall.activity.PreferencesActivity" />
         </activity>
-        <activity android:name=".activity.AboutActivity"></activity>
+
+        <activity
+            android:name=".activity.AboutActivity"
+            android:label="@string/eternity_wall"
+            android:parentActivityName=".activity.PreferencesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.eternitywall.eternitywall.activity.PreferencesActivity" />
+        </activity>
     </application>
 
 </manifest>

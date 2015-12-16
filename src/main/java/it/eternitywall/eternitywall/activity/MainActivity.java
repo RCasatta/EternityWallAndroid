@@ -225,7 +225,7 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
                 }
             });
             TextView txtPreferences = new TextView(MainActivity.this);
-            txtPreferences.setPadding(0, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
+            txtPreferences.setPadding(4, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
             txtPreferences.setText(getResources().getString(R.string.action_preferences));
             txtPreferences.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
             txtPreferences.setTypeface(font);
@@ -281,7 +281,6 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
 
             TextView txtShare = new TextView(MainActivity.this);
             txtShare.setPadding(0, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
-            txtShare.setText(getResources().getString(R.string.action_share));
             txtShare.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
             txtShare.setTypeface(font);
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
@@ -289,7 +288,7 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
             if (passphrase==null){
                 txtShare.setText("");
             } else {
-
+                txtShare.setText(getResources().getString(R.string.action_share));
                 menu.findItem(R.id.action_share).setActionView(txtShare);
                 menu.findItem(R.id.action_share).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
@@ -321,7 +320,7 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
             }
 
             TextView txtPreferences = new TextView(MainActivity.this);
-            txtPreferences.setPadding(0, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
+            txtPreferences.setPadding(4, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
             txtPreferences.setText(getResources().getString(R.string.action_preferences));
             txtPreferences.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
             txtPreferences.setTypeface(font);

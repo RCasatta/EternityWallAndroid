@@ -18,40 +18,58 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
+import it.eternitywall.eternitywall.wallet.EWWalletService;
 
 public class PreferencesActivity extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
 
+
         findViewById(R.id.llResync).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (existAccount()) {
+                    EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
+                    ewWalletService.stopSync();
+                }else
+                    dialogCreateAccount();
             }
         });
         findViewById(R.id.llAbout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(PreferencesActivity.this,AboutActivity.class));
+                startActivity(new Intent(PreferencesActivity.this, AboutActivity.class));
             }
         });
         findViewById(R.id.llRemove).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogPin_removePassphrase();
+                if (existAccount()) {
+                    EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
+                    ewWalletService.stopSync();
+                    dialogPin_removePassphrase();
+                }else
+                    dialogCreateAccount();
             }
         });
         findViewById(R.id.llPassphrase).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogPin_showPassphrase();
+                if (existAccount())
+                    dialogPin_showPassphrase();
+                else
+                    dialogCreateAccount();
             }
         });
+
+
         ((Switch)findViewById(R.id.switchDonation)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -61,9 +79,30 @@ public class PreferencesActivity extends AppCompatActivity {
         ((LinearLayout)findViewById(R.id.llDebug)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(PreferencesActivity.this, DebugActivity.class));
+                if (existAccount())
+                    startActivity(new Intent(PreferencesActivity.this, DebugActivity.class));
+                else
+                    dialogCreateAccount();
             }
         });
+    }
+
+    private boolean existAccount(){
+        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(PreferencesActivity.this);
+        String passphrase = sharedPref.getString(Preferences.PASSPHRASE,null);
+        if(passphrase!=null) {
+            return true;
+        }else
+            return false;
+    }
+
+
+    private void dialogCreateAccount() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Warning");
+        alertDialog.setMessage("Account not defined, please crate a wallet.");
+        AlertDialog alert = alertDialog.create();
+        alert.show();
     }
 
     private void dialogPin_showPassphrase(){
@@ -134,15 +173,13 @@ public class PreferencesActivity extends AppCompatActivity {
                         // remove preferences
                         final SharedPreferences.Editor edit = sharedPref.edit();
                         edit.putString(Preferences.PASSPHRASE, null);
-                        edit.putString(Preferences.PIN, null );
+                        edit.putString(Preferences.PIN, null);
                         edit.commit();
 
                         // stop observable
 
-                        // remove blockchain
-
-
-                        // remove walletstate
+                        EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
+                        ewWalletService.stopSync();
 
                     }
                 }else {
