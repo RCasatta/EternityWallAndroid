@@ -56,7 +56,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="message"
-                android:textColor="@color/primaryText" />
+                android:textColor="@color/primaryText"
+                android:layout_marginTop="2dp"/>
 
             <TextView
                 style="@style/TextAppearance.AppCompat.Small"

@@ -3,11 +3,14 @@ package it.eternitywall.eternitywall.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -32,11 +35,14 @@ import org.json.JSONObject;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Http;
+import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
 import it.eternitywall.eternitywall.wallet.WalletObservable;
@@ -187,11 +193,26 @@ public class WriteActivity extends ActionBarActivity {
             try {
                 Transaction transaction = transactionBroadcast.future().get();
                 if (transaction == null) {
-                    Toast.makeText(this, "error creating transaction", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Error broadcasting transaction!", Toast.LENGTH_LONG).show();
 
                 } else {
-                    Toast.makeText(this, "tx broadcasted", Toast.LENGTH_LONG).show();
-                    //TODO ask count unconfirmed in eternitywall.it???
+                    Toast.makeText(this, "Message sent! You'll be notified when written", Toast.LENGTH_LONG).show();
+
+                    final String hash = transaction.getHashAsString();
+                    final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+                    Set<String> stringSet = new HashSet<>( sharedPref.getStringSet(Preferences.TO_NOTIFY, new HashSet<String>()) );
+                    final SharedPreferences.Editor edit = sharedPref.edit();
+                    stringSet.add(hash);
+                    edit.putStringSet(Preferences.TO_NOTIFY,stringSet);
+                    edit.commit();
+
+                    Handler handler = new Handler();
+                    Runnable r = new Runnable() {
+                        public void run() {
+                            Http.get("http://eternitywall.it/v1/countmessagesinqueue");
+                        }
+                    };
+                    handler.postDelayed(r, 3000);
                 }
 
             } catch (InterruptedException e) {

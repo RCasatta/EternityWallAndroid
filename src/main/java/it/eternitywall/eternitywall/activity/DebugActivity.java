@@ -1,6 +1,8 @@
 package it.eternitywall.eternitywall.activity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -11,10 +13,13 @@ import org.bitcoinj.core.PeerGroup;
 import org.bitcoinj.core.Wallet;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import it.eternitywall.eternitywall.Debug;
 import it.eternitywall.eternitywall.EWApplication;
+import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.adapters.DebugListAdapter;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
@@ -84,27 +89,37 @@ public class DebugActivity extends AppCompatActivity implements DebugListAdapter
 
         final EWApplication application = (EWApplication) getApplication();
         final EWWalletService ewWalletService = application.getEwWalletService();
-        WalletObservable walletObservable = application.getWalletObservable();
-        if(walletObservable!=null) {
+        final WalletObservable walletObservable = application.getWalletObservable();
 
+        if(ewWalletService!=null) {
             PeerGroup peerGroup = ewWalletService.getPeerGroup();
-            if (peerGroup !=null) {
-                debugListAdapter.add( new Debug( "Peer height" , "" + peerGroup.getMostCommonChainHeight()));
-                debugListAdapter.add( new Debug( "Connected peers" , "" + peerGroup.getConnectedPeers().size() ) );
+            if (peerGroup != null) {
+                debugListAdapter.add(new Debug("Peer height", "" + peerGroup.getMostCommonChainHeight()));
+                debugListAdapter.add(new Debug("Connected peers", "" + peerGroup.getConnectedPeers().size()));
 
             }
 
             Wallet wallet = ewWalletService.getWallet();
-            if(wallet !=null) {
-                debugListAdapter.add( new Debug( "Wallet height" , ""+ wallet.getLastBlockSeenHeight() ) );
+            if (wallet != null) {
+                debugListAdapter.add(new Debug("Wallet height", "" + wallet.getLastBlockSeenHeight()));
                 debugListAdapter.add(new Debug("Txs in wallet", "" + wallet.getTransactionsByTime().size()));
                 String bloomString = wallet.getBloomFilter(1E-5).toString();
-                debugListAdapter.add(new Debug("Bloom filter", "" + bloomString.substring(bloomString.indexOf("size")) ));
+                debugListAdapter.add(new Debug("Bloom filter", "" + bloomString.substring(bloomString.indexOf("size"))));
             }
 
-        }
-        debugListAdapter.notifyDataSetChanged();
+            debugListAdapter.add(new Debug("Next message id", "" + ewWalletService.getNextMessageId()));
+            debugListAdapter.add(new Debug("Next change id", "" + ewWalletService.getNextChange()));
 
+        }
+
+
+
+        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        Set<String> stringSet = sharedPref.getStringSet(Preferences.TO_NOTIFY, new HashSet<String>());
+        debugListAdapter.add(new Debug("Txs to notify", "" + stringSet.size()));
+
+        debugListAdapter.notifyDataSetChanged();
+        swipe.setRefreshing(false);
 
     }
 }

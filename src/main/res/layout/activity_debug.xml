@@ -3,6 +3,14 @@
     android:layout_height="match_parent"
     tools:context="it.eternitywall.eternitywall.activity.DebugActivity">
 
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/activity_main_swipe_refresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -10,17 +18,4 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/activity_main_swipe_refresh_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ListView
-            android:id="@+id/lstMessages"
-            android:layout_width="match_parent"
-            android:divider="@android:color/transparent"
-            android:layout_height="match_parent" />
-    </android.support.v4.widget.SwipeRefreshLayout>
-
-
 </RelativeLayout>

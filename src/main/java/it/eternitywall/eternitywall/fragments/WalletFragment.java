@@ -121,11 +121,13 @@ public class WalletFragment extends Fragment {
         @Override
         public void onServiceConnected(final ComponentName className,
                                        final IBinder service) {
-            Log.i(TAG,".onServiceConnected()");
+            Log.i(TAG, ".onServiceConnected()");
             EWApplication ewApplication = (EWApplication) getActivity().getApplication();
-            walletObservable = ewApplication.getWalletObservable();
-            walletObservable.addObserver(updateUI);   //TODO nullPointerExcpetion here
-            updateUI.update(null,null);  //Refresh UI
+            walletObservable = ewApplication.getWalletObservable();   //Should be moved in activity, but this way you have no callback for the listener here
+            if(walletObservable!=null && updateUI!=null) {   //could be that the app is detroyed but the service still active, in that case there is a null pointer here, TODO ugly, could cause problem
+                walletObservable.addObserver(updateUI);
+                updateUI.update(null, null);  //Refresh UI
+            }
         }
 
         @Override
@@ -266,7 +268,10 @@ public class WalletFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        Log.i(TAG, "onDetach");
+
         mListener = null;
+
     }
 
     /**

@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 
@@ -76,24 +77,32 @@ public class EWWalletService extends Service implements Runnable {
     private Wallet wallet;
     private boolean isSynced = false;
 
+    public Integer getNextMessageId() {
+        return nextMessageId;
+    }
+
+    public Integer getNextChange() {
+        return nextChange;
+    }
+
     private Address getAlias() {  //watch observable
         return changes.get( 0 ).toAddress(PARAMS);
     }
 
     private Address getCurrent() {  //watch observable
-        if(!isSynced && nextChange==0)
+        if(!isSynced || nextChange==0 || nextChange>99) //TODO manage nextChange>99
             return null;
         return changes.get( nextChange-1 ).toAddress(PARAMS);
     }
 
     private Address getNext() {  //watch observable
-        if(!isSynced && nextChange==0)
+        if(!isSynced || nextChange>99)  //TODO manage nextChange>99
             return null;
         return changes.get( nextChange ).toAddress(PARAMS);
     }
 
     private EWMessageData getNextMessageData() {
-        if(!isSynced || nextChange ==0) {
+        if(!isSynced || nextChange ==0 || nextChange>99) { //TODO manage nextChange>99
             Log.i(TAG, "getNextMessageData returning null " + isSynced + " " + nextChange);
             return null;
         }
@@ -109,8 +118,8 @@ public class EWWalletService extends Service implements Runnable {
 
     public TransactionBroadcast sendMessage(String message) {
         Log.i(TAG,"sendMessage " +message );
-        if(!isSynced || nextChange==0) {
-            Log.i(TAG, "sendMessage returning null " + isSynced + " " + nextChange);
+        if(!isSynced || nextChange==0 || nextChange>99 || nextMessageId>99) {
+            Log.i(TAG, "sendMessage returning null " + isSynced + " " + nextChange + " " + nextMessageId);   //TODO manage nextChange>99 or nextMessageId>0
             return null;
         }
         EWMessageData ewMessageData= getNextMessageData();
@@ -159,7 +168,7 @@ public class EWWalletService extends Service implements Runnable {
     }
 
     public TransactionBroadcast registerAlias(String aliasName) {
-        if(!isSynced && nextChange !=0) {
+        if(!isSynced || nextChange !=0) {
             Log.i(TAG,"not synced or next change different from zero");
             return null;
         }
@@ -324,7 +333,7 @@ public class EWWalletService extends Service implements Runnable {
             wallet.addEventListener(new EWWalletEventListener(walletObservable));
 
             blockChain = new BlockChain(PARAMS, wallet, blockStore);
-            chainListener = new MyBlockchainListener( all, walletObservable );
+            chainListener = new MyBlockchainListener( all, (EWApplication) getApplication() );
             blockChain.addListener(chainListener);
             peerGroup = new PeerGroup(PARAMS, blockChain);
             //peerGroup.addAddress(InetAddress.getByName("10.106.137.73"));

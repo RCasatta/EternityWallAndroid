@@ -10,4 +10,6 @@ public class Preferences {
     public static String EMAIL      = "email";
     public static String CHK_ONE    = "ckone";
     public static String CHK_TWO    = "cktwo";
+    public static String TO_NOTIFY  = "tonotify";
+
 }
