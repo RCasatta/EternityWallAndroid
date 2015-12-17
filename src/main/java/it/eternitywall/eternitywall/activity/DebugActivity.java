@@ -23,7 +23,6 @@ import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.adapters.DebugListAdapter;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
-import it.eternitywall.eternitywall.wallet.WalletObservable;
 
 public class DebugActivity extends AppCompatActivity implements DebugListAdapter.MessageListAdapterManager {
 
@@ -87,36 +86,47 @@ public class DebugActivity extends AppCompatActivity implements DebugListAdapter
         DebugListAdapter debugListAdapter = (DebugListAdapter) lstDebug.getAdapter();
         debugListAdapter.clear();
 
-        final EWApplication application = (EWApplication) getApplication();
-        final EWWalletService ewWalletService = application.getEwWalletService();
-        final WalletObservable walletObservable = application.getWalletObservable();
+        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String passphrase = sharedPref.getString(Preferences.PASSPHRASE, null);
 
-        if(ewWalletService!=null) {
-            PeerGroup peerGroup = ewWalletService.getPeerGroup();
-            if (peerGroup != null) {
-                debugListAdapter.add(new Debug("Peer height", "" + peerGroup.getMostCommonChainHeight()));
-                debugListAdapter.add(new Debug("Connected peers", "" + peerGroup.getConnectedPeers().size()));
+        if(passphrase==null) {  //you never come here, dialog from preferences prevent this
+            debugListAdapter.add(new Debug("Passphrase not set", "set your account to see debug info"));
+        } else {
+            final EWApplication application = (EWApplication) getApplication();
+            final EWWalletService ewWalletService = application.getEwWalletService();
+            //final WalletObservable walletObservable = application.getWalletObservable();
+
+            if(ewWalletService!=null) {
+                PeerGroup peerGroup = ewWalletService.getPeerGroup();
+                if (peerGroup != null) {
+                    debugListAdapter.add(new Debug("Peer height", "" + peerGroup.getMostCommonChainHeight()));
+                    debugListAdapter.add(new Debug("Connected peers", "" + peerGroup.getConnectedPeers().size()));
+
+                }
+
+                Wallet wallet = ewWalletService.getWallet();
+                if (wallet != null) {
+                    debugListAdapter.add(new Debug("Wallet height", "" + wallet.getLastBlockSeenHeight()));
+                    debugListAdapter.add(new Debug("Txs in wallet", "" + wallet.getTransactionsByTime().size()));
+                    String bloomString = wallet.getBloomFilter(1E-5).toString();
+                    debugListAdapter.add(new Debug("Bloom filter", "" + bloomString.substring(bloomString.indexOf("size"))));
+                }
+
+                debugListAdapter.add(new Debug("Next message id", "" + ewWalletService.getNextMessageId()));
+                debugListAdapter.add(new Debug("Next change id", "" + ewWalletService.getNextChange()));
+
+                Set<String> stringSet = sharedPref.getStringSet(Preferences.TO_NOTIFY, new HashSet<String>());
+                debugListAdapter.add(new Debug("Txs to notify", "" + stringSet.size()));
 
             }
-
-            Wallet wallet = ewWalletService.getWallet();
-            if (wallet != null) {
-                debugListAdapter.add(new Debug("Wallet height", "" + wallet.getLastBlockSeenHeight()));
-                debugListAdapter.add(new Debug("Txs in wallet", "" + wallet.getTransactionsByTime().size()));
-                String bloomString = wallet.getBloomFilter(1E-5).toString();
-                debugListAdapter.add(new Debug("Bloom filter", "" + bloomString.substring(bloomString.indexOf("size"))));
-            }
-
-            debugListAdapter.add(new Debug("Next message id", "" + ewWalletService.getNextMessageId()));
-            debugListAdapter.add(new Debug("Next change id", "" + ewWalletService.getNextChange()));
-
         }
 
 
 
-        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        Set<String> stringSet = sharedPref.getStringSet(Preferences.TO_NOTIFY, new HashSet<String>());
-        debugListAdapter.add(new Debug("Txs to notify", "" + stringSet.size()));
+
+
+
+
 
         debugListAdapter.notifyDataSetChanged();
         swipe.setRefreshing(false);

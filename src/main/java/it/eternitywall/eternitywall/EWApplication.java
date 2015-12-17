@@ -11,12 +11,23 @@ import android.util.Log;
 
 import com.subgraph.orchid.crypto.PRNGFixes;
 
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
 import java.util.Timer;
 
-import it.eternitywall.eternitywall.wallet.WalletObserver;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.android.LogcatAppender;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.rolling.RollingFileAppender;
+import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
 import it.eternitywall.eternitywall.wallet.EWBinder;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
 import it.eternitywall.eternitywall.wallet.WalletObservable;
+import it.eternitywall.eternitywall.wallet.WalletObserver;
 
 public class EWApplication extends MultiDexApplication {
     private static final String TAG = "EWApplication";
@@ -58,6 +69,8 @@ public class EWApplication extends MultiDexApplication {
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         //startService(intent);
 
+        initLogging();
+
         timer = new Timer();
         timedLogStat = new TimedLogStat(this);
         timer.schedule(timedLogStat, 30000L, 30000L);
@@ -69,5 +82,55 @@ public class EWApplication extends MultiDexApplication {
 
     public WalletObservable getWalletObservable() {
         return walletObservable;
+    }
+
+    private static boolean TEST = true;
+    private void initLogging()
+    {
+        final File logDir = getDir("log", TEST ? Context.MODE_WORLD_READABLE : MODE_PRIVATE);
+        final File logFile = new File(logDir, "wallet.log");
+
+        final LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+        final PatternLayoutEncoder filePattern = new PatternLayoutEncoder();
+        filePattern.setContext(context);
+        filePattern.setPattern("%d{HH:mm:ss.SSS} [%thread] %logger{0} - %msg%n");
+        filePattern.start();
+
+        final RollingFileAppender<ILoggingEvent> fileAppender = new RollingFileAppender<ILoggingEvent>();
+        fileAppender.setContext(context);
+        fileAppender.setFile(logFile.getAbsolutePath());
+
+        final TimeBasedRollingPolicy<ILoggingEvent> rollingPolicy = new TimeBasedRollingPolicy<ILoggingEvent>();
+        rollingPolicy.setContext(context);
+        rollingPolicy.setParent(fileAppender);
+        rollingPolicy.setFileNamePattern(logDir.getAbsolutePath() + "/wallet.%d.log.gz");
+        rollingPolicy.setMaxHistory(7);
+        rollingPolicy.start();
+
+        fileAppender.setEncoder(filePattern);
+        fileAppender.setRollingPolicy(rollingPolicy);
+        fileAppender.start();
+
+        final PatternLayoutEncoder logcatTagPattern = new PatternLayoutEncoder();
+        logcatTagPattern.setContext(context);
+        logcatTagPattern.setPattern("%logger{0}");
+        logcatTagPattern.start();
+
+        final PatternLayoutEncoder logcatPattern = new PatternLayoutEncoder();
+        logcatPattern.setContext(context);
+        logcatPattern.setPattern("[%thread] %msg%n");
+        logcatPattern.start();
+
+        final LogcatAppender logcatAppender = new LogcatAppender();
+        logcatAppender.setContext(context);
+        logcatAppender.setTagEncoder(logcatTagPattern);
+        logcatAppender.setEncoder(logcatPattern);
+        logcatAppender.start();
+
+        final ch.qos.logback.classic.Logger log = context.getLogger(Logger.ROOT_LOGGER_NAME);
+        log.addAppender(fileAppender);
+        log.addAppender(logcatAppender);
+        log.setLevel(Level.INFO);
     }
 }

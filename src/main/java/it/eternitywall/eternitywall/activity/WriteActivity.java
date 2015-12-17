@@ -3,14 +3,11 @@ package it.eternitywall.eternitywall.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -30,19 +27,14 @@ import android.widget.Toast;
 import com.google.common.base.Optional;
 
 import org.bitcoinj.core.Transaction;
-import org.bitcoinj.core.TransactionBroadcast;
 import org.json.JSONObject;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Http;
-import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
 import it.eternitywall.eternitywall.wallet.WalletObservable;
@@ -68,7 +60,7 @@ public class WriteActivity extends ActionBarActivity {
 
     private String address=null;
     private String replyFrom=null;
-
+    private String aliasName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +81,7 @@ public class WriteActivity extends ActionBarActivity {
 
         final WalletObservable walletObservable = ((EWApplication) getApplication()).getWalletObservable();
         if(walletObservable!=null) {
-            final String aliasName = walletObservable.getAliasName();
+            aliasName = walletObservable.getAliasName();
             if(aliasName!=null) {
                 List<String> list = new ArrayList<>();
                 list.add(aliasName);
@@ -140,10 +132,14 @@ public class WriteActivity extends ActionBarActivity {
                     return;
                 }
 
-                if(ANONYMOUS.equals( spnrSender.getSelectedItem().toString()) ) {
+                if(aliasName==null) {
                     sendAnonymous();
                 } else {
-                    sendFromWallet();
+                    if (ANONYMOUS.equals(spnrSender.getSelectedItem().toString())) {
+                        sendAnonymous();
+                    } else {
+                        sendFromWallet();
+                    }
                 }
 
 
@@ -185,11 +181,15 @@ public class WriteActivity extends ActionBarActivity {
          */
     }
 
+    private Transaction curTx;
     private void sendFromWallet() {
         Log.i(TAG,"sendFromWallet " + curmsg);
         if(curmsg!=null && !curmsg.isEmpty()) {
             final EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
-            final TransactionBroadcast transactionBroadcast = ewWalletService.sendMessage(curmsg);
+            curTx= ewWalletService.createMessageTx(curmsg);
+
+            /*final TransactionBroadcast transactionBroadcast = ewWalletService.sendTransaction(curTx);
+
             try {
                 Transaction transaction = transactionBroadcast.future().get();
                 if (transaction == null) {
@@ -215,11 +215,16 @@ public class WriteActivity extends ActionBarActivity {
                     handler.postDelayed(r, 3000);
                 }
 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             } catch (ExecutionException e) {
+                Toast.makeText(this, "Error broadcasting message! Please retry", Toast.LENGTH_LONG).show();
+                Log.e(TAG, e.getMessage());
                 e.printStackTrace();
-            }
+            } catch (InterruptedException e) {
+                Toast.makeText(this, "Error broadcasting message! Please retry", Toast.LENGTH_LONG).show();
+                Log.e(TAG, e.getMessage());
+                e.printStackTrace();
+
+            }*/
         }
 
     }

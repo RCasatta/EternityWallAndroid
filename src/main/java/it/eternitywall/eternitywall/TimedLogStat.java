@@ -50,6 +50,7 @@ public class TimedLogStat extends TimerTask {
                     hashes.add(tx.getHashAsString());
                 }
                 Log.i(TAG, "wallet txs: " + Joiner.on(",").join(hashes) );
+
             }
         } else {
             Log.i(TAG, "WalletObservable is null ()");

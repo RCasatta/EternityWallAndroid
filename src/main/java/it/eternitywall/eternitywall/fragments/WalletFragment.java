@@ -1,10 +1,14 @@
 package it.eternitywall.eternitywall.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,6 +29,7 @@ import android.widget.Toast;
 
 import org.bitcoinj.core.Coin;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -52,6 +57,7 @@ public class WalletFragment extends Fragment {
     private TextView syncingText;
     private TextView currentAddressText;
     private TextView aliasNameText;
+    private TextView btcBalanceUnconfirmed;
     private ImageView currentQrCode;
     private ImageView identicon;
     private CurrencyView btcBalance;
@@ -152,7 +158,11 @@ public class WalletFragment extends Fragment {
                     Log.i(TAG, android.os.Process.myTid() + " TID UI : Refreshing wallet fragment");
                     if (walletObservable.getState() == WalletObservable.State.SYNCED) {
                         final Coin walletBalance = walletObservable.getWalletBalance();
-                        final String units = String.valueOf(walletBalance.getValue());
+                        final Coin walletUnconfirmedBalance = walletObservable.getWalletUnconfirmedBalance();
+                        long value1 = walletBalance.getValue();
+                        long value2 = walletUnconfirmedBalance.getValue();
+                        long value = Math.max(value1, value2) ;  //Optimistic view
+                        final String units = String.valueOf(value);
                         final Bitmap QrCodeBitmap = walletObservable.getCurrentQrCode();
                         final Bitmap IdenticonBitmap = walletObservable.getCurrentIdenticon();
                         final String aliasName = walletObservable.getAliasName();
@@ -173,6 +183,11 @@ public class WalletFragment extends Fragment {
                         } else {
                             aliasNameText.setVisibility(View.GONE);
                             setAliasButton.setVisibility(View.VISIBLE);
+                        }
+                        if(value1!=value2) {
+                            btcBalanceUnconfirmed.setVisibility(View.VISIBLE);
+                        } else {
+                            btcBalanceUnconfirmed.setVisibility(View.GONE);
                         }
 
                     } else if (walletObservable.getState() == WalletObservable.State.SYNCING) {
@@ -204,6 +219,7 @@ public class WalletFragment extends Fragment {
         identicon = (ImageView) view.findViewById(R.id.identicon);
         btcBalance = (CurrencyView) view.findViewById(R.id.btcBalance);
         setAliasButton = (Button) view.findViewById(R.id.setAlias);
+        btcBalanceUnconfirmed = (TextView) view.findViewById(R.id.btcBalanceUnconfirmed);
 
         setAliasButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -231,7 +247,28 @@ public class WalletFragment extends Fragment {
             public void onClick(View v) {
                 if(walletObservable!=null && walletObservable.getCurrent()!=null && Bitcoin.isValidAddress( walletObservable.getCurrent().toString())) {
                     Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("bitcoin:" + walletObservable.getCurrent().toString()));
-                    startActivity(i);
+                    if(isAvailable(i))
+                        startActivity(i);
+                    else {
+                        AlertDialog d = new AlertDialog.Builder(getActivity())
+                                .setTitle(getString(R.string.app_name))
+                                .setMessage("There are no bitcoin wallet app installed, do you want to install GreenBits?")
+                                .setNegativeButton("No, thanks", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .setPositiveButton("Yes" + "!", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + "com.greenaddress.greenbits_android_wallet")));
+                                    }
+                                })
+                                .create();
+                        d.show();
+                    }
                 }
             }
         });
@@ -243,6 +280,14 @@ public class WalletFragment extends Fragment {
         }
 
         return view;
+    }
+
+    private boolean isAvailable(Intent intent) {
+        final PackageManager mgr = getActivity().getPackageManager();
+        List<ResolveInfo> list =
+                mgr.queryIntentActivities(intent,
+                        PackageManager.MATCH_DEFAULT_ONLY);
+        return list.size() > 0;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

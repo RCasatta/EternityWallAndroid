@@ -12,6 +12,7 @@ import java.util.Observable;
  */
 public class WalletObservable extends Observable {
     private Coin walletBalance = Coin.ZERO;
+    private Coin walletUnconfirmedBalance = Coin.ZERO;
     private State state= State.NOT_STARTED;
     private Address current;
     private Integer percSync;
@@ -151,11 +152,24 @@ public class WalletObservable extends Observable {
         }
     }
 
+    public Coin getWalletUnconfirmedBalance() {
+        return walletUnconfirmedBalance;
+    }
+
+    public void setWalletUnconfirmedBalance(Coin walletUnconfirmedBalance) {
+        if(!walletUnconfirmedBalance.equals(this.walletUnconfirmedBalance) ) {
+            this.walletUnconfirmedBalance = walletUnconfirmedBalance;
+            setChanged();
+        }
+
+    }
+
     @Override
     public String toString() {
         return "WalletObservable{" +
                 "alias='" + alias + '\'' +
                 ", walletBalance=" + walletBalance +
+                ", walletUnconfirmedBalance=" + walletUnconfirmedBalance +
                 ", state=" + state +
                 ", current=" + current +
                 ", percSync=" + percSync +

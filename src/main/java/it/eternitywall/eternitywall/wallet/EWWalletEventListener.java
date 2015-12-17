@@ -27,6 +27,7 @@ public class EWWalletEventListener implements WalletEventListener {
     public void onCoinsReceived(Wallet wallet, Transaction tx, Coin prevBalance, Coin newBalance) {
         Log.i(TAG, "onCoinsReceived");
         walletObservable.setWalletBalance(wallet.getBalance());
+        walletObservable.setWalletUnconfirmedBalance(wallet.getBalance(Wallet.BalanceType.ESTIMATED));
         walletObservable.notifyObservers();
 
     }
@@ -35,6 +36,7 @@ public class EWWalletEventListener implements WalletEventListener {
     public void onCoinsSent(Wallet wallet, Transaction tx, Coin prevBalance, Coin newBalance) {
         Log.i(TAG, "onCoinsSent");
         walletObservable.setWalletBalance(wallet.getBalance());
+        walletObservable.setWalletUnconfirmedBalance(wallet.getBalance(Wallet.BalanceType.ESTIMATED));
         walletObservable.notifyObservers();
     }
 
@@ -45,8 +47,9 @@ public class EWWalletEventListener implements WalletEventListener {
 
     @Override
     public void onTransactionConfidenceChanged(Wallet wallet, Transaction tx) {
-        Log.i(TAG, "onTransactionConfidenceChanged " + tx.getHash().toString());
+        Log.i(TAG, "onTransactionConfidenceChanged " + tx.getHash().toString() + " " + tx.getConfidence());
         walletObservable.setWalletBalance(wallet.getBalance());
+        walletObservable.setWalletUnconfirmedBalance(wallet.getBalance(Wallet.BalanceType.ESTIMATED));
         walletObservable.notifyObservers();
     }
 
@@ -54,6 +57,7 @@ public class EWWalletEventListener implements WalletEventListener {
     public void onWalletChanged(Wallet wallet) {
         Log.i(TAG, "onWalletChanged");
         walletObservable.setWalletBalance(wallet.getBalance());
+        walletObservable.setWalletUnconfirmedBalance(wallet.getBalance(Wallet.BalanceType.ESTIMATED));
         walletObservable.notifyObservers();
     }
 
@@ -64,4 +68,6 @@ public class EWWalletEventListener implements WalletEventListener {
     @Override
     public void onKeysAdded(List<ECKey> keys) {
     }
+
+
 }

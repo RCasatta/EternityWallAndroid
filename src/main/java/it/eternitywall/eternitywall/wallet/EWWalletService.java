@@ -28,10 +28,12 @@ import org.bitcoinj.script.ScriptBuilder;
 import org.bitcoinj.script.ScriptOpCodes;
 import org.bitcoinj.store.BlockStore;
 import org.bitcoinj.store.SPVBlockStore;
+import org.bitcoinj.utils.Threading;
 import org.bitcoinj.wallet.WalletTransaction;
 import org.spongycastle.util.encoders.Hex;
 
 import java.io.File;
+import java.net.InetAddress;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -50,6 +52,9 @@ import it.eternitywall.eternitywall.bitcoin.Bitcoin;
  */
 public class EWWalletService extends Service implements Runnable {
     private static final String TAG = "EWWalletService";
+
+    private static String REGISTER_ALIAS_TAG = "TEWA ";
+    private static String EW_MESSAGE_TAG     = "TEW ";
 
     private final static NetworkParameters PARAMS=MainNetParams.get();
     private final static int EPOCH     = 1447891200;  //19 Novembre 2015 00:00 first EWA 5f362444d23dd258ae1c2b60b1d79cb2c5231fc50df50713a415e13502fc1da9
@@ -116,8 +121,9 @@ public class EWWalletService extends Service implements Runnable {
         return ewMessageData;
     }
 
-    public TransactionBroadcast sendMessage(String message) {
-        Log.i(TAG,"sendMessage " +message );
+    public Transaction createMessageTx(String message) {
+        Log.i(TAG,"createMessageTx " +message );
+
         if(!isSynced || nextChange==0 || nextChange>99 || nextMessageId>99) {
             Log.i(TAG, "sendMessage returning null " + isSynced + " " + nextChange + " " + nextMessageId);   //TODO manage nextChange>99 or nextMessageId>0
             return null;
@@ -133,8 +139,9 @@ public class EWWalletService extends Service implements Runnable {
         Long totalAvailable = 0L;
         for (TransactionOutput to  : transactionOutputList) {
             totalAvailable += to.getValue().getValue();
+
             newTx.addInput(to);
-            Log.i(TAG,"adding input");
+            Log.i(TAG,"adding input minNonDust=" + to.getMinNonDustValue().longValue() ) ;
         }
         Log.i(TAG,"total available " + totalAvailable);
         Long toSend = totalAvailable-FEE-DUST;
@@ -143,7 +150,8 @@ public class EWWalletService extends Service implements Runnable {
             return null;
         }
 
-        message = "EW " + message;
+
+        message = EW_MESSAGE_TAG + message;
         final byte[] toWrite = message.getBytes();
 
         newTx.addOutput(Coin.valueOf(DUST), ewMessageData.getMessageId());
@@ -160,15 +168,30 @@ public class EWWalletService extends Service implements Runnable {
 
         Log.i(TAG, "new tx hash: " + newTx.getHash());
         Log.i(TAG, "new tx hex: " + newTxHex);
+        return newTx;
+    }
+
+    public TransactionBroadcast sendTransaction(Transaction tx) {
+        Log.i(TAG,"sendTransaction " +tx );
+
+        TransactionBroadcast transactionBroadcast = peerGroup.broadcastTransaction(tx);
+        return transactionBroadcast;
+    }
+    
+
+    public TransactionBroadcast sendMessage(String message) {
+        Log.i(TAG,"sendMessage " +message );
+        Transaction newTx = createMessageTx(message);
 
         TransactionBroadcast transactionBroadcast = peerGroup.broadcastTransaction(newTx);
-        Log.i(TAG, "TxBroadcasted " + newTx.getHash().toString());
+        Log.i(TAG, "TxBroadcasted " + newTx.getHashAsString() );
 
         return transactionBroadcast;
     }
 
+
     public TransactionBroadcast registerAlias(String aliasName) {
-        if(!isSynced || nextChange !=0) {
+        if(!isSynced || nextChange !=1) {
             Log.i(TAG,"not synced or next change different from zero");
             return null;
         }
@@ -195,7 +218,8 @@ public class EWWalletService extends Service implements Runnable {
         final Address change = firstChange.toAddress(PARAMS);
         Log.i(TAG, "Sending to change " + change.toString() + " " + toSend + " satoshis");
 
-        aliasName = "EWA " + aliasName;
+
+        aliasName = REGISTER_ALIAS_TAG + aliasName;
 
         final byte[] toWrite = aliasName.getBytes();
         newTx.addOutput(Coin.ZERO,
@@ -262,6 +286,7 @@ public class EWWalletService extends Service implements Runnable {
     @Override
     public void run() {
         try {
+            org.bitcoinj.core.Context.getOrCreate(PARAMS);
             walletObservable.setState(WalletObservable.State.STARTED);
             walletObservable.notifyObservers();
 
@@ -314,8 +339,12 @@ public class EWWalletService extends Service implements Runnable {
                 wallet = Wallet.fromKeys(PARAMS,ecKeyList);
             }
 
+
+            Log.i(TAG, "wallet key size " + wallet.getKeychainSize());
+
             Log.i(TAG, "wallet bloom " + wallet.getBloomFilter(1E-5));
             wallet.autosaveToFile(walletFile, 30, TimeUnit.SECONDS, new WalletSaveListener());
+            wallet.cleanup();
 
             final long l = System.currentTimeMillis() - start;
             Log.i(TAG, "My messages id are " + messagesId);
@@ -324,19 +353,21 @@ public class EWWalletService extends Service implements Runnable {
 
             blockStore = new SPVBlockStore(PARAMS, blockFile);
             chainHead = blockStore.getChainHead();
-            Log.i(TAG,"BlockStoreAtStartHeight " + chainHead.getHeight() );
+            Log.i(TAG, "BlockStoreAtStartHeight " + chainHead.getHeight());
 
             if (chainHead.getHeight() == 0) {  //first run
                 Log.i(TAG, "First run");
                 CheckpointManager.checkpoint(PARAMS, Checkpoints.getAsStream(), blockStore, EPOCH);
             }
-            wallet.addEventListener(new EWWalletEventListener(walletObservable));
+            wallet.addEventListener(new EWWalletEventListener(walletObservable), Threading.SAME_THREAD);
 
             blockChain = new BlockChain(PARAMS, wallet, blockStore);
             chainListener = new MyBlockchainListener( all, (EWApplication) getApplication() );
             blockChain.addListener(chainListener);
             peerGroup = new PeerGroup(PARAMS, blockChain);
-            //peerGroup.addAddress(InetAddress.getByName("10.106.137.73"));
+            peerGroup.addWallet(wallet);  //Unconfirmed wasn't seen because there wasn't this line -> a day spent on this line. Fuck
+            //peerGroup.setMaxConnections(40);
+            peerGroup.addAddress(InetAddress.getByName("10.106.137.73"));  //DEBUG
             //peerGroup.setMaxConnections(1);
             //peerGroup.addWallet(wallet);
             peerGroup.addPeerDiscovery(new DnsDiscovery(PARAMS));
@@ -414,6 +445,7 @@ public class EWWalletService extends Service implements Runnable {
         walletObservable.setState(WalletObservable.State.SYNCED);
         Log.i(TAG, "Changed state");
         walletObservable.setWalletBalance(wallet.getBalance());
+        walletObservable.setWalletUnconfirmedBalance(wallet.getBalance(Wallet.BalanceType.ESTIMATED));
         Log.i(TAG, "Changed wallet balance");
         final Address current = nextChange==0 ? getAlias() : getCurrent();
         walletObservable.setCurrent(current);
