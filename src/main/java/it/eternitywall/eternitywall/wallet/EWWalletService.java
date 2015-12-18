@@ -216,14 +216,18 @@ public class EWWalletService extends Service implements Runnable {
         final Address inputAddress = input.toAddress(PARAMS);
         final Transaction newTx = new Transaction(PARAMS);
 
-        List<TransactionOutput> transactionOutputList = getMines(inputAddress);
         Long totalAvailable = 0L;
-        for (TransactionOutput to  : transactionOutputList) {
-            totalAvailable += to.getValue().getValue();
+        Map<Sha256Hash, Transaction> unspent = wallet.getTransactionPool(WalletTransaction.Pool.UNSPENT);
+        for (Map.Entry<Sha256Hash, Transaction> entry : unspent.entrySet()) {
+            Transaction current = entry.getValue();
+            List<TransactionOutput> outputs = current.getOutputs();
+            for (TransactionOutput to : outputs) {
+                newTx.addInput(to);
+                totalAvailable += to.getValue().getValue();
+            }
 
-            newTx.addInput(to);
-            Log.i(TAG,"adding input minNonDust=" + to.getMinNonDustValue().longValue() ) ;
         }
+
         Log.i(TAG,"total available " + totalAvailable);
         Long toSend = totalAvailable-FEE;
         if(toSend < DUST) {

@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.net.InetAddresses;
@@ -35,6 +36,7 @@ public class PersonalNodeDialogFragment extends DialogFragment {
     private EditText txtNode;
     private Button btnAdd;
     private ListView lstNodes;
+    private TextView advise;
 
 
     @Nullable
@@ -46,6 +48,7 @@ public class PersonalNodeDialogFragment extends DialogFragment {
         lstNodes = (ListView) view.findViewById(R.id.lstNodes);
         txtNode = (EditText) view.findViewById(R.id.txtNode);
         btnAdd = (Button) view.findViewById(R.id.btnAdd);
+        advise = (TextView) view.findViewById(R.id.advise);
 
         final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final Set<String> stringSet = sharedPref.getStringSet(Preferences.NODES, new HashSet<String>());
@@ -53,6 +56,8 @@ public class PersonalNodeDialogFragment extends DialogFragment {
         stringList.addAll(stringSet);
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>( getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, stringList );
         lstNodes.setAdapter(arrayAdapter);
+
+        adviseVisibility(stringSet);
 
 
         lstNodes.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -68,6 +73,7 @@ public class PersonalNodeDialogFragment extends DialogFragment {
                 edit.commit();
                 arrayAdapter.remove(current);
                 arrayAdapter.notifyDataSetChanged();
+                adviseVisibility(newStringSet);
 
                 return true;
             }
@@ -90,14 +96,24 @@ public class PersonalNodeDialogFragment extends DialogFragment {
                 SharedPreferences.Editor edit = sharedPref.edit();
                 edit.putStringSet(Preferences.NODES, newStringSet);
                 edit.commit();
+
                 arrayAdapter.add(stringNode);
                 arrayAdapter.notifyDataSetChanged();
-
+                adviseVisibility(newStringSet);
+                txtNode.setText("");
 
             }
         });
 
         return view;
 
+    }
+
+    private void adviseVisibility(Set<String> stringSet) {
+        if(stringSet.size()>0) {
+            advise.setVisibility(View.VISIBLE);
+        } else {
+            advise.setVisibility(View.GONE);
+        }
     }
 }

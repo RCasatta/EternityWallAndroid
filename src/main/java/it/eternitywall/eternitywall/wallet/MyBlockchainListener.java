@@ -48,7 +48,7 @@ public class MyBlockchainListener implements BlockChainListener {
 
     @Override
     public void notifyNewBestBlock(StoredBlock block) throws VerificationException {
-        Log.d(TAG, "notifyNewBestBlock " + block.getHeight());
+        //Log.d(TAG, "notifyNewBestBlock " + block.getHeight());
     }
 
     @Override

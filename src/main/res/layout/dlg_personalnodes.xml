@@ -11,6 +11,14 @@
         android:layout_height="wrap_content">
     </ListView>
 
+    <TextView
+        android:id="@+id/advise"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:textColor="@color/secondaryText"
+        android:gravity="center"
+        android:text="long tap to delete"/>
 
     <EditText
         android:id="@+id/txtNode"
@@ -20,6 +28,7 @@
         android:singleLine="true"
         android:padding="@dimen/padding_high"
         android:layout_height="wrap_content" />
+
 
 
     <RelativeLayout
