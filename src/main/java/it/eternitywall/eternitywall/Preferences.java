@@ -5,11 +5,11 @@ package it.eternitywall.eternitywall;
  */
 public class Preferences {
 
-    public static String PASSPHRASE = "passphrase";
-    public static String PIN        = "pin";
-    public static String EMAIL      = "email";
-    public static String CHK_ONE    = "ckone";
-    public static String CHK_TWO    = "cktwo";
-    public static String TO_NOTIFY  = "tonotify";
-
+    public static final String NODES      = "nodes";
+    public static final String PASSPHRASE = "passphrase";
+    public static final String PIN        = "pin";
+    public static final String EMAIL      = "email";
+    public static final String CHK_ONE    = "ckone";
+    public static final String CHK_TWO    = "cktwo";
+    public static final String TO_NOTIFY  = "tonotify";
 }

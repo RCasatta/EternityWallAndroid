@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import org.bitcoinj.core.Peer;
 import org.bitcoinj.core.PeerGroup;
 import org.bitcoinj.core.Wallet;
 
@@ -100,8 +101,12 @@ public class DebugActivity extends AppCompatActivity implements DebugListAdapter
                 PeerGroup peerGroup = ewWalletService.getPeerGroup();
                 if (peerGroup != null) {
                     debugListAdapter.add(new Debug("Peer height", "" + peerGroup.getMostCommonChainHeight()));
-                    debugListAdapter.add(new Debug("Connected peers", "" + peerGroup.getConnectedPeers().size()));
-
+                    List<Peer> connectedPeers = peerGroup.getConnectedPeers();
+                    int size = connectedPeers.size();
+                    debugListAdapter.add(new Debug("Connected peers", "" + size));
+                    if(size>0) {
+                        debugListAdapter.add(new Debug("First connected peer", "" + connectedPeers.get(0).getAddress().toString() ));
+                    }
                 }
 
                 Wallet wallet = ewWalletService.getWallet();

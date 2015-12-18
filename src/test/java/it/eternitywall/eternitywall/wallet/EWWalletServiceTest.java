@@ -3,6 +3,8 @@ package it.eternitywall.eternitywall.wallet;
 import org.bitcoinj.core.BloomFilter;
 import org.junit.Test;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +33,16 @@ public class EWWalletServiceTest {
         System.out.println(ciao.hashCode());
         ciao.add("ciao");
         System.out.println(ciao.hashCode());
+    }
+
+
+    @Test
+    public void testInetAddress() throws UnknownHostException {
+
+        InetAddress address = InetAddress.getByName("1.1.1");
+        //InetAddress address2 = InetAddress.getByName("46e467sfgh&&&");
+        InetAddress address3 = InetAddress.getByName("21.1.1");
+
 
     }
 

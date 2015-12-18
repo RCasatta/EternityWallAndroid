@@ -3,20 +3,22 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="16dp"
-    android:layout_marginBottom="16dp"
-    tools:context="it.eternitywall.eternitywall.activity.PreferencesActivity">
+        tools:context="it.eternitywall.eternitywall.activity.PreferencesActivity">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/scrollView2" >
 
+
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="16dp"/>
 
             <TextView android:text="@string/account" android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

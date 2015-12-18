@@ -4,20 +4,16 @@
     android:padding="@dimen/padding_high"
     android:layout_height="match_parent">
 
-    <ScrollView
+
+    <ListView
+        android:id="@+id/lstNodes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+    </ListView>
 
-        <ListView
-            android:id="@+id/lstNodes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </ListView>
-
-    </ScrollView>
 
     <EditText
-        android:id="@+id/txtEmail"
+        android:id="@+id/txtNode"
         android:hint="@string/add_node"
         android:layout_width="match_parent"
         android:textColor="@color/primaryText"

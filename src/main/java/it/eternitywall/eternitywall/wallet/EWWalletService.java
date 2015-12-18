@@ -34,7 +34,10 @@ import org.bitcoinj.wallet.WalletTransaction;
 import org.spongycastle.util.encoders.Hex;
 
 import java.io.File;
+import java.net.ConnectException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -417,8 +420,18 @@ public class EWWalletService extends Service implements Runnable {
             peerGroup.addWallet(wallet);  //Unconfirmed wasn't seen because there wasn't this line -> a day spent on this line. Fuck
             //peerGroup.setMaxConnections(40);
 
-            peerGroup.addAddress(InetAddress.getByName("10.106.137.73"));  //TODO DEBUG
-
+            final Set<String> stringSet = sharedPref.getStringSet(Preferences.NODES, new HashSet<String>());
+            if(stringSet.size()>0) {
+                for (String current : stringSet) {
+                    boolean portOpen = isPortOpen(current, 8333, 1000);
+                    if(portOpen) {
+                        Log.i(TAG,"port is reachable! " + current + ":8333" );
+                        peerGroup.addAddress(InetAddress.getByName("10.106.137.73"));
+                    } else {
+                        Log.i(TAG,"port is unreachable! " + current + ":8333" );
+                    }
+                }
+            }
 
             //peerGroup.setMaxConnections(1);
             //peerGroup.addWallet(wallet);
@@ -439,6 +452,26 @@ public class EWWalletService extends Service implements Runnable {
             Log.i(TAG, e.getMessage());
         }
 
+    }
+
+
+    public static boolean isPortOpen(final String ip, final int port, final int timeout) {
+        try {
+            Socket socket = new Socket();
+            socket.connect(new InetSocketAddress(ip, port), timeout);
+            socket.close();
+            return true;
+        }
+
+        catch(ConnectException ce){
+            ce.printStackTrace();
+            return false;
+        }
+
+        catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
     public void onSynced() {
@@ -502,7 +535,7 @@ public class EWWalletService extends Service implements Runnable {
         final Address current = nextChange==0 ? getAlias() : getCurrent();
         walletObservable.setCurrent(current);
 
-        walletObservable.setAliasName("Test");  //TODO DEBUG
+        //walletObservable.setAliasName("Test");  //TODO DEBUG
 
         Log.i(TAG, "Changed current");
 
