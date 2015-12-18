@@ -1,13 +1,12 @@
 package it.eternitywall.eternitywall.activity;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,35 +30,43 @@ public class PreferencesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
 
+        View llResync = findViewById(R.id.llResync);
+        View llAbout = findViewById(R.id.llAbout);
+        View llRemove = findViewById(R.id.llRemove);
+        View llPassphrase = findViewById(R.id.llPassphrase);
+        Switch switchDonation = (Switch) findViewById(R.id.switchDonation);
+        LinearLayout llDebug = (LinearLayout) findViewById(R.id.llDebug);
 
-        findViewById(R.id.llResync).setOnClickListener(new View.OnClickListener() {
+
+
+        llResync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (existAccount()) {
                     EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
                     ewWalletService.stopSync();
-                }else
+                } else
                     dialogCreateAccount();
             }
         });
-        findViewById(R.id.llAbout).setOnClickListener(new View.OnClickListener() {
+        llAbout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(PreferencesActivity.this, AboutActivity.class));
             }
         });
-        findViewById(R.id.llRemove).setOnClickListener(new View.OnClickListener() {
+        llRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (existAccount()) {
                     EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
                     ewWalletService.stopSync();
                     dialogPin_removePassphrase();
-                }else
+                } else
                     dialogCreateAccount();
             }
         });
-        findViewById(R.id.llPassphrase).setOnClickListener(new View.OnClickListener() {
+        llPassphrase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (existAccount())
@@ -70,13 +77,13 @@ public class PreferencesActivity extends AppCompatActivity {
         });
 
 
-        ((Switch)findViewById(R.id.switchDonation)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        switchDonation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
             }
         });
-        ((LinearLayout)findViewById(R.id.llDebug)).setOnClickListener(new View.OnClickListener() {
+        llDebug.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (existAccount())

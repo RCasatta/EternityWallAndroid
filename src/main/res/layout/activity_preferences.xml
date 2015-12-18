@@ -17,13 +17,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <!--not showing until we have more sections-->
-            <TextView android:text="Account Preferences" android:layout_width="wrap_content"
+
+            <TextView android:text="Account" android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/primary"
-                android:visibility="gone"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin" />
+
+
+
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:orientation="vertical"
@@ -78,6 +80,13 @@
                     android:text="Resync the wallet to the blockchain" />
             </LinearLayout>
 
+
+
+
+
+
+
+
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -88,7 +97,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="@dimen/padding_high"
-                android:id="@+id/llDebug" >
+                android:id="@+id/llEmpty" >
 
                 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     android:orientation="vertical"
@@ -101,18 +110,102 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:id="@+id/textView9"
-                        android:text="Debug Info" />
+                        android:id="@+id/textViewEmpty"
+                        android:text="Empty wallet" />
 
                     <TextView
                         style="@style/TextAppearance.AppCompat.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:id="@+id/textView10"
-                        android:text="Show information about blockchain" />
+                        android:id="@+id/textViewEmptyDesc"
+                        android:text="Send all of your bicoin to a single address" />
                 </LinearLayout>
             </LinearLayout>
+
+
+
+
+
+
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/message_border" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/padding_high"
+                android:id="@+id/llRemove" >
+
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        style="@style/TextAppearance.AppCompat.Large"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:id="@+id/textView11"
+                        android:text="Remove Account" />
+
+                    <TextView
+                        style="@style/TextAppearance.AppCompat.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:id="@+id/textView12"
+                        android:text="Delete current stored passphrase" />
+                </LinearLayout>
+            </LinearLayout>
+
+
+
+            <TextView android:text="Other settings" android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="10dp"/>
+
+
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/padding_high"
+                android:id="@+id/llPersonalNode">
+
+                <TextView
+                    style="@style/TextAppearance.AppCompat.Large"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:id="@+id/textViewPersonal"
+                    android:text="Personal node" />
+
+                <TextView
+                    style="@style/TextAppearance.AppCompat.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:id="@+id/textViewPersonalDesc"
+                    android:text="Set the address of your personal node, if set and reachable the wallet will sync against this node" />
+            </LinearLayout>
+
+
+
+
+
+
+
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -157,6 +250,8 @@
                     android:layout_gravity="center" />
             </LinearLayout>
 
+
+
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -167,31 +262,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="@dimen/padding_high"
-                android:id="@+id/llRemove" >
+                android:id="@+id/llDebug" >
 
                 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     android:orientation="vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1">
+                    android:layout_weight="1" >
 
                     <TextView
                         style="@style/TextAppearance.AppCompat.Large"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:id="@+id/textView11"
-                        android:text="Remove Account" />
+                        android:id="@+id/textView9"
+                        android:text="Debug Info" />
 
                     <TextView
                         style="@style/TextAppearance.AppCompat.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:id="@+id/textView12"
-                        android:text="Delete current stored passphrase" />
+                        android:id="@+id/textView10"
+                        android:text="Show information about blockchain" />
                 </LinearLayout>
             </LinearLayout>
+
+
+
+
+
 
             <FrameLayout
                 android:layout_width="match_parent"
