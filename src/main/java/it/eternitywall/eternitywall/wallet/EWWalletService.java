@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.bitcoinj.core.Address;
+import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.BlockChain;
 import org.bitcoinj.core.CheckpointManager;
 import org.bitcoinj.core.Coin;
@@ -59,7 +60,7 @@ public class EWWalletService extends Service implements Runnable {
     private final static NetworkParameters PARAMS=MainNetParams.get();
     private final static int EPOCH     = 1447891200;  //19 Novembre 2015 00:00 first EWA 5f362444d23dd258ae1c2b60b1d79cb2c5231fc50df50713a415e13502fc1da9
     private final static int PER_CHUNK = 100;
-    public static final Long DUST      = 1000L ;
+    public static final Long DUST      = 5000L ;
     public static final Long FEE       = 11000L ;
     public static final String BLOCKCHAIN_FILE = "blockchain";
     public static final String WALLET_FILE     = "wallet";
@@ -141,15 +142,14 @@ public class EWWalletService extends Service implements Runnable {
             totalAvailable += to.getValue().getValue();
 
             newTx.addInput(to);
-            Log.i(TAG,"adding input minNonDust=" + to.getMinNonDustValue().longValue() ) ;
         }
+
         Log.i(TAG,"total available " + totalAvailable);
         Long toSend = totalAvailable-FEE-DUST;
         if(toSend < DUST) {
             Log.i(TAG, "toSend is less than dust");
             return null;
         }
-
 
         message = EW_MESSAGE_TAG + message;
         final byte[] toWrite = message.getBytes();
@@ -166,12 +166,12 @@ public class EWWalletService extends Service implements Runnable {
         wallet.signTransaction(req);
         final String newTxHex = Bitcoin.transactionToHex(newTx);
 
-        Log.i(TAG, "new tx hash: " + newTx.getHash());
-        Log.i(TAG, "new tx hex: " + newTxHex);
+        Log.i(TAG, "newTxHash: " + newTx.getHash());
+        Log.i(TAG, "newTxHex: " + newTxHex);
         return newTx;
     }
 
-    public TransactionBroadcast sendTransaction(Transaction tx) {
+    public TransactionBroadcast broadcastTransaction(Transaction tx) {
         Log.i(TAG,"sendTransaction " +tx );
 
         TransactionBroadcast transactionBroadcast = peerGroup.broadcastTransaction(tx);
@@ -180,15 +180,64 @@ public class EWWalletService extends Service implements Runnable {
     
 
     public TransactionBroadcast sendMessage(String message) {
-        Log.i(TAG,"sendMessage " +message );
+        Log.i(TAG, "sendMessage " + message);
         Transaction newTx = createMessageTx(message);
 
-        TransactionBroadcast transactionBroadcast = peerGroup.broadcastTransaction(newTx);
-        Log.i(TAG, "TxBroadcasted " + newTx.getHashAsString() );
-
-        return transactionBroadcast;
+        return broadcastTransaction(newTx);
     }
 
+
+    public Transaction createExitTransaction(String bitcoinAddress) {
+        Log.i(TAG,"createExitTransaction to " +bitcoinAddress );
+
+        if(!isSynced || nextChange==0 || nextChange>99 ) {
+            Log.w(TAG, "sendMessage returning null " + isSynced + " " + nextChange);   //TODO manage nextChange>99 or nextMessageId>0
+            return null;
+        }
+
+        Address destination=null;
+        if(!Bitcoin.isValidAddress(bitcoinAddress)) {
+            Log.w(TAG, "!Bitcoin.isValidAddress " + bitcoinAddress);   //TODO manage nextChange>99 or nextMessageId>0
+            return null;
+        } else {
+            try {
+                destination= new Address(PARAMS, bitcoinAddress);
+            } catch (AddressFormatException e) {
+                Log.wtf(TAG,"should not happen, just verified");
+            }
+        }
+
+        isSynced=false;  //TODO
+
+        final ECKey input = changes.get(nextChange-1);
+        final Address inputAddress = input.toAddress(PARAMS);
+        final Transaction newTx = new Transaction(PARAMS);
+
+        List<TransactionOutput> transactionOutputList = getMines(inputAddress);
+        Long totalAvailable = 0L;
+        for (TransactionOutput to  : transactionOutputList) {
+            totalAvailable += to.getValue().getValue();
+
+            newTx.addInput(to);
+            Log.i(TAG,"adding input minNonDust=" + to.getMinNonDustValue().longValue() ) ;
+        }
+        Log.i(TAG,"total available " + totalAvailable);
+        Long toSend = totalAvailable-FEE;
+        if(toSend < DUST) {
+            Log.i(TAG, "toSend is less than dust");
+            return null;
+        }
+
+        newTx.addOutput(Coin.valueOf(toSend), destination );
+
+        Wallet.SendRequest req = Wallet.SendRequest.forTx(newTx);
+        wallet.signTransaction(req);
+        final String newTxHex = Bitcoin.transactionToHex(newTx);
+
+        Log.i(TAG, "new tx hash: " + newTx.getHash());
+        Log.i(TAG, "new tx hex: " + newTxHex);
+        return newTx;
+    }
 
     public TransactionBroadcast registerAlias(String aliasName) {
         if(!isSynced || nextChange !=1) {
@@ -367,7 +416,10 @@ public class EWWalletService extends Service implements Runnable {
             peerGroup = new PeerGroup(PARAMS, blockChain);
             peerGroup.addWallet(wallet);  //Unconfirmed wasn't seen because there wasn't this line -> a day spent on this line. Fuck
             //peerGroup.setMaxConnections(40);
-            peerGroup.addAddress(InetAddress.getByName("10.106.137.73"));  //DEBUG
+
+            peerGroup.addAddress(InetAddress.getByName("10.106.137.73"));  //TODO DEBUG
+
+
             //peerGroup.setMaxConnections(1);
             //peerGroup.addWallet(wallet);
             peerGroup.addPeerDiscovery(new DnsDiscovery(PARAMS));
@@ -449,6 +501,9 @@ public class EWWalletService extends Service implements Runnable {
         Log.i(TAG, "Changed wallet balance");
         final Address current = nextChange==0 ? getAlias() : getCurrent();
         walletObservable.setCurrent(current);
+
+        walletObservable.setAliasName("Test");  //TODO DEBUG
+
         Log.i(TAG, "Changed current");
 
         Log.i(TAG, "Notifying");
@@ -456,6 +511,8 @@ public class EWWalletService extends Service implements Runnable {
         Log.i(TAG, "Ending...");
 
     }
+
+
 
 
     private static String EWA_PREFIX = "455741";

@@ -100,6 +100,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:text="unconfirmed"
+                    android:textColor="@color/secondaryText"
                     android:layout_below="@id/btcBalance"
                     android:visibility="gone"
                     />

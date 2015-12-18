@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:padding="@dimen/padding_high"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ListView
+            android:id="@+id/lstNodes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </ListView>
+
+    </ScrollView>
+
+    <EditText
+        android:id="@+id/txtEmail"
+        android:hint="Add node..."
+        android:layout_width="match_parent"
+        android:textColor="@color/primaryText"
+        android:singleLine="true"
+        android:padding="@dimen/padding_high"
+        android:layout_height="wrap_content" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/padding_high"
+        android:layout_height="wrap_content">
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:indeterminate="true"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:visibility="invisible"
+            android:background="@android:color/transparent"
+            android:layout_centerInParent="true"/>
+
+        <Button
+            android:id="@+id/btnAdd"
+            android:text="@string/add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

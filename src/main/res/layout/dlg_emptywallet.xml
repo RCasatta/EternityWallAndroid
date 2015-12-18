@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:padding="@dimen/padding_high"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/txtAddress"
+        android:hint="Insert destination address..."
+        android:layout_width="match_parent"
+        android:textColor="@color/primaryText"
+        android:singleLine="true"
+        android:padding="@dimen/padding_high"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:layout_marginTop="@dimen/padding_high"
+        android:id="@+id/ckOne"
+        android:checked="false"
+        android:text="Are you sure to empty your wallet ?"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/padding_high"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btnSend"
+            android:text="@string/btn_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

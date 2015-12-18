@@ -16,7 +16,6 @@ public class WalletObservable extends Observable {
     private State state= State.NOT_STARTED;
     private Address current;
     private Integer percSync;
-    private Integer height;
     private String alias;
     private String aliasName;
     private Bitmap currentQrCode;
@@ -119,17 +118,6 @@ public class WalletObservable extends Observable {
         }
     }
 
-    public Integer getHeight() {
-        return height;
-    }
-
-    public void setHeight(Integer height) {
-        if(!height.equals(this.height)) {
-            this.height = height;
-            setChanged();
-        }
-    }
-
     public State getState() {
         return state;
     }
@@ -173,7 +161,6 @@ public class WalletObservable extends Observable {
                 ", state=" + state +
                 ", current=" + current +
                 ", percSync=" + percSync +
-                ", height=" + height +
                 ", aliasName='" + aliasName + '\'' +
                 ", currentQrCodeSource='" + currentQrCodeSource + '\'' +
                 ", currentIdenticonSource='" + currentIdenticonSource + '\'' +

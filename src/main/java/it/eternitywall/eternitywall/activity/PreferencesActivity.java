@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,9 +22,12 @@ import android.widget.TextView;
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
+import it.eternitywall.eternitywall.dialogfragments.EmptyWalletDialogFragment;
+import it.eternitywall.eternitywall.dialogfragments.PersonalNodeDialogFragment;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
 
 public class PreferencesActivity extends AppCompatActivity {
+    private static final String TAG = "PreferencesActivity";
 
 
     @Override
@@ -34,10 +39,11 @@ public class PreferencesActivity extends AppCompatActivity {
         View llAbout = findViewById(R.id.llAbout);
         View llRemove = findViewById(R.id.llRemove);
         View llPassphrase = findViewById(R.id.llPassphrase);
+        View llEmpty = findViewById(R.id.llEmpty);
+        View llPersonalNode = findViewById(R.id.llPersonalNode);
+
         Switch switchDonation = (Switch) findViewById(R.id.switchDonation);
         LinearLayout llDebug = (LinearLayout) findViewById(R.id.llDebug);
-
-
 
         llResync.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,6 +98,83 @@ public class PreferencesActivity extends AppCompatActivity {
                     dialogCreateAccount();
             }
         });
+
+
+        llEmpty.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(PreferencesActivity.this)
+                        .setTitle("Insert PIN");
+                final FrameLayout frameView = new FrameLayout(PreferencesActivity.this);
+                final EditText editText = new EditText(PreferencesActivity.this);
+                editText.setHint("****");
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                params.setMargins(getResources().getDimensionPixelSize(R.dimen.padding_high), getResources().getDimensionPixelSize(R.dimen.padding_high), getResources().getDimensionPixelSize(R.dimen.padding_high), getResources().getDimensionPixelSize(R.dimen.padding_high));
+                editText.setLayoutParams(params);
+                frameView.addView(editText, params);
+                builder.setView(frameView);
+
+                builder.setPositiveButton(getResources().getString(R.string.btn_confirm), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(PreferencesActivity.this);
+                        String pin = sharedPref.getString(Preferences.PIN, null);
+                        if (pin != null && editText.getText().toString().equals(pin)) {
+                            dialogEmptyWallet();
+                        } else {
+                            new AlertDialog.Builder(PreferencesActivity.this)
+                                    .setTitle("Attention")
+                                    .setMessage("Invalid PIN. Retry...")
+                                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // do nothing
+                                        }
+                                    }).show();
+                        }
+                    }
+                });
+                builder.create().show();
+
+
+
+            }
+        });
+
+        llPersonalNode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                dialogPersonalNode();
+
+            }
+        });
+
+    }
+
+    private void dialogPersonalNode() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("dialogPersonalNode");
+        if(prev != null)
+            ft.remove(prev);
+        ft.addToBackStack(null);
+
+        PersonalNodeDialogFragment frag = new PersonalNodeDialogFragment();
+
+        frag.show(ft, "dialogPersonalNode");
+    }
+
+    private void dialogEmptyWallet() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("dialogEmptyWallet");
+        if(prev != null)
+            ft.remove(prev);
+        ft.addToBackStack(null);
+
+        EmptyWalletDialogFragment frag = new EmptyWalletDialogFragment();
+        frag.show(ft, "dialogEmptyWallet");
     }
 
     private boolean existAccount(){
@@ -113,6 +196,7 @@ public class PreferencesActivity extends AppCompatActivity {
     }
 
     private void dialogPin_showPassphrase(){
+
         AlertDialog.Builder builder = new AlertDialog.Builder(PreferencesActivity.this)
                 .setTitle("Insert PIN");
         final FrameLayout frameView = new FrameLayout(PreferencesActivity.this);
@@ -124,6 +208,7 @@ public class PreferencesActivity extends AppCompatActivity {
         editText.setLayoutParams(params);
         frameView.addView(editText, params);
         builder.setView(frameView);
+
         builder.setPositiveButton(getResources().getString(R.string.btn_confirm), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

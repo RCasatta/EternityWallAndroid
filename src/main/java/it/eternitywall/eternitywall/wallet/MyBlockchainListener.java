@@ -48,8 +48,7 @@ public class MyBlockchainListener implements BlockChainListener {
 
     @Override
     public void notifyNewBestBlock(StoredBlock block) throws VerificationException {
-        Log.i(TAG, "notifyNewBestBlock");
-        walletObservable.setHeight(block.getHeight());
+        Log.i(TAG, "notifyNewBestBlock " + block.getHeight());
     }
 
     @Override
