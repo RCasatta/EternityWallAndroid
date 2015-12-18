@@ -17,7 +17,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Recover account"
+                android:text="@string/recover_account"
                 android:textSize="24sp"
                 android:gravity="center"
                 android:textColor="@color/primaryText"
@@ -38,7 +38,7 @@
                     android:layout_height="wrap_content"
                     android:lines="3"
                     android:textColor="@color/primaryText"
-                    android:hint="passphrase"
+                    android:hint="@string/passphrase"
                     android:gravity="center|bottom"
                     style="@style/EditText" />
             </android.support.design.widget.TextInputLayout>
@@ -61,7 +61,7 @@
                         android:id="@+id/pin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="PIN"
+                        android:hint="@string/pin"
                         android:inputType="numberPassword"
                         android:password="true"
                         android:textSize="18sp"
@@ -78,7 +78,7 @@
                         android:id="@+id/confirmPin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Confirm PIN"
+                        android:hint="@string/confirm_pin"
                         android:inputType="numberPassword"
                         android:password="true"
                         android:textSize="18sp"
@@ -93,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp"
-                android:text="Confirm" />
+                android:text="@string/confirm" />
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

@@ -28,7 +28,7 @@
             android:layout_centerHorizontal="true"
             android:textSize="20sp"
             android:layout_marginTop="10dp"
-            android:text="Syncing"/>
+            android:text="@string/syncing"/>
 
 
     </RelativeLayout>
@@ -59,7 +59,6 @@
                     android:id="@+id/aliasName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="aliasName"
                     android:layout_toRightOf="@id/identicon"
                     android:layout_centerVertical="true"
                     android:textSize="24sp"
@@ -67,7 +66,7 @@
 
                 <Button
                     android:id="@+id/setAlias"
-                    android:text="SET ALIAS"
+                    android:text="@string/set_alias"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/alphaText"
@@ -99,7 +98,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text="unconfirmed"
+                    android:text="@string/unconfirmed"
                     android:textColor="@color/secondaryText"
                     android:layout_below="@id/btcBalance"
                     android:visibility="gone"
@@ -129,8 +128,7 @@
                 android:gravity="center"
                 android:textSize="14sp"
                 android:textIsSelectable="true"
-                android:text="currentAddress"/>
-
+                />
 
         </LinearLayout>
     </ScrollView>

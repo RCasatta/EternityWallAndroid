@@ -23,7 +23,7 @@
                 android:textStyle="bold|italic"
                 android:textSize="20sp"
                 android:lines="3"
-                android:text="here will be the passphrase"
+                android:text="@string/here_passphrase"
                 android:layout_gravity="center" />
 
             <ImageView
@@ -37,7 +37,7 @@
                 android:layout_marginTop="@dimen/activity_vertical_margin" />
 
             <TextView
-                android:text="Use this PIN to view your passphrase from preference settings and confirm sending messages."
+                android:text="@string/pin_info_where"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/txtDisclaimer2"
@@ -63,7 +63,7 @@
                         android:id="@+id/pin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="PIN"
+                        android:hint="@string/pin"
                         android:inputType="numberPassword"
                         android:password="true"
                         android:textSize="18sp"
@@ -80,7 +80,7 @@
                         android:id="@+id/confirmPin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Confirm PIN"
+                        android:hint="@string/confirm_pin"
                         android:inputType="numberPassword"
                         android:password="true"
                         android:textSize="18sp"
@@ -116,7 +116,7 @@
             </LinearLayout>
 
             <TextView
-                android:text="Your account can only be restored using the above passphrase. Make sure you save it before proceeding. For safety reasons, the passphrase is stored only on your device and not on the servers. If you loose it without backup, is not recoverable."
+                android:text="@string/passphrase_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/txtDisclaimer"

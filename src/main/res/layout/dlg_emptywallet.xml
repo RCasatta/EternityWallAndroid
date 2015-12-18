@@ -6,7 +6,7 @@
 
     <EditText
         android:id="@+id/txtAddress"
-        android:hint="Insert destination address..."
+        android:hint="@string/insert_destination"
         android:layout_width="match_parent"
         android:textColor="@color/primaryText"
         android:singleLine="true"
@@ -17,7 +17,7 @@
         android:layout_marginTop="@dimen/padding_high"
         android:id="@+id/ckOne"
         android:checked="false"
-        android:text="Are you sure to empty your wallet ?"
+        android:text="@string/empty_wallet_question"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

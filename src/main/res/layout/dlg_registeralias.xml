@@ -11,7 +11,7 @@
 
     <EditText
         android:id="@+id/txtAlias"
-        android:hint="Alias (max 20 chars)"
+        android:hint="@string/alias"
         android:layout_width="match_parent"
 
         android:singleLine="true"
@@ -24,7 +24,7 @@
         android:gravity="center"
         android:layout_marginTop="10dp"
         android:textColor="@color/primaryDark"
-        android:text="Choose carefully!\n You can't change this account alias"
+        android:text="@string/warning_permanent_alias"
         />
 
     <Button
@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_gravity="center_horizontal"
-        android:text="REGISTER"
+        android:text="@string/register"
         />
 
 

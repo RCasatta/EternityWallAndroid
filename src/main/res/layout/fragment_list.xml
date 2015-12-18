@@ -17,7 +17,7 @@
         android:visibility="gone"
         android:paddingLeft="@dimen/padding_high"
         android:paddingRight="@dimen/padding_high"
-        android:text="No eternity messages found" />
+        android:text="@string/no_msg_found" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/activity_main_swipe_refresh_layout"

@@ -18,7 +18,7 @@
 
     <EditText
         android:id="@+id/txtEmail"
-        android:hint="Add node..."
+        android:hint="@string/add_node"
         android:layout_width="match_parent"
         android:textColor="@color/primaryText"
         android:singleLine="true"

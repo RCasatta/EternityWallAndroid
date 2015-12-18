@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Like this message sending any amount to the following address"
+        android:text="@string/like_info"
         android:id="@+id/textView"
         android:layout_marginBottom="@dimen/padding_small" />
 

@@ -6,7 +6,7 @@
 
     <EditText
         android:id="@+id/txtEmail"
-        android:hint="insert your email..."
+        android:hint="@string/insert_email"
         android:layout_width="match_parent"
         android:background="@drawable/style_message_background"
         android:textColor="@color/primaryText"
@@ -18,7 +18,7 @@
         android:layout_marginTop="@dimen/padding_high"
         android:id="@+id/ckOne"
         android:checked="true"
-        android:text="Subscribe also to mailing list (max 1 email/month)"
+        android:text="@string/subscribe_ml"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -26,7 +26,7 @@
         android:layout_marginTop="@dimen/padding_high"
         android:id="@+id/ckTwo"
         android:checked="true"
-        android:text="Notify me when message receives replies"
+        android:text="@string/notify_if_replies"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
