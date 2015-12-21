@@ -26,7 +26,7 @@ public class WalletAppKitTest {
     public void testWalletApp() throws UnknownHostException {
 
 
-        WalletAppKit kit = new WalletAppKit(MainNetParams.get(), new File("."), "a") {
+        WalletAppKit kit = new WalletAppKit(MainNetParams.get(), new File("/tmp"), "" + System.currentTimeMillis()) {
             @Override
             protected void onSetupCompleted() {
                 // This is called in a background thread after startAndWait is called, as setting up various objects
@@ -50,6 +50,9 @@ public class WalletAppKitTest {
         Service service = kit.startAsync();
 
         service.awaitRunning();
+        kit.peerGroup().addPeerFilterProvider(new EWFilterProvider());
+        EWChainListener listener = new EWChainListener();
+        kit.chain().addListener(listener);
 
         Address address = kit.wallet().freshReceiveAddress();
         kit.wallet().addEventListener(new AbstractWalletEventListener() {
@@ -82,6 +85,7 @@ public class WalletAppKitTest {
             }
         });
         System.out.println("address= " + address.toString());
+        System.out.println("counter=" + listener.counter);
 
         service.awaitTerminated();
 

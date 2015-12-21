@@ -155,7 +155,7 @@ public class WalletFragment extends Fragment {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.i(TAG, android.os.Process.myTid() + " TID UI : Refreshing wallet fragment");
+                    Log.i(TAG, android.os.Process.myTid() + " TID UI : Refreshing wallet fragment " + walletObservable);
                     if (walletObservable.getState() == WalletObservable.State.SYNCED) {
                         final Coin walletBalance = walletObservable.getWalletBalance();
                         final Coin walletUnconfirmedBalance = walletObservable.getWalletUnconfirmedBalance();
@@ -224,7 +224,8 @@ public class WalletFragment extends Fragment {
         setAliasButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Long walletBalance = walletObservable.getWalletBalance().longValue();
+                Long walletBalance = walletObservable.getWalletUnconfirmedBalance().longValue();
+                Log.i(TAG,"walletBalance=" + walletBalance);
                 if( walletBalance < (EWWalletService.DUST + EWWalletService.FEE) ) {
                     Toast.makeText(getActivity(), "You need at least 0.2 mBTC to register an alias", Toast.LENGTH_LONG).show();
                     return;
@@ -236,7 +237,7 @@ public class WalletFragment extends Fragment {
                     ft.remove(prev);
                 ft.addToBackStack(null);
 
-                RegAliasDialogFragment frag = new RegAliasDialogFragment();
+                RegAliasDialogFragment frag = new RegAliasDialogFragment(walletObservable);
                 frag.show(ft, "dialog");
 
             }
@@ -308,6 +309,7 @@ public class WalletFragment extends Fragment {
             throw new RuntimeException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+
     }
 
     @Override

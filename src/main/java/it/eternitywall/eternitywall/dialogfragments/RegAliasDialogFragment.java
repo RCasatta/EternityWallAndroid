@@ -13,6 +13,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionBroadcast;
 
@@ -21,6 +25,7 @@ import java.util.concurrent.ExecutionException;
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
+import it.eternitywall.eternitywall.wallet.WalletObservable;
 
 /**
  * Created by Riccardo Casatta @RCasatta on 08/12/15.
@@ -30,6 +35,12 @@ public class RegAliasDialogFragment extends DialogFragment {
 
     private Button btnRegister;
     private TextView txtAlias;
+
+    private WalletObservable walletObservable;
+
+    public RegAliasDialogFragment(WalletObservable walletObservable) {
+        this.walletObservable = walletObservable;
+    }
 
     public RegAliasDialogFragment() {
     }
@@ -49,7 +60,7 @@ public class RegAliasDialogFragment extends DialogFragment {
             public void onClick(View v) {
                 Log.i(TAG, "onClick");
 
-                String aliasString = txtAlias.getText().toString();
+                final String aliasString = txtAlias.getText().toString();
                 if (aliasString == null || aliasString.isEmpty()) {
                     Toast.makeText(getActivity(), "Alias cannot be empty", Toast.LENGTH_LONG).show();
                     return;
@@ -63,8 +74,30 @@ public class RegAliasDialogFragment extends DialogFragment {
 
                 //TODO check messages
                 TransactionBroadcast transactionBroadcast = ewWalletService.registerAlias(aliasString);
+
+                if(transactionBroadcast==null) {
+                    Toast.makeText(getActivity(), "Cannot broadcast", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 try {
-                    Transaction transaction = transactionBroadcast.future().get();
+
+                    ListenableFuture<Transaction> future = transactionBroadcast.future();
+                    Futures.addCallback(future, new FutureCallback<Transaction>() {
+                        @Override
+                        public void onSuccess(@Nullable Transaction result) {
+                            Log.i(TAG,"onSuccess callback");
+                            walletObservable.setAliasName(aliasString + " (unconfirmed)");
+                            walletObservable.notifyObservers();
+                        }
+
+                        @Override
+                        public void onFailure(Throwable t) {
+                            Log.i(TAG,"onFailure callback");
+
+                        }
+                    });
+                    Transaction transaction = future.get();
                     if (transaction == null) {
                         Toast.makeText(getActivity(), "hash is null", Toast.LENGTH_LONG).show();
 
@@ -72,9 +105,9 @@ public class RegAliasDialogFragment extends DialogFragment {
                         Toast.makeText(getActivity(), "register alias tx created", Toast.LENGTH_LONG).show();
                     }
 
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
+                } catch (InterruptedException | ExecutionException e) {
+                    Toast.makeText(getActivity(), "Oooops...", Toast.LENGTH_LONG).show();
+                    Log.w(TAG, "Error " + e.getMessage());
                     e.printStackTrace();
                 }
 

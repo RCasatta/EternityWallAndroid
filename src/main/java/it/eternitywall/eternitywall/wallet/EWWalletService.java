@@ -86,6 +86,10 @@ public class EWWalletService extends Service implements Runnable {
     private Wallet wallet;
     private boolean isSynced = false;
 
+    public void setIsSynced(boolean isSynced) {
+        this.isSynced = isSynced;
+    }
+
     public Integer getNextMessageId() {
         return nextMessageId;
     }
@@ -194,7 +198,7 @@ public class EWWalletService extends Service implements Runnable {
         Log.i(TAG,"createExitTransaction to " +bitcoinAddress );
 
         if(!isSynced || nextChange==0 || nextChange>99 ) {
-            Log.w(TAG, "sendMessage returning null " + isSynced + " " + nextChange);   //TODO manage nextChange>99 or nextMessageId>0
+            Log.w(TAG, "createExitTransaction returning null " + isSynced + " " + nextChange);   //TODO manage nextChange>99 or nextMessageId>0
             return null;
         }
 
@@ -212,7 +216,6 @@ public class EWWalletService extends Service implements Runnable {
 
         isSynced=false;  //TODO
 
-        final ECKey input = changes.get(nextChange - 1);
         final Transaction newTx = new Transaction(PARAMS);
 
         Long totalAvailable = 0L;
@@ -225,7 +228,7 @@ public class EWWalletService extends Service implements Runnable {
                 long value = to.getValue().getValue();
 
                 if(to.isAvailableForSpending() && value>0) {
-                    Log.i(TAG,"adding spendable output " + to);
+                    Log.i(TAG, "adding spendable output " + to);
                     newTx.addInput(to);
                     totalAvailable += value;
                 }
@@ -236,7 +239,7 @@ public class EWWalletService extends Service implements Runnable {
         Log.i(TAG,"total available " + totalAvailable);
         Long toSend = totalAvailable-FEE;
         if(toSend < DUST) {
-            Log.i(TAG, "toSend is less than dust");
+            Log.i(TAG, "toSend is less than dust, exiting");
             return null;
         }
 
@@ -253,7 +256,7 @@ public class EWWalletService extends Service implements Runnable {
 
     public TransactionBroadcast registerAlias(String aliasName) {
         if(!isSynced || nextChange !=1) {
-            Log.i(TAG,"not synced or next change different from zero");
+            Log.i(TAG,"not synced or next change different from zero " + isSynced + nextChange);
             return null;
         }
         isSynced=false;  //TODO
