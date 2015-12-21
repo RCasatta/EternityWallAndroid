@@ -57,7 +57,6 @@ public class MyDownloadListener extends DownloadProgressTracker {
             walletObservable.setState(WalletObservable.State.DOWNLOADED);
             walletObservable.notifyObservers();
         }
-
     }
 
     public long getDownloadTime() {
@@ -68,7 +67,7 @@ public class MyDownloadListener extends DownloadProgressTracker {
     @Override
     public void onBlocksDownloaded(Peer peer, Block block, FilteredBlock filteredBlock, int blocksLeft) {
         super.onBlocksDownloaded(peer, block, filteredBlock, blocksLeft);
-        Log.i(TAG, "onBlocksDownloaded");
+        //Log.i(TAG, "onBlocksDownloaded");
 
         size+=block.getMessageSize();
 
