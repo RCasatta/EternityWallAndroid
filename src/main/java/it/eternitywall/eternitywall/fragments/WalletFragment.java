@@ -122,6 +122,8 @@ public class WalletFragment extends Fragment {
             activity.unbindService(mConnection);
         }
     }
+
+    boolean connect=false;
     private final ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
@@ -133,12 +135,14 @@ public class WalletFragment extends Fragment {
             if(walletObservable!=null && updateUI!=null) {   //could be that the app is detroyed but the service still active, in that case there is a null pointer here, TODO ugly, could cause problem
                 walletObservable.addObserver(updateUI);
                 updateUI.update(null, null);  //Refresh UI
+                connect=true;
             }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Log.i(TAG, ".onServiceDisconnected()");
+            connect=false;
             //walletObservable.deleteObserver(updateUI);
         }
 
@@ -191,6 +195,8 @@ public class WalletFragment extends Fragment {
                         }
 
                     } else if (walletObservable.getState() == WalletObservable.State.SYNCING) {
+                        if (activity!=null && activity.isFinishing())
+                            return;
                         syncedLayout.setVisibility(View.GONE);
                         syncingLayout.setVisibility(View.VISIBLE);
                         if (walletObservable.getPercSync() != null)
@@ -301,6 +307,8 @@ public class WalletFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         Log.i(TAG, "onAttach");
+        if (walletObservable!=null && connect)
+            walletObservable.addObserver(updateUI);
 
         if (activity instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) activity;
@@ -316,6 +324,8 @@ public class WalletFragment extends Fragment {
         Log.i(TAG, "onDetach");
 
         mListener = null;
+        if (walletObservable!=null && connect)
+            walletObservable.deleteObserver(updateUI);
 
     }
 
