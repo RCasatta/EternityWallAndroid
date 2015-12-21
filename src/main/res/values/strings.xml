@@ -67,7 +67,7 @@
     <string name="personal_node_info">Set the address of your personal node, if set and reachable the wallet will sync against this node</string>
     <string name="account">Account</string>
     <string name="donation">Donation</string>
-    <string name="donate_info">Donate to eternitywall</string>
+    <string name="donate_info">Donate 0.1 mBTC to Eternity Wall developers when sending transactions</string>
     <string name="show_info_blockchain">Show information about blockchain</string>
     <string name="debug_info">Debug Info</string>
     <string name="ew_website">www.eternitywall.it</string>

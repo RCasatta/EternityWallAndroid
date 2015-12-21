@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -88,12 +89,17 @@ public class PreferencesActivity extends AppCompatActivity {
 
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(PreferencesActivity.this);
-        switchDonation.setChecked(sharedPref.getBoolean(Preferences.DONATION,true));
+
+        switchDonation.setChecked(sharedPref.getBoolean(Preferences.DONATION, true));
         switchDonation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(PreferencesActivity.this);
-                sharedPref.edit().putBoolean(Preferences.DONATION,isChecked ).commit();
+                sharedPref.edit().putBoolean(Preferences.DONATION,isChecked ).apply();
+                Log.i(TAG, "isChecked=" + isChecked);
+                if(isChecked) {
+                    Toast.makeText(PreferencesActivity.this,"Thank you! :)", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
