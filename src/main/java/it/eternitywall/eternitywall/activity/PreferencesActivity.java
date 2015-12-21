@@ -18,6 +18,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Preferences;
@@ -52,6 +53,7 @@ public class PreferencesActivity extends AppCompatActivity {
                     EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
                     ewWalletService.stopSync();
                     ewWalletService.startSync();
+                    Toast.makeText(PreferencesActivity.this,"Resync started", Toast.LENGTH_LONG).show();
                 } else
                     dialogCreateAccount();
             }
@@ -266,6 +268,7 @@ public class PreferencesActivity extends AppCompatActivity {
                         EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
                         ewWalletService.stopSync();
                         ewWalletService.removePasshrase();
+                        Toast.makeText(PreferencesActivity.this,"Account removed!",Toast.LENGTH_LONG).show();
                     }
                 }else {
                     new AlertDialog.Builder(PreferencesActivity.this)

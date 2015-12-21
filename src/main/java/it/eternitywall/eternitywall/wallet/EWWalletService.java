@@ -86,6 +86,10 @@ public class EWWalletService extends Service implements Runnable {
     private Wallet wallet;
     private boolean isSynced = false;
 
+    public void setIsSynced(boolean isSynced) {
+        this.isSynced = isSynced;
+    }
+
     public Integer getNextMessageId() {
         return nextMessageId;
     }
@@ -194,7 +198,7 @@ public class EWWalletService extends Service implements Runnable {
         Log.i(TAG,"createExitTransaction to " +bitcoinAddress );
 
         if(!isSynced || nextChange==0 || nextChange>99 ) {
-            Log.w(TAG, "sendMessage returning null " + isSynced + " " + nextChange);   //TODO manage nextChange>99 or nextMessageId>0
+            Log.w(TAG, "createExitTransaction returning null " + isSynced + " " + nextChange);   //TODO manage nextChange>99 or nextMessageId>0
             return null;
         }
 
@@ -212,7 +216,6 @@ public class EWWalletService extends Service implements Runnable {
 
         isSynced=false;  //TODO
 
-        final ECKey input = changes.get(nextChange-1);
         final Transaction newTx = new Transaction(PARAMS);
 
         Long totalAvailable = 0L;
@@ -220,9 +223,15 @@ public class EWWalletService extends Service implements Runnable {
         for (Map.Entry<Sha256Hash, Transaction> entry : unspent.entrySet()) {
             Transaction current = entry.getValue();
             List<TransactionOutput> outputs = current.getOutputs();
+
             for (TransactionOutput to : outputs) {
-                newTx.addInput(to);
-                totalAvailable += to.getValue().getValue();
+                long value = to.getValue().getValue();
+
+                if(to.isAvailableForSpending() && value>0) {
+                    Log.i(TAG, "adding spendable output " + to);
+                    newTx.addInput(to);
+                    totalAvailable += value;
+                }
             }
 
         }
@@ -230,7 +239,7 @@ public class EWWalletService extends Service implements Runnable {
         Log.i(TAG,"total available " + totalAvailable);
         Long toSend = totalAvailable-FEE;
         if(toSend < DUST) {
-            Log.i(TAG, "toSend is less than dust");
+            Log.i(TAG, "toSend is less than dust, exiting");
             return null;
         }
 
@@ -247,7 +256,7 @@ public class EWWalletService extends Service implements Runnable {
 
     public TransactionBroadcast registerAlias(String aliasName) {
         if(!isSynced || nextChange !=1) {
-            Log.i(TAG,"not synced or next change different from zero");
+            Log.i(TAG,"not synced or next change different from zero " + isSynced + nextChange);
             return null;
         }
         isSynced=false;  //TODO
@@ -399,8 +408,8 @@ public class EWWalletService extends Service implements Runnable {
 
             Log.i(TAG, "wallet bloom " + wallet.getBloomFilter(1E-5));
             wallet.autosaveToFile(walletFile, 30, TimeUnit.SECONDS, new WalletSaveListener());
-            wallet.cleanup();
             wallet.setAcceptRiskyTransactions(true);
+            //wallet.cleanup();
 
             final long l = System.currentTimeMillis() - start;
             Log.i(TAG, "My messages id are " + messagesId);
@@ -427,6 +436,7 @@ public class EWWalletService extends Service implements Runnable {
 
             final Set<String> stringSet = sharedPref.getStringSet(Preferences.NODES, new HashSet<String>());
             if(stringSet.size()>0) {
+                Log.i(TAG,"There are personal nodes " + stringSet.size() );
                 for (String current : stringSet) {
                     boolean portOpen = isPortOpen(current, 8333, 1000);
                     if(portOpen) {
@@ -454,7 +464,8 @@ public class EWWalletService extends Service implements Runnable {
             Log.i(TAG, "download started");
 
         } catch (Exception e) {
-            Log.i(TAG, e.getMessage());
+            Log.e(TAG, "" + e.getMessage());
+            e.printStackTrace();
         }
 
     }
@@ -641,7 +652,7 @@ public class EWWalletService extends Service implements Runnable {
 
     public void removePasshrase() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        sharedPref.edit().remove(Preferences.PASSPHRASE).remove(Preferences.PIN).commit();
+        sharedPref.edit().remove(Preferences.PASSPHRASE).remove(Preferences.PIN).remove(Preferences.TO_NOTIFY).commit();
     }
 
 }

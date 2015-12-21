@@ -18,6 +18,7 @@ import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.core.VerificationException;
+import org.bitcoinj.core.Wallet;
 import org.bitcoinj.params.MainNetParams;
 
 import java.util.HashSet;
@@ -49,6 +50,14 @@ public class MyBlockchainListener implements BlockChainListener {
     @Override
     public void notifyNewBestBlock(StoredBlock block) throws VerificationException {
         //Log.d(TAG, "notifyNewBestBlock " + block.getHeight());
+        EWWalletService ewWalletService = ewApplication.getEwWalletService();
+        if(ewWalletService!=null) {
+            Wallet wallet = ewWalletService.getWallet();
+            if(wallet.getPendingTransactions().size()==0) {
+                ewWalletService.setIsSynced(true);
+            }
+        }
+
     }
 
     @Override

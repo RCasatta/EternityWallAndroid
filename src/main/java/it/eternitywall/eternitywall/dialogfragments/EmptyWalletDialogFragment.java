@@ -62,6 +62,12 @@ public class EmptyWalletDialogFragment extends DialogFragment {
                 final EWApplication ewApplication = (EWApplication) getActivity().getApplication();
                 final EWWalletService ewWalletService = ewApplication.getEwWalletService();
                 final Transaction tx = ewWalletService.createExitTransaction(bitcoinAddress);
+                if(tx==null) {
+                    Log.i(TAG,"exit transaction is null ");
+
+                    Toast.makeText(getActivity(), "Wait unconfirmed tx and try again",Toast.LENGTH_LONG).show();
+                    return;
+                }
 
                 Log.i(TAG,"Created exit transaction " + tx);
                 Log.i(TAG, "ExitTransactionHex " + Bitcoin.transactionToHex(tx));
@@ -75,6 +81,7 @@ public class EmptyWalletDialogFragment extends DialogFragment {
                 Futures.addCallback(future, new FutureCallback<Transaction>() {
                     @Override
                     public void onSuccess(@Nullable Transaction result) {
+                        Log.i(TAG,"Transaction broadcasted!");
                         Toast.makeText(getActivity(),"Transaction broadcasted!", Toast.LENGTH_LONG).show();
                     }
 

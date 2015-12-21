@@ -3,11 +3,14 @@ package it.eternitywall.eternitywall.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,14 +30,19 @@ import android.widget.Toast;
 import com.google.common.base.Optional;
 
 import org.bitcoinj.core.Transaction;
+import org.bitcoinj.core.TransactionBroadcast;
 import org.json.JSONObject;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Http;
+import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
 import it.eternitywall.eternitywall.wallet.WalletObservable;
@@ -188,7 +196,7 @@ public class WriteActivity extends ActionBarActivity {
             final EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
             curTx= ewWalletService.createMessageTx(curmsg);
 
-            /*final TransactionBroadcast transactionBroadcast = ewWalletService.sendTransaction(curTx);
+            final TransactionBroadcast transactionBroadcast = ewWalletService.broadcastTransaction(curTx);
 
             try {
                 Transaction transaction = transactionBroadcast.future().get();
@@ -209,22 +217,18 @@ public class WriteActivity extends ActionBarActivity {
                     Handler handler = new Handler();
                     Runnable r = new Runnable() {
                         public void run() {
-                            Http.get("http://eternitywall.it/v1/countmessagesinqueue");
+                            Optional<String> stringOptional = Http.get("http://eternitywall.it/v1/countmessagesinqueue");
+                            Log.i(TAG,"count messages in queue returns " + stringOptional.isPresent() );
                         }
                     };
                     handler.postDelayed(r, 3000);
                 }
 
-            } catch (ExecutionException e) {
+            } catch (ExecutionException | InterruptedException e ) {
                 Toast.makeText(this, "Error broadcasting message! Please retry", Toast.LENGTH_LONG).show();
                 Log.e(TAG, e.getMessage());
                 e.printStackTrace();
-            } catch (InterruptedException e) {
-                Toast.makeText(this, "Error broadcasting message! Please retry", Toast.LENGTH_LONG).show();
-                Log.e(TAG, e.getMessage());
-                e.printStackTrace();
-
-            }*/
+            }
         }
 
     }
