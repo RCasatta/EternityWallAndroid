@@ -213,7 +213,6 @@ public class EWWalletService extends Service implements Runnable {
         isSynced=false;  //TODO
 
         final ECKey input = changes.get(nextChange-1);
-        final Address inputAddress = input.toAddress(PARAMS);
         final Transaction newTx = new Transaction(PARAMS);
 
         Long totalAvailable = 0L;
@@ -401,6 +400,7 @@ public class EWWalletService extends Service implements Runnable {
             Log.i(TAG, "wallet bloom " + wallet.getBloomFilter(1E-5));
             wallet.autosaveToFile(walletFile, 30, TimeUnit.SECONDS, new WalletSaveListener());
             wallet.cleanup();
+            wallet.setAcceptRiskyTransactions(true);
 
             final long l = System.currentTimeMillis() - start;
             Log.i(TAG, "My messages id are " + messagesId);
@@ -416,6 +416,7 @@ public class EWWalletService extends Service implements Runnable {
                 CheckpointManager.checkpoint(PARAMS, Checkpoints.getAsStream(), blockStore, EPOCH);
             }
             wallet.addEventListener(new EWWalletEventListener(walletObservable), Threading.SAME_THREAD);
+            //wallet.setRiskAnalyzer(new DefaultRiskAnalysis.Analyzer());
 
             blockChain = new BlockChain(PARAMS, wallet, blockStore);
             chainListener = new MyBlockchainListener( all, (EWApplication) getApplication() );
