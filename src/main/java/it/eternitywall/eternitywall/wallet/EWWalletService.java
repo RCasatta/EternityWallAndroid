@@ -212,7 +212,7 @@ public class EWWalletService extends Service implements Runnable {
 
         isSynced=false;  //TODO
 
-        final ECKey input = changes.get(nextChange-1);
+        final ECKey input = changes.get(nextChange - 1);
         final Transaction newTx = new Transaction(PARAMS);
 
         Long totalAvailable = 0L;
@@ -220,9 +220,15 @@ public class EWWalletService extends Service implements Runnable {
         for (Map.Entry<Sha256Hash, Transaction> entry : unspent.entrySet()) {
             Transaction current = entry.getValue();
             List<TransactionOutput> outputs = current.getOutputs();
+
             for (TransactionOutput to : outputs) {
-                newTx.addInput(to);
-                totalAvailable += to.getValue().getValue();
+                long value = to.getValue().getValue();
+
+                if(to.isAvailableForSpending() && value>0) {
+                    Log.i(TAG,"adding spendable output " + to);
+                    newTx.addInput(to);
+                    totalAvailable += value;
+                }
             }
 
         }
@@ -399,8 +405,8 @@ public class EWWalletService extends Service implements Runnable {
 
             Log.i(TAG, "wallet bloom " + wallet.getBloomFilter(1E-5));
             wallet.autosaveToFile(walletFile, 30, TimeUnit.SECONDS, new WalletSaveListener());
-            wallet.cleanup();
             wallet.setAcceptRiskyTransactions(true);
+            //wallet.cleanup();
 
             final long l = System.currentTimeMillis() - start;
             Log.i(TAG, "My messages id are " + messagesId);
@@ -427,6 +433,7 @@ public class EWWalletService extends Service implements Runnable {
 
             final Set<String> stringSet = sharedPref.getStringSet(Preferences.NODES, new HashSet<String>());
             if(stringSet.size()>0) {
+                Log.i(TAG,"There are personal nodes " + stringSet.size() );
                 for (String current : stringSet) {
                     boolean portOpen = isPortOpen(current, 8333, 1000);
                     if(portOpen) {
@@ -454,7 +461,8 @@ public class EWWalletService extends Service implements Runnable {
             Log.i(TAG, "download started");
 
         } catch (Exception e) {
-            Log.i(TAG, e.getMessage());
+            Log.e(TAG, "" + e.getMessage());
+            e.printStackTrace();
         }
 
     }
