@@ -70,26 +70,22 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         setSupportActionBar(toolbar);
 
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
+        // Set Table Layout and Pager with fragments
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         changeTabsFont();
 
-        /*
-        String passphrase = Bitcoin.getNewMnemonicPassphrase();
-        EWWallet ewWallet = new EWWallet( passphrase ,  getApplicationContext());
-        Thread thread = new Thread(ewWallet);
-        thread.start();
-        */
-
+        // Show / Hide write button
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         String passphrase=sharedPref.getString(Preferences.PASSPHRASE, null);
         if (passphrase==null){
+            // Hide write button on activity if there is no account
             findViewById(R.id.payButton).setVisibility(View.GONE);
         } else {
+            // Show write button on activity if there is one account
             findViewById(R.id.payButton).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -225,7 +221,7 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
                 }
             });
             TextView txtPreferences = new TextView(MainActivity.this);
-            txtPreferences.setPadding(4, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
+            txtPreferences.setPadding(6, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
             txtPreferences.setText(getResources().getString(R.string.action_preferences));
             txtPreferences.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
             txtPreferences.setTypeface(font);
@@ -287,8 +283,10 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
             String passphrase=sharedPref.getString(Preferences.PASSPHRASE, null);
             if (passphrase==null){
                 txtShare.setText("");
+                menu.findItem(R.id.action_share).setVisible(false);
             } else {
                 txtShare.setText(getResources().getString(R.string.action_share));
+                menu.findItem(R.id.action_share).setVisible(true);
                 menu.findItem(R.id.action_share).setActionView(txtShare);
                 menu.findItem(R.id.action_share).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
@@ -320,10 +318,11 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
             }
 
             TextView txtPreferences = new TextView(MainActivity.this);
-            txtPreferences.setPadding(4, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
+            txtPreferences.setPadding(6, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
             txtPreferences.setText(getResources().getString(R.string.action_preferences));
             txtPreferences.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
             txtPreferences.setTypeface(font);
+
             menu.findItem(R.id.action_preferences).setActionView(txtPreferences);
             menu.findItem(R.id.action_preferences).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override

@@ -2,9 +2,11 @@ package it.eternitywall.eternitywall.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.SearchView;
@@ -29,6 +31,7 @@ import java.util.List;
 
 import it.eternitywall.eternitywall.Http;
 import it.eternitywall.eternitywall.Message;
+import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.activity.WriteActivity;
 import it.eternitywall.eternitywall.adapters.MessageListAdapter;
@@ -126,18 +129,23 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
         // Inflate the layout for this fragment
         View v= inflater.inflate(R.layout.fragment_list, container, false);
 
+        // Set Fragment Views
         lstMessages = (ListView) v.findViewById(R.id.lstMessages);
         progress = (ProgressBar) v.findViewById(R.id.progress);
         swipe = (SwipeRefreshLayout) v.findViewById(R.id.activity_main_swipe_refresh_layout);
         txtHeader = (TextView)v.findViewById(R.id.txtHeader);
 
+        // Set empty variables and messages
         messages = new ArrayList<Message>();
         cursor = null;
         search = null;
         sortby = null;
         inQueue = null;
+
+        // load messages on Swipe
         loadMoreData();
 
+        // Set Swipe on refresh scroll-upper event
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -151,6 +159,23 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
 
 
         });
+
+        // Show / Hide write button
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String passphrase=sharedPref.getString(Preferences.PASSPHRASE, null);
+        if (passphrase==null){
+            // Show write button on activity if there is one account
+            v.findViewById(R.id.payButton).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(getActivity(), WriteActivity.class);
+                    startActivity(i);
+                }
+            });
+        } else {
+            // Hide write button on activity if there is no account
+            v.findViewById(R.id.payButton).setVisibility(View.GONE);
+        }
 
         return v;
     }
