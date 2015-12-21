@@ -71,6 +71,9 @@
         <item name="android:textColorPrimaryInverse">@color/primaryLight</item>
         <item name="android:textColorSecondaryInverse">@color/primaryLight</item>
 
+
+        <item name="android:dialogTheme">@style/DialogStyle</item>
+
     </style>
 
 <style name="ButtonStyle" parent="android:Widget.Button">
@@ -79,6 +82,10 @@
     <item name="colorButtonNormal">@color/accent</item>
     <item name="android:textColor">@color/action_bar_background</item>
 </style>
+
+    <style name="DialogStyle" parent="AlertDialog.AppCompat.Light">
+        <item name="android:dialogTitle">@color/black</item>
+    </style>
 
 <!-- ActionBar styles -->
     <style name="MyActionBar" parent="Widget.AppCompat.ActionBar">
