@@ -51,6 +51,7 @@ public class PreferencesActivity extends AppCompatActivity {
                 if (existAccount()) {
                     EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
                     ewWalletService.stopSync();
+                    ewWalletService.startSync();
                 } else
                     dialogCreateAccount();
             }
@@ -261,20 +262,10 @@ public class PreferencesActivity extends AppCompatActivity {
                 if (pin!=null && editText.getText().toString().equals(pin)){
                     String passphrase = sharedPref.getString(Preferences.PASSPHRASE,null);
                     if (passphrase!=null){
-                        // REMOVE
-
-
-                        // remove preferences
-                        final SharedPreferences.Editor edit = sharedPref.edit();
-                        edit.putString(Preferences.PASSPHRASE, null);
-                        edit.putString(Preferences.PIN, null);
-                        edit.commit();
-
-                        // stop observable
-
+                        // stop & remove
                         EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
                         ewWalletService.stopSync();
-
+                        ewWalletService.removePasshrase();
                     }
                 }else {
                     new AlertDialog.Builder(PreferencesActivity.this)

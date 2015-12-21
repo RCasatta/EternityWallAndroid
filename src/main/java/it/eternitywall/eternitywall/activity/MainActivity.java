@@ -292,7 +292,7 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         final WalletObservable walletObservable = ((EWApplication) getApplication()).getWalletObservable();
-                        if (walletObservable != null) {
+                        if (walletObservable != null && walletObservable.getState() == WalletObservable.State.SYNCED ) {
                             Intent intent = new Intent();
                             intent.setAction(Intent.ACTION_SEND);
                             intent.putExtra(Intent.EXTRA_TEXT, walletObservable.getCurrent().toString());
@@ -306,7 +306,7 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
                     @Override
                     public void onClick(View v) {
                         final WalletObservable walletObservable = ((EWApplication) getApplication()).getWalletObservable();
-                        if (walletObservable != null) {
+                        if (walletObservable != null && walletObservable.getState() == WalletObservable.State.SYNCED ) {
                             Intent intent = new Intent();
                             intent.setAction(Intent.ACTION_SEND);
                             intent.putExtra(Intent.EXTRA_TEXT, walletObservable.getCurrent().toString());

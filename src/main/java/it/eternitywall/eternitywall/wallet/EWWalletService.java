@@ -613,7 +613,10 @@ public class EWWalletService extends Service implements Runnable {
     public void stopSync() {
         blockChain.removeListener(chainListener);
         blockChain.removeWallet(wallet);
-        peerGroup.stopAsync();
+        if(peerGroup.isRunning())
+            peerGroup.stop();
+
+        peerGroup.removeWallet(wallet);
         wallet.cleanup();
         wallet.reset();
 
@@ -633,6 +636,11 @@ public class EWWalletService extends Service implements Runnable {
         final File walletFile = new File(path, WALLET_FILE );
         blockFile.delete();
         walletFile.delete();
+    }
+
+    public void removePasshrase() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPref.edit().remove(Preferences.PASSPHRASE).remove(Preferences.PIN).commit();
     }
 
 }
