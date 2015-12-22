@@ -87,7 +87,7 @@ public class RegAliasDialogFragment extends DialogFragment {
                         @Override
                         public void onSuccess(@Nullable Transaction result) {
                             Log.i(TAG,"onSuccess callback");
-                            walletObservable.setAliasName(aliasString + " (unconfirmed)");
+                            walletObservable.setUnconfirmedAliasName(aliasString);
                             walletObservable.notifyObservers();
                         }
 

@@ -48,7 +48,7 @@
     <string name="font_awesome_bitcoin"></string>
 
     <string name="title_activity_preferences">Preferences</string>
-    <string name="title_activity_debug">DebugActivity</string>
+    <string name="title_activity_debug">Debug Info</string>
     <string name="btn_contact">CONTACT</string>
     <string name="btn_visit">VISIT</string>
     <string name="eternity_wall">Eternity Wall</string>
@@ -97,6 +97,7 @@
     <string name="unconfirmed">unconfirmed</string>
     <string name="date">date</string>
     <string name="message">message</string>
+    <string name="unconfirmed_with_parenthesis">(unconfirmed)</string>
 
 
 </resources>

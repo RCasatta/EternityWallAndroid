@@ -57,6 +57,7 @@ public class WalletFragment extends Fragment {
     private TextView syncingText;
     private TextView currentAddressText;
     private TextView aliasNameText;
+    private TextView aliasNameUnconfirmed;
     private TextView btcBalanceUnconfirmed;
     private ImageView currentQrCode;
     private ImageView identicon;
@@ -170,6 +171,7 @@ public class WalletFragment extends Fragment {
                         final Bitmap QrCodeBitmap = walletObservable.getCurrentQrCode();
                         final Bitmap IdenticonBitmap = walletObservable.getCurrentIdenticon();
                         final String aliasName = walletObservable.getAliasName();
+                        final String unconfirmedAliasName = walletObservable.getUnconfirmedAliasName();
 
                         syncedLayout.setVisibility(View.VISIBLE);
                         syncingLayout.setVisibility(View.GONE);
@@ -185,8 +187,16 @@ public class WalletFragment extends Fragment {
                             aliasNameText.setVisibility(View.VISIBLE);
                             setAliasButton.setVisibility(View.GONE);
                         } else {
-                            aliasNameText.setVisibility(View.GONE);
-                            setAliasButton.setVisibility(View.VISIBLE);
+                            if(unconfirmedAliasName!=null) {
+                                aliasNameText.setText(unconfirmedAliasName);
+                                aliasNameUnconfirmed.setVisibility(View.VISIBLE);
+                                aliasNameText.setVisibility(View.VISIBLE);
+                                setAliasButton.setVisibility(View.GONE);
+                            } else {
+                                aliasNameUnconfirmed.setVisibility(View.GONE);
+                                aliasNameText.setVisibility(View.GONE);
+                                setAliasButton.setVisibility(View.VISIBLE);
+                            }
                         }
                         if(value1!=value2) {
                             btcBalanceUnconfirmed.setVisibility(View.VISIBLE);
@@ -216,15 +226,16 @@ public class WalletFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_wallet, container, false);
         Log.i(TAG, "onCreateView");
 
-        syncingLayout = (RelativeLayout) view.findViewById(R.id.syncingLayout);
-        syncedLayout = (LinearLayout) view.findViewById(R.id.syncedLayout);
-        syncingText = (TextView) view.findViewById(R.id.syncingText);
-        aliasNameText = (TextView) view.findViewById(R.id.aliasName);
-        currentAddressText = (TextView) view.findViewById(R.id.currentAddress);
-        currentQrCode = (ImageView) view.findViewById(R.id.currentQrCode);
-        identicon = (ImageView) view.findViewById(R.id.identicon);
-        btcBalance = (CurrencyView) view.findViewById(R.id.btcBalance);
-        setAliasButton = (Button) view.findViewById(R.id.setAlias);
+        syncingLayout         = (RelativeLayout) view.findViewById(R.id.syncingLayout);
+        syncedLayout          = (LinearLayout) view.findViewById(R.id.syncedLayout);
+        syncingText           = (TextView) view.findViewById(R.id.syncingText);
+        aliasNameText         = (TextView) view.findViewById(R.id.aliasName);
+        aliasNameUnconfirmed  = (TextView) view.findViewById(R.id.aliasNameUnconfirmed);
+        currentAddressText    = (TextView) view.findViewById(R.id.currentAddress);
+        currentQrCode         = (ImageView) view.findViewById(R.id.currentQrCode);
+        identicon             = (ImageView) view.findViewById(R.id.identicon);
+        btcBalance            = (CurrencyView) view.findViewById(R.id.btcBalance);
+        setAliasButton        = (Button) view.findViewById(R.id.setAlias);
         btcBalanceUnconfirmed = (TextView) view.findViewById(R.id.btcBalanceUnconfirmed);
 
         setAliasButton.setOnClickListener(new View.OnClickListener() {

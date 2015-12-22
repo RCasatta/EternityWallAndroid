@@ -18,6 +18,7 @@ public class WalletObservable extends Observable {
     private Integer percSync;
     private String alias;
     private String aliasName;
+    private String unconfirmedAliasName;
     private Bitmap currentQrCode;
     private Bitmap currentIdenticon;
 
@@ -47,6 +48,17 @@ public class WalletObservable extends Observable {
     public void setAliasName(String aliasName) {
         if(!aliasName.equals(this.aliasName)) {
             this.aliasName = aliasName;
+            setChanged();
+        }
+    }
+
+    public String getUnconfirmedAliasName() {
+        return unconfirmedAliasName;
+    }
+
+    public void setUnconfirmedAliasName(String unconfirmedAliasName) {
+        if(!unconfirmedAliasName.equals(this.unconfirmedAliasName)) {
+            this.unconfirmedAliasName = unconfirmedAliasName;
             setChanged();
         }
     }

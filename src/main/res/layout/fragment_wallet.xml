@@ -63,6 +63,18 @@
                     android:layout_centerVertical="true"
                     android:textSize="24sp"
                     />
+                <TextView
+                    android:id="@+id/aliasNameUnconfirmed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/aliasName"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/secondaryText"
+                    android:textSize="16sp"
+                    android:text="@string/unconfirmed_with_parenthesis"
+                    android:visibility="gone"
+                    />
+
 
                 <Button
                     android:id="@+id/setAlias"

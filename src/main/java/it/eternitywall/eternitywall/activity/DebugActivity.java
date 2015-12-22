@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -26,13 +27,12 @@ import it.eternitywall.eternitywall.adapters.DebugListAdapter;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
 
 public class DebugActivity extends AppCompatActivity implements DebugListAdapter.MessageListAdapterManager {
-
+    private static final String TAG = "DebugActivity";
 
     private ListView lstDebug;
     DebugListAdapter debugListAdapter;
     private SwipeRefreshLayout swipe;
     private List<Debug> debugs;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +83,7 @@ public class DebugActivity extends AppCompatActivity implements DebugListAdapter
 
     @Override
     public void loadMoreData() {
+        Log.i(TAG, "loadMoreData");
 
         DebugListAdapter debugListAdapter = (DebugListAdapter) lstDebug.getAdapter();
         debugListAdapter.clear();
@@ -125,13 +126,6 @@ public class DebugActivity extends AppCompatActivity implements DebugListAdapter
 
             }
         }
-
-
-
-
-
-
-
 
         debugListAdapter.notifyDataSetChanged();
         swipe.setRefreshing(false);

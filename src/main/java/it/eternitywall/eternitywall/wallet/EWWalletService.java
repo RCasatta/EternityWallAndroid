@@ -58,8 +58,8 @@ import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 public class EWWalletService extends Service implements Runnable {
     private static final String TAG = "EWWalletService";
 
-    private static String REGISTER_ALIAS_TAG = "TEWA ";
-    private static String EW_MESSAGE_TAG     = "TEW ";
+    private static String REGISTER_ALIAS_TAG = "EWA ";
+    private static String EW_MESSAGE_TAG     = "EW ";
 
     private final static NetworkParameters PARAMS=MainNetParams.get();
     private final static int EPOCH     = 1447891200;  //19 Novembre 2015 00:00 first EWA 5f362444d23dd258ae1c2b60b1d79cb2c5231fc50df50713a415e13502fc1da9
