@@ -72,6 +72,7 @@
                     android:textColor="@color/secondaryText"
                     android:textSize="16sp"
                     android:text="@string/unconfirmed_with_parenthesis"
+                    android:paddingLeft="10dp"
                     android:visibility="gone"
                     />
 

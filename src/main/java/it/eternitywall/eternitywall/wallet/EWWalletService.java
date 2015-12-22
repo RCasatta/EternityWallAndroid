@@ -20,6 +20,7 @@ import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.StoredBlock;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionBroadcast;
+import org.bitcoinj.core.TransactionConfidence;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.core.Wallet;
@@ -269,8 +270,8 @@ public class EWWalletService extends Service implements Runnable {
     }
 
     public TransactionBroadcast registerAlias(String aliasName) {
-        if(!isSynced || nextChange !=1) {
-            Log.i(TAG,"not synced or next change different from zero " + isSynced + nextChange);
+        if(!isSynced || nextChange != 1) {
+            Log.i(TAG,"not synced or next change different from zero " + isSynced + " " + nextChange);
             return null;
         }
         isSynced=false;  //TODO
@@ -283,7 +284,7 @@ public class EWWalletService extends Service implements Runnable {
         Log.i(TAG,"aliasAddress is = " + aliasAddress.toString() );
         Transaction newTx = new Transaction(PARAMS);
 
-        List<TransactionOutput> transactionOutputList = getMines(aliasAddress);
+        List<TransactionOutput> transactionOutputList = getMines(aliasAddress);  //adfgsdg
         Long totalAvailable = 0L;
         for (TransactionOutput to  : transactionOutputList) {
             totalAvailable += to.getValue().getValue();
@@ -580,6 +581,7 @@ public class EWWalletService extends Service implements Runnable {
 
     private static String EWA_PREFIX = "455741";
     public static void checkAlias(Transaction tx, WalletObservable walletObservable) {
+
         final List<TransactionOutput> outputs = tx.getOutputs();
         for (TransactionOutput to : outputs) {
             byte[] script = to.getScriptBytes();
@@ -606,7 +608,12 @@ public class EWWalletService extends Service implements Runnable {
                             if(aliasName.length()>20)
                                 aliasName=aliasName.substring(0,20);
                             Log.i(TAG, "Found alias name!! " + aliasName);
-                            walletObservable.setAliasName(aliasName);
+
+                            if(tx.getConfidence().getConfidenceType() == TransactionConfidence.ConfidenceType.PENDING ) {
+                                walletObservable.setUnconfirmedAliasName(aliasName);
+                            } else {
+                                walletObservable.setAliasName(aliasName);
+                            }
                             walletObservable.notifyObservers();
                         }
                     }

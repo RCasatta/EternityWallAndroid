@@ -241,10 +241,10 @@ public class WalletFragment extends Fragment {
         setAliasButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Long walletBalance = walletObservable.getWalletUnconfirmedBalance().longValue();
+                Long walletBalance = walletObservable.getWalletBalance().longValue();
                 Log.i(TAG,"walletBalance=" + walletBalance);
                 if( walletBalance < (EWWalletService.DUST + EWWalletService.FEE) ) {
-                    Toast.makeText(getActivity(), "You need at least 0.2 mBTC to register an alias", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "You need at least 0.2 mBTC confirmed balance to register an alias", Toast.LENGTH_LONG).show();
                     return;
                 }
 

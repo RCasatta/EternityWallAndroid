@@ -222,6 +222,8 @@ public class WriteActivity extends ActionBarActivity {
                         }
                     };
                     handler.postDelayed(r, 3000);
+
+                    finish();
                 }
 
             } catch (ExecutionException | InterruptedException e ) {

@@ -15,6 +15,7 @@ import org.bitcoinj.core.ScriptException;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.StoredBlock;
 import org.bitcoinj.core.Transaction;
+import org.bitcoinj.core.TransactionConfidence;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.core.VerificationException;
@@ -99,14 +100,21 @@ public class MyBlockchainListener implements BlockChainListener {
     @Override
     public void receiveFromBlock(Transaction tx, StoredBlock block, AbstractBlockChain.NewBlockType blockType, int relativityOffset) throws VerificationException {
         Log.i(TAG, "receiveFromBlock " + tx.getHashAsString() + " in block " + block);
+
         EWWalletService.checkAlias(tx, walletObservable);
         createNotification(tx);
+        //TODO add listener to confidence change
     }
 
     private void createNotification(Transaction tx) {
-        String hash = tx.getHashAsString();
+        if(tx.getConfidence().getConfidenceType() == TransactionConfidence.ConfidenceType.PENDING) {
+            Log.i(TAG,"createNotification result pending");
+            return;
+        }
+
+        final String hash = tx.getHashAsString();
         final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(ewApplication);
-        Set<String> stringSet = sharedPref.getStringSet(Preferences.TO_NOTIFY, new HashSet<String>());
+        final Set<String> stringSet = sharedPref.getStringSet(Preferences.TO_NOTIFY, new HashSet<String>());
         if(stringSet.size()>0) {
             if(stringSet.contains(hash)) {  //NOTIFY
                 stringSet.remove(hash);

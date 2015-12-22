@@ -1,5 +1,6 @@
 package it.eternitywall;
 
+import org.bitcoinj.core.Address;
 import org.bitcoinj.crypto.ChildNumber;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.crypto.HDKeyDerivation;
@@ -23,7 +24,7 @@ public class BitcoinTest {
      */
 
     @Test
-    public void testEWClientMasterpublic() {
+    public void testEWClientMaster() {
         byte[] entropyFromPassphrase = Bitcoin.getEntropyFromPassphrase("The passphrase is the Eternity Wall one");
         EWDerivation ewDerivation = new EWDerivation(entropyFromPassphrase);
         String s = ewDerivation.getAlias().toAddress(MainNetParams.get()).toString();
@@ -59,6 +60,21 @@ public class BitcoinTest {
         final HDKeyDerivation.RawKeyBytes deriveSoftPublicRawBytes2 = HDKeyDerivation.deriveChildKeyBytesFromPublic(deriveSoftPublic, new ChildNumber(1, false), HDKeyDerivation.PublicDeriveMode.NORMAL);
         final DeterministicKey deriveSoftPublic2 = HDKeyDerivation.createMasterPubKeyFromBytes(deriveSoftPublicRawBytes2.keyBytes, deriveSoftPublicRawBytes2.chainCode);
         assertEquals(expected2, Bitcoin.keyToStringAddress(deriveSoftPublic2) );
+
+
+    }
+
+    @Test
+    public void testEWClientMasterPublicx() {
+
+        EWDerivation ewDerivation = new EWDerivation(Bitcoin.getRandomSeed());
+
+        for(int i =0;i<367;i++) {
+            DeterministicKey donation = ewDerivation.getDonation(i);
+            MainNetParams PARAMS = MainNetParams.get();
+            Address address = donation.toAddress(PARAMS);
+            System.out.println(address.toString());
+        }
 
 
     }

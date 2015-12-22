@@ -98,7 +98,10 @@ public class PreferencesActivity extends AppCompatActivity {
                 sharedPref.edit().putBoolean(Preferences.DONATION,isChecked ).apply();
                 Log.i(TAG, "isChecked=" + isChecked);
                 if(isChecked) {
-                    Toast.makeText(PreferencesActivity.this,"Thank you! :)", Toast.LENGTH_LONG).show();
+                    Toast.makeText(PreferencesActivity.this,"Thank you! :)", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PreferencesActivity.this,":(", Toast.LENGTH_SHORT).show();
+
                 }
             }
         });
