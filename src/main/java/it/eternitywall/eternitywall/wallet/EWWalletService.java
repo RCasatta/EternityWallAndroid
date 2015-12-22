@@ -23,6 +23,7 @@ import org.bitcoinj.core.TransactionBroadcast;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.core.Wallet;
+import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.net.discovery.DnsDiscovery;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.script.ScriptBuilder;
@@ -64,6 +65,7 @@ public class EWWalletService extends Service implements Runnable {
     private final static int EPOCH     = 1447891200;  //19 Novembre 2015 00:00 first EWA 5f362444d23dd258ae1c2b60b1d79cb2c5231fc50df50713a415e13502fc1da9
     private final static int PER_CHUNK = 100;
     public static final Long DUST      = 5000L ;
+    public static final Long DONATION  = 10000L ;
     public static final Long FEE       = 11000L ;
     public static final String BLOCKCHAIN_FILE = "blockchain";
     public static final String WALLET_FILE     = "wallet";
@@ -76,6 +78,7 @@ public class EWWalletService extends Service implements Runnable {
     private Set<Address> all       = new HashSet<>();
     private List<ECKey> messagesId = new ArrayList<>();
     private List<ECKey> changes    = new ArrayList<>();
+    private EWDerivation ewDerivation;
 
     private MyBlockchainListener chainListener;
     private MyDownloadListener downloadListener;
@@ -138,6 +141,8 @@ public class EWWalletService extends Service implements Runnable {
         }
         EWMessageData ewMessageData= getNextMessageData();
         isSynced=false;  //TODO
+        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        final boolean donation = sharedPref.getBoolean(Preferences.DONATION, false);
 
         final ECKey input = ewMessageData.getInput();
         Address inputAddress = input.toAddress(PARAMS);
@@ -153,6 +158,9 @@ public class EWWalletService extends Service implements Runnable {
 
         Log.i(TAG,"total available " + totalAvailable);
         Long toSend = totalAvailable-FEE-DUST;
+        if(donation)
+            toSend = toSend-DONATION;
+
         if(toSend < DUST) {
             Log.i(TAG, "toSend is less than dust");
             return null;
@@ -168,6 +176,12 @@ public class EWWalletService extends Service implements Runnable {
                         .data(toWrite)
                         .build());
         newTx.addOutput(Coin.valueOf(toSend), ewMessageData.getChange());
+
+        if(donation) {
+            Log.i(TAG, "Has donation, adding output");
+            DeterministicKey todayDonation = ewDerivation.getTodayDonation();
+            newTx.addOutput(Coin.valueOf(DONATION), todayDonation.toAddress(PARAMS));
+        }
 
         Wallet.SendRequest req = Wallet.SendRequest.forTx(newTx);
         wallet.signTransaction(req);
@@ -365,7 +379,7 @@ public class EWWalletService extends Service implements Runnable {
                 return;
             }
             final byte[] seed = Bitcoin.getEntropyFromPassphrase(passphrase);
-            final EWDerivation ewDerivation = new EWDerivation(seed);
+            ewDerivation = new EWDerivation(seed);
             final String alias = Bitcoin.keyToStringAddress( ewDerivation.getAlias() );
             walletObservable.setAlias(alias);
             walletObservable.notifyObservers();
@@ -631,8 +645,9 @@ public class EWWalletService extends Service implements Runnable {
         peerGroup.removeWallet(wallet);
         wallet.cleanup();
         wallet.reset();
+        wallet.clearTransactions(0);
 
-        walletObservable.setState(WalletObservable.State.NOT_STARTED);
+        walletObservable.reset();
         walletObservable.notifyObservers();
 
         messagesId.clear();
@@ -646,8 +661,10 @@ public class EWWalletService extends Service implements Runnable {
             path = new File("./data/");
         final File blockFile = new File(path, BLOCKCHAIN_FILE );
         final File walletFile = new File(path, WALLET_FILE );
-        blockFile.delete();
-        walletFile.delete();
+        boolean blockDeleted  = blockFile.delete();
+        boolean walletDeleted =  walletFile.delete();
+        Log.i(TAG, "blockDeleted: "  + blockDeleted);
+        Log.i(TAG, "walletDeleted: " + walletDeleted);
     }
 
     public void removePasshrase() {

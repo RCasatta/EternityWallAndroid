@@ -149,7 +149,21 @@ public class WalletObservable extends Observable {
             this.walletUnconfirmedBalance = walletUnconfirmedBalance;
             setChanged();
         }
+    }
 
+    public void reset() {
+        aliasName=null;
+        alias=null;
+        walletUnconfirmedBalance=Coin.ZERO;
+        walletBalance=Coin.ZERO;
+        currentQrCodeSource=null;
+        current=null;
+        currentQrCode=null;
+        percSync=null;
+        currentIdenticon=null;
+        currentIdenticonSource=null;
+        state=WalletObservable.State.NOT_STARTED;
+        setChanged();
     }
 
     @Override

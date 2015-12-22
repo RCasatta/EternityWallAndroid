@@ -4,6 +4,8 @@ import org.bitcoinj.crypto.ChildNumber;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.crypto.HDKeyDerivation;
 
+import java.util.Calendar;
+
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 
 /**
@@ -30,18 +32,18 @@ public class EWDerivation {
     // type could be 0 for changes and 1 for messages
 
     //EW donation master public
-    private String hexMasterPublicKey="02982d773156ecf4809db9f25a8c827cffc2d1fff275b2691f87ad2ff608839fab";
-    private String hexChainCode="c662a4b9aea3f9cbc749e3789668451b1279be2424ab2539f2de64511198ad10";
+    private String hexMasterPublicKey = "02982d773156ecf4809db9f25a8c827cffc2d1fff275b2691f87ad2ff608839fab";
+    private String hexChainCode = "c662a4b9aea3f9cbc749e3789668451b1279be2424ab2539f2de64511198ad10";
     private DeterministicKey donationMasterPublic;
 
     public EWDerivation(byte[] seed) {
-        deterministicKey   = HDKeyDerivation.createMasterPrivateKey(seed);
-        ewMaster           = HDKeyDerivation.deriveChildKey(deterministicKey, new ChildNumber(EW_DERIVATION, true));   // /m/4544288'/
-        bitcoinMaster      = HDKeyDerivation.deriveChildKey(ewMaster, new ChildNumber(0, true));  // /m/4544288'/0'
+        deterministicKey = HDKeyDerivation.createMasterPrivateKey(seed);
+        ewMaster = HDKeyDerivation.deriveChildKey(deterministicKey, new ChildNumber(EW_DERIVATION, true));   // /m/4544288'/
+        bitcoinMaster = HDKeyDerivation.deriveChildKey(ewMaster, new ChildNumber(0, true));  // /m/4544288'/0'
         firstAccountMaster = HDKeyDerivation.deriveChildKey(bitcoinMaster, new ChildNumber(0, true));  // /m/4544288'/0'/0'
 
-        changesMaster      = HDKeyDerivation.deriveChildKey(firstAccountMaster, new ChildNumber(0, false));  // /m/4544288'/0'/0'/0
-        messagesMaster     = HDKeyDerivation.deriveChildKey(firstAccountMaster, new ChildNumber(1, false));  // /m/4544288'/0'/0'/1
+        changesMaster = HDKeyDerivation.deriveChildKey(firstAccountMaster, new ChildNumber(0, false));  // /m/4544288'/0'/0'/0
+        messagesMaster = HDKeyDerivation.deriveChildKey(firstAccountMaster, new ChildNumber(1, false));  // /m/4544288'/0'/0'/1
 
         /*
         //Anonymous derivation are probably not needed
@@ -51,8 +53,8 @@ public class EWDerivation {
         */
 
         final byte[] bytesMasterPublicKey = Bitcoin.fromHex(hexMasterPublicKey);
-        final byte[] bytesChainCode       = Bitcoin.fromHex(hexChainCode);
-        donationMasterPublic  = HDKeyDerivation.createMasterPubKeyFromBytes(bytesMasterPublicKey, bytesChainCode);
+        final byte[] bytesChainCode = Bitcoin.fromHex(hexChainCode);
+        donationMasterPublic = HDKeyDerivation.createMasterPubKeyFromBytes(bytesMasterPublicKey, bytesChainCode);
     }
 
     public DeterministicKey getAlias() {
@@ -72,10 +74,15 @@ public class EWDerivation {
     }
 
 
-
-
     public DeterministicKey getDonation(int d) {
         return HDKeyDerivation.deriveChildKey(donationMasterPublic, new ChildNumber(d, false));
-
     }
+
+    public DeterministicKey getTodayDonation() {
+        Calendar calendar = Calendar.getInstance();
+        int dayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
+        return getDonation(dayOfYear);
+    }
+
+
 }
