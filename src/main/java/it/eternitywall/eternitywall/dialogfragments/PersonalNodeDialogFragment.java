@@ -1,14 +1,19 @@
 package it.eternitywall.eternitywall.dialogfragments;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -34,32 +39,27 @@ public class PersonalNodeDialogFragment extends DialogFragment {
     private static final String TAG = "PersonalNodeDlg";
 
     private EditText txtNode;
-    private Button btnAdd;
     private ListView lstNodes;
     private TextView advise;
+    private View view;
 
-
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dlg_personalnodes, container, false);
-        getDialog().setTitle("Personal nodes");
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        view = getActivity().getLayoutInflater().inflate(R.layout.dlg_personalnodes, null);
 
         lstNodes = (ListView) view.findViewById(R.id.lstNodes);
         txtNode = (EditText) view.findViewById(R.id.txtNode);
-        btnAdd = (Button) view.findViewById(R.id.btnAdd);
         advise = (TextView) view.findViewById(R.id.advise);
+
 
         final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final Set<String> stringSet = sharedPref.getStringSet(Preferences.NODES, new HashSet<String>());
         final List<String> stringList = new LinkedList<>();
         stringList.addAll(stringSet);
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>( getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, stringList );
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, stringList);
         lstNodes.setAdapter(arrayAdapter);
 
         adviseVisibility(stringSet);
-
-
         lstNodes.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -79,35 +79,44 @@ public class PersonalNodeDialogFragment extends DialogFragment {
             }
         });
 
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String stringNode = txtNode.getText().toString();
+        return new AlertDialog.Builder(getActivity())
+                // Set Dialog Title
+                .setTitle("Personal nodes")
+                // Set Dialog Message : custom view
+                .setView(view)
+                // Positive button
+                .setNeutralButton("Add", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Do something
+                        String stringNode = txtNode.getText().toString();
 
-                boolean inetAddress = InetAddresses.isInetAddress(stringNode);
-                if (!inetAddress) {
-                    Log.i(TAG, "Invalid address");
-                    Toast.makeText(getActivity(), "Invalid address", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                Set<String> newStringSet = new HashSet<String>(stringSet);
-                newStringSet.add(stringNode);
+                        boolean inetAddress = InetAddresses.isInetAddress(stringNode);
+                        if (!inetAddress) {
+                            Log.i(TAG, "Invalid address");
+                            Toast.makeText(getActivity(), "Invalid address", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        Set<String> newStringSet = new HashSet<String>(stringSet);
+                        newStringSet.add(stringNode);
 
-                SharedPreferences.Editor edit = sharedPref.edit();
-                edit.putStringSet(Preferences.NODES, newStringSet);
-                edit.commit();
+                        SharedPreferences.Editor edit = sharedPref.edit();
+                        edit.putStringSet(Preferences.NODES, newStringSet);
+                        edit.commit();
 
-                arrayAdapter.add(stringNode);
-                arrayAdapter.notifyDataSetChanged();
-                adviseVisibility(newStringSet);
-                txtNode.setText("");
-
-            }
-        });
-
-        return view;
-
+                        arrayAdapter.add(stringNode);
+                        arrayAdapter.notifyDataSetChanged();
+                        adviseVisibility(newStringSet);
+                        txtNode.setText("");
+                    }
+                })
+                // Negative Button
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,	int which) {
+                        // Do nothing
+                    }
+                }).create();
     }
+
 
     private void adviseVisibility(Set<String> stringSet) {
         if(stringSet.size()>0) {

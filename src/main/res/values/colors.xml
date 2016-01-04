@@ -32,6 +32,7 @@
     <color name="primaryDark">#1976D2</color>
     <color name="primaryLight">#BBDEFB</color>
     <color name="accent">#FF9800</color>
+    <color name="accentLight">#FFC107</color>
     <color name="primaryText">#212121</color>
     <color name="secondaryText">#727272</color>
     <color name="icons">#FFFFFF</color>

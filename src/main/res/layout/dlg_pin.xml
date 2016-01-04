@@ -4,10 +4,7 @@
     android:layout_width="match_parent"
     android:padding="@dimen/padding_high"
     android:layout_height="match_parent"
-
     >
-
-
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/inputLayoutPassword"
@@ -15,24 +12,14 @@
         android:layout_height="wrap_content"
         >
         <EditText
-            android:id="@+id/txtAlias"
+            android:id="@+id/editText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/alias"
+            android:hint="@string/pin"
+            android:inputType="numberPassword"
+            android:password="true"
             android:textSize="18sp"
             style="@style/EditText" />
     </android.support.design.widget.TextInputLayout>
-
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginTop="10dp"
-        android:textColor="@color/primaryDark"
-        android:text="@string/warning_permanent_alias"
-        />
-
-
 
 </LinearLayout>

@@ -4,14 +4,21 @@
     android:padding="@dimen/padding_high"
     android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/txtAddress"
-        android:hint="@string/insert_destination"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/inputLayout"
         android:layout_width="match_parent"
-        android:textColor="@color/primaryText"
-        android:singleLine="true"
-        android:padding="@dimen/padding_high"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        >
+        <EditText
+            android:id="@+id/txtAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/insert_destination"
+            android:singleLine="true"
+            android:textSize="18sp"
+            style="@style/EditText"
+            android:padding="@dimen/padding_high" />
+    </android.support.design.widget.TextInputLayout>
 
     <CheckBox
         android:layout_marginTop="@dimen/padding_high"
@@ -21,19 +28,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/padding_high"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:id="@+id/btnSend"
-            android:text="@string/btn_send"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"/>
-
-    </RelativeLayout>
 
 
 </LinearLayout>

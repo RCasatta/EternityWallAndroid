@@ -2,9 +2,11 @@ package it.eternitywall.eternitywall.dialogfragments;
 
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,92 +35,101 @@ import it.eternitywall.eternitywall.wallet.WalletObservable;
 public class RegAliasDialogFragment extends DialogFragment {
     private static final String TAG = RegAliasDialogFragment.class.toString();
 
-    private Button btnRegister;
     private TextView txtAlias;
+    private View view;
 
     private WalletObservable walletObservable;
-
-    public RegAliasDialogFragment(WalletObservable walletObservable) {
-        this.walletObservable = walletObservable;
-    }
 
     public RegAliasDialogFragment() {
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.i(TAG, "onCreateView");
-        View view = inflater.inflate(R.layout.dlg_registeralias, container, false);
-        getDialog().setTitle("Register Alias");
 
-        btnRegister = (Button) view.findViewById(R.id.btnRegister);
-        txtAlias = (TextView) view.findViewById(R.id.txtAlias);
-
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "onClick");
-
-                final String aliasString = txtAlias.getText().toString();
-                if (aliasString == null || aliasString.isEmpty()) {
-                    Toast.makeText(getActivity(), "Alias cannot be empty", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                if (aliasString.length() > 20) {
-                    Toast.makeText(getActivity(), "Alias cannot be longer than 20 chars", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                EWWalletService ewWalletService = ((EWApplication) getActivity().getApplication()).getEwWalletService();
-
-                //TODO check messages
-                TransactionBroadcast transactionBroadcast = ewWalletService.registerAlias(aliasString);
-
-                if(transactionBroadcast==null) {
-                    Toast.makeText(getActivity(), "Cannot broadcast", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                try {
-
-                    ListenableFuture<Transaction> future = transactionBroadcast.future();
-                    Futures.addCallback(future, new FutureCallback<Transaction>() {
-                        @Override
-                        public void onSuccess(@Nullable Transaction result) {
-                            Log.i(TAG,"onSuccess callback");
-                            walletObservable.setUnconfirmedAliasName(aliasString);
-                            walletObservable.notifyObservers();
-                        }
-
-                        @Override
-                        public void onFailure(Throwable t) {
-                            Log.i(TAG,"onFailure callback");
-
-                        }
-                    });
-                    Transaction transaction = future.get();
-                    if (transaction == null) {
-                        Toast.makeText(getActivity(), "hash is null", Toast.LENGTH_LONG).show();
-
-                    } else {
-                        Toast.makeText(getActivity(), "register alias tx created", Toast.LENGTH_LONG).show();
-                    }
-
-                } catch (InterruptedException | ExecutionException e) {
-                    Toast.makeText(getActivity(), "Oooops...", Toast.LENGTH_LONG).show();
-                    Log.w(TAG, "Error " + e.getMessage());
-                    e.printStackTrace();
-                }
-
-                dismiss();
-            }
-        });
-
-        return view;
-
+    public void setWalletObservable(WalletObservable walletObservable){
+        this.walletObservable = walletObservable;
     }
 
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        view = getActivity().getLayoutInflater().inflate(R.layout.dlg_registeralias, null);
+        txtAlias = (TextView) view.findViewById(R.id.txtAlias);
+
+        return new AlertDialog.Builder(getActivity())
+                // Set Dialog Title
+                .setTitle("Register Alias")
+                // Set Dialog Message : custom view
+                .setView(view)
+                // Positive button
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Do something
+                        positive();
+                    }
+                })
+                // Negative Button
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,	int which) {
+                        // Do nothing
+                    }
+                }).create();
+    }
+
+    void positive(){
+        Log.i(TAG, "onClick");
+
+        final String aliasString = txtAlias.getText().toString();
+        if (aliasString == null || aliasString.isEmpty()) {
+            Toast.makeText(getActivity(), "Alias cannot be empty", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (aliasString.length() > 20) {
+            Toast.makeText(getActivity(), "Alias cannot be longer than 20 chars", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        EWWalletService ewWalletService = ((EWApplication) getActivity().getApplication()).getEwWalletService();
+
+        //TODO check messages
+        TransactionBroadcast transactionBroadcast = ewWalletService.registerAlias(aliasString);
+
+        if(transactionBroadcast==null) {
+            Toast.makeText(getActivity(), "Cannot broadcast", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        try {
+
+            ListenableFuture<Transaction> future = transactionBroadcast.future();
+            Futures.addCallback(future, new FutureCallback<Transaction>() {
+                @Override
+                public void onSuccess(@Nullable Transaction result) {
+                    Log.i(TAG,"onSuccess callback");
+                    walletObservable.setUnconfirmedAliasName(aliasString);
+                    walletObservable.notifyObservers();
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    Log.i(TAG,"onFailure callback");
+
+                }
+            });
+            Transaction transaction = future.get();
+            if (transaction == null) {
+                Toast.makeText(getActivity(), "hash is null", Toast.LENGTH_LONG).show();
+
+            } else {
+                Toast.makeText(getActivity(), "register alias tx created", Toast.LENGTH_LONG).show();
+            }
+
+        } catch (InterruptedException | ExecutionException e) {
+            Toast.makeText(getActivity(), "Oooops...", Toast.LENGTH_LONG).show();
+            Log.w(TAG, "Error " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        dismiss();
+    }
 
     @Override
     public void onStart() {

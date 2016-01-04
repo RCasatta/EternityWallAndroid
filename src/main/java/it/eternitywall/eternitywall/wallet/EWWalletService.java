@@ -644,21 +644,28 @@ public class EWWalletService extends Service implements Runnable {
     }
 
     public void stopSync() {
-        blockChain.removeListener(chainListener);
-        blockChain.removeWallet(wallet);
-        if(peerGroup.isRunning())
-            peerGroup.stop();
-
-        peerGroup.removeWallet(wallet);
-        wallet.cleanup();
-        wallet.reset();
-        wallet.clearTransactions(0);
-
-        walletObservable.reset();
-        walletObservable.notifyObservers();
-
-        messagesId.clear();
-        changes.clear();
+        if (blockChain!=null) {
+            blockChain.removeListener(chainListener);
+            blockChain.removeWallet(wallet);
+        }
+        if (peerGroup!=null) {
+            if (peerGroup.isRunning())
+                peerGroup.stop();
+            peerGroup.removeWallet(wallet);
+        }
+        if (wallet!=null) {
+            wallet.cleanup();
+            wallet.reset();
+            wallet.clearTransactions(0);
+        }
+        if (walletObservable!=null) {
+            walletObservable.reset();
+            walletObservable.notifyObservers();
+        }
+        if (messagesId!=null)
+            messagesId.clear();
+        if(changes!=null)
+            changes.clear();
 
         final Context context = getApplicationContext();
         File path;

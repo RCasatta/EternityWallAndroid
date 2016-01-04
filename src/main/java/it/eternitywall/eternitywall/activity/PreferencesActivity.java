@@ -26,6 +26,8 @@ import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.dialogfragments.EmptyWalletDialogFragment;
 import it.eternitywall.eternitywall.dialogfragments.PersonalNodeDialogFragment;
+
+import it.eternitywall.eternitywall.dialogfragments.PinAlertDialogFragment;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
 
 public class PreferencesActivity extends AppCompatActivity {
@@ -123,38 +125,7 @@ public class PreferencesActivity extends AppCompatActivity {
                 if (!existAccount()) {
                     dialogCreateAccount();
                 } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(PreferencesActivity.this)
-                            .setTitle("Insert PIN");
-                    final FrameLayout frameView = new FrameLayout(PreferencesActivity.this);
-                    final EditText editText = new EditText(PreferencesActivity.this);
-                    editText.setHint("****");
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                    params.setMargins(getResources().getDimensionPixelSize(R.dimen.padding_high), getResources().getDimensionPixelSize(R.dimen.padding_high), getResources().getDimensionPixelSize(R.dimen.padding_high), getResources().getDimensionPixelSize(R.dimen.padding_high));
-                    editText.setLayoutParams(params);
-                    frameView.addView(editText, params);
-                    builder.setView(frameView);
-
-                    builder.setPositiveButton(getResources().getString(R.string.btn_confirm), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(PreferencesActivity.this);
-                            String pin = sharedPref.getString(Preferences.PIN, null);
-                            if (pin != null && editText.getText().toString().equals(pin)) {
-                                dialogEmptyWallet();
-                            } else {
-                                new AlertDialog.Builder(PreferencesActivity.this)
-                                        .setTitle("Attention")
-                                        .setMessage("Invalid PIN. Retry...")
-                                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                // do nothing
-                                            }
-                                        }).show();
-                            }
-                        }
-                    });
-                    builder.create().show();
+                    dialogPin_emptyWallet();
                 }
             }
         });
@@ -169,15 +140,8 @@ public class PreferencesActivity extends AppCompatActivity {
     }
 
     private void dialogPersonalNode() {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        Fragment prev = getSupportFragmentManager().findFragmentByTag("dialogPersonalNode");
-        if(prev != null)
-            ft.remove(prev);
-        ft.addToBackStack(null);
-
-        PersonalNodeDialogFragment frag = new PersonalNodeDialogFragment();
-
-        frag.show(ft, "dialogPersonalNode");
+        PersonalNodeDialogFragment personalNodeDialogFragment= new PersonalNodeDialogFragment();
+        personalNodeDialogFragment.show(getSupportFragmentManager(),PersonalNodeDialogFragment.class.toString());
     }
 
     private void dialogEmptyWallet() {
@@ -187,8 +151,8 @@ public class PreferencesActivity extends AppCompatActivity {
             ft.remove(prev);
         ft.addToBackStack(null);
 
-        EmptyWalletDialogFragment frag = new EmptyWalletDialogFragment();
-        frag.show(ft, "dialogEmptyWallet");
+        EmptyWalletDialogFragment emptyWalletDialogFragment = new EmptyWalletDialogFragment();
+        emptyWalletDialogFragment.show(ft,EmptyWalletDialogFragment.class.toString());
     }
 
     private boolean existAccount(){
@@ -210,32 +174,21 @@ public class PreferencesActivity extends AppCompatActivity {
     }
 
     private void dialogPin_showPassphrase(){
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(PreferencesActivity.this)
-                .setTitle("Insert PIN");
-        final FrameLayout frameView = new FrameLayout(PreferencesActivity.this);
-        final EditText editText = new EditText(PreferencesActivity.this);
-        editText.setHint("****");
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(getResources().getDimensionPixelSize(R.dimen.padding_high), getResources().getDimensionPixelSize(R.dimen.padding_high), getResources().getDimensionPixelSize(R.dimen.padding_high), getResources().getDimensionPixelSize(R.dimen.padding_high));
-        editText.setLayoutParams(params);
-        frameView.addView(editText, params);
-        builder.setView(frameView);
-
-        builder.setPositiveButton(getResources().getString(R.string.btn_confirm), new DialogInterface.OnClickListener() {
+        final PinAlertDialogFragment pinAlertDialogFragment= PinAlertDialogFragment.newInstance(R.string.confirm_pin);
+        pinAlertDialogFragment.setPositive(new Runnable() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void run() {
                 final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(PreferencesActivity.this);
-                String pin = sharedPref.getString(Preferences.PIN, null);
-                if (pin != null && editText.getText().toString().equals(pin)) {
+                String pin = sharedPref.getString(Preferences.PIN,null);
+
+                if (pin!=null && pinAlertDialogFragment.getPin().equals(pin)){
                     String passphrase = sharedPref.getString(Preferences.PASSPHRASE, null);
                     if (passphrase != null) {
                         // SHOW
                         TextView txtPassphrase = (TextView) findViewById(R.id.txtPassphrase);
                         txtPassphrase.setText(passphrase);
                     }
-                } else {
+                }else {
                     new AlertDialog.Builder(PreferencesActivity.this)
                             .setTitle("Attention")
                             .setMessage("Invalid PIN. Retry...")
@@ -244,33 +197,22 @@ public class PreferencesActivity extends AppCompatActivity {
                                     // do nothing
                                 }
                             }).show();
-
-
                 }
             }
         });
-        builder.create().show();
+        pinAlertDialogFragment.show(getSupportFragmentManager(),PinAlertDialogFragment.class.toString());
+
     }
 
-
     private void dialogPin_removePassphrase(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(PreferencesActivity.this)
-                .setTitle("Insert PIN");
-        final FrameLayout frameView = new FrameLayout(PreferencesActivity.this);
-        final EditText editText = new EditText(PreferencesActivity.this);
-        editText.setHint("****");
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(getResources().getDimensionPixelSize(R.dimen.padding_high), getResources().getDimensionPixelSize(R.dimen.padding_high), getResources().getDimensionPixelSize(R.dimen.padding_high), getResources().getDimensionPixelSize(R.dimen.padding_high));
-        editText.setLayoutParams(params);
-        frameView.addView(editText,params);
-        builder.setView(frameView);
-        builder.setPositiveButton(getResources().getString(R.string.btn_confirm), new DialogInterface.OnClickListener() {
+        final PinAlertDialogFragment pinAlertDialogFragment= PinAlertDialogFragment.newInstance(R.string.confirm_pin);
+        pinAlertDialogFragment.setPositive(new Runnable() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void run() {
                 final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(PreferencesActivity.this);
                 String pin = sharedPref.getString(Preferences.PIN,null);
-                if (pin!=null && editText.getText().toString().equals(pin)){
+
+                if (pin!=null && pinAlertDialogFragment.getPin().equals(pin)){
                     String passphrase = sharedPref.getString(Preferences.PASSPHRASE,null);
                     if (passphrase!=null){
                         // stop & remove
@@ -288,12 +230,40 @@ public class PreferencesActivity extends AppCompatActivity {
                                     // do nothing
                                 }
                             }).show();
-
-
                 }
             }
         });
-        builder.create().show();
+        pinAlertDialogFragment.show(getSupportFragmentManager(),PinAlertDialogFragment.class.toString());
+    }
+
+    private void dialogPin_emptyWallet(){
+        final PinAlertDialogFragment pinAlertDialogFragment= PinAlertDialogFragment.newInstance(R.string.confirm_pin);
+        pinAlertDialogFragment.setPositive(new Runnable() {
+            @Override
+            public void run() {
+                final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(PreferencesActivity.this);
+                String pin = sharedPref.getString(Preferences.PIN,null);
+
+                if (pin!=null && pinAlertDialogFragment.getPin().equals(pin)){
+                    String passphrase = sharedPref.getString(Preferences.PASSPHRASE,null);
+                    if (passphrase!=null){
+                        // stop & remove
+                        dialogEmptyWallet();
+                    }
+                }else {
+                    new AlertDialog.Builder(PreferencesActivity.this)
+                            .setTitle("Attention")
+                            .setMessage("Invalid PIN. Retry...")
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // do nothing
+                                }
+                            }).show();
+                }
+            }
+        });
+        pinAlertDialogFragment.show(getSupportFragmentManager(),PinAlertDialogFragment.class.toString());
+
     }
 
     @Override

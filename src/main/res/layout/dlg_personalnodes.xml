@@ -8,7 +8,8 @@
     <ListView
         android:id="@+id/lstNodes"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
     </ListView>
 
     <TextView
@@ -20,39 +21,24 @@
         android:gravity="center"
         android:text="long tap to delete"/>
 
-    <EditText
-        android:id="@+id/txtNode"
-        android:hint="@string/add_node"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/inputLayoutPassword"
+        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:textColor="@color/primaryText"
-        android:singleLine="true"
-        android:padding="@dimen/padding_high"
-        android:layout_height="wrap_content" />
-
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/padding_high"
-        android:layout_height="wrap_content">
-
-        <ProgressBar
-            android:id="@+id/progress"
-            android:indeterminate="true"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:visibility="invisible"
-            android:background="@android:color/transparent"
-            android:layout_centerInParent="true"/>
-
-        <Button
-            android:id="@+id/btnAdd"
-            android:text="@string/add"
-            android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+        <EditText
+            android:id="@+id/txtNode"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"/>
+            android:hint="@string/add_node"
+            android:singleLine="true"
+            android:textColor="@color/primaryText"
+            style="@style/EditText"
+            android:digits="0123456789." />
+    </android.support.design.widget.TextInputLayout>
 
-    </RelativeLayout>
+
 
 
 </LinearLayout>

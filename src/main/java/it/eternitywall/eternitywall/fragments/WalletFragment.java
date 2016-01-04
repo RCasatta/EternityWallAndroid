@@ -254,7 +254,8 @@ public class WalletFragment extends Fragment {
                     ft.remove(prev);
                 ft.addToBackStack(null);
 
-                RegAliasDialogFragment frag = new RegAliasDialogFragment(walletObservable);
+                RegAliasDialogFragment frag = new RegAliasDialogFragment();
+                frag.setWalletObservable(walletObservable);
                 frag.show(ft, "dialog");
 
             }

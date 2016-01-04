@@ -44,6 +44,7 @@ import it.eternitywall.eternitywall.IdenticonGenerator;
 import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.adapters.MessageListAdapter;
+import it.eternitywall.eternitywall.dialogfragments.RankingDialogFragment;
 
 public class DetailActivity extends ActionBarActivity {
 
@@ -246,30 +247,8 @@ public class DetailActivity extends ActionBarActivity {
                         @Override
                         public void onClick(View v) {
 
-                            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(DetailActivity.this);
-                            LayoutInflater inflater = DetailActivity.this.getLayoutInflater();
-                            View dialogView = inflater.inflate(R.layout.dialog_ranking, null);
-                            dialogBuilder.setView(dialogView);
-                            dialogBuilder.setTitle("Message ranking");
-
-                            // set the custom dialog components - text, image and button
-                            TextView txtRank = (TextView) dialogView.findViewById(R.id.txtRank);
-                            TextView txtValue = (TextView) dialogView.findViewById(R.id.txtValue);
-                            TextView txtText = (TextView) dialogView.findViewById(R.id.txtText);
-                            txtText.setText("This message has been viewed " + mMessage.getView() + " times of which " + mMessage.getWeekView() + " in the last seven days.");
-
-                            long integer = Math.round(mMessage.getValue() * 1000);
-                            Double doubled = Double.valueOf(integer) / 1000;
-
-                            txtValue.setText(doubled.toString());
-                            if (mMessage.getRank() == 1)
-                                txtRank.setText("top");
-                            else if (mMessage.getRank() == 2)
-                                txtRank.setText("middle");
-                            else if (mMessage.getRank() == 3)
-                                txtRank.setText("low");
-                            dialogBuilder.setCancelable(true);
-                            dialogBuilder.show();
+                            RankingDialogFragment rankingDialogFragment = new RankingDialogFragment();
+                            rankingDialogFragment.show(getSupportFragmentManager(),RankingDialogFragment.class.toString());
 
                         }
                     });

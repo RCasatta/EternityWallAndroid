@@ -4,15 +4,22 @@
     android:padding="@dimen/padding_high"
     android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/txtEmail"
-        android:hint="@string/insert_email"
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/inputLayoutPassword"
         android:layout_width="match_parent"
-        android:background="@drawable/style_message_background"
-        android:textColor="@color/primaryText"
-        android:singleLine="true"
-        android:padding="@dimen/padding_high"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        >
+        <EditText
+            android:id="@+id/txtEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/insert_email"
+            android:password="true"
+            android:textSize="18sp"
+            style="@style/EditText" />
+    </android.support.design.widget.TextInputLayout>
+
 
     <CheckBox
         android:layout_marginTop="@dimen/padding_high"
@@ -30,28 +37,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/padding_high"
-        android:layout_height="wrap_content">
-
-        <ProgressBar
-            android:id="@+id/progress"
-            android:indeterminate="true"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:visibility="invisible"
-            android:background="@android:color/transparent"
-            android:layout_centerInParent="true"/>
-
-        <Button
-            android:id="@+id/btnSend"
-            android:text="@string/save"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"/>
-
-    </RelativeLayout>
 
 
 </LinearLayout>
