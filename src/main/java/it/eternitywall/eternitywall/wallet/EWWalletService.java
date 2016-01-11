@@ -686,8 +686,8 @@ public class EWWalletService extends Service implements Runnable {
         try {
             blockDeleted  = blockFile.getCanonicalFile().delete();
             walletDeleted =  walletFile.getCanonicalFile().delete();
-            Log.i(TAG, "blockDeleted: "  + blockDeleted);
-            Log.i(TAG, "walletDeleted: " + walletDeleted);
+            Log.i(TAG, "blockDeleted: "+ blockDeleted+" - length: "+ blockFile.getCanonicalFile().length() );
+            Log.i(TAG, "walletDeleted: " + walletDeleted+" - length: "+ walletFile.getCanonicalFile().length() );
         } catch (IOException e) {
             e.printStackTrace();
         }
