@@ -166,7 +166,11 @@ public class WriteActivity extends ActionBarActivity {
                 if (curmsg.isEmpty()) {
                     Toast.makeText(WriteActivity.this, getString(R.string.err_empty_message), Toast.LENGTH_SHORT).show();
                     return;
+                } else if (calcRemainingBytes() < 0) {
+                    Toast.makeText(WriteActivity.this, "Message too long", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+
 
                 if(aliasName==null) {
                     sendAnonymous();

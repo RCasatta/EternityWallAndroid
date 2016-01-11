@@ -109,7 +109,9 @@ public class NotifyDialogFragment extends DialogFragment {
                 super.onPostExecute(o);
                 if (ok) {
                     dismiss();
-                    getActivity().finish();
+                    // LIKE OK
+                    if (getActivity()!=null)
+                        getActivity().finish();
                 } else {
                     Toast.makeText(getActivity(), getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
                 }
