@@ -98,6 +98,9 @@
     <string name="date">date</string>
     <string name="message">message</string>
     <string name="unconfirmed_with_parenthesis">(unconfirmed)</string>
+    <string name="wallet_warning">Small amount of bitcoin ($1 for example) allow you to write some messages. We don’t recommend to keep big amounts in the EW wallet, you can re-charge any time if it’s the case. There are a lot of full-fledged bitcoin wallet out there that are more appropriate for your savings.</string>
+    <string name="syncing_warning">The first time usually requires three minutes, depending on your connection and network state. Afterwards it\'s faster but it depends how frequent the app sync. In case of problems, try resync from the preferences.</string>
+    <string name="long_tap_to_delete">long tap to delete</string>
 
 
 </resources>

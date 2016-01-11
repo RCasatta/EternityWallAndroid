@@ -4,7 +4,6 @@
 
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="20dp"
     tools:context="it.eternitywall.eternitywall.fragments.WalletFragment">
 
     <RelativeLayout
@@ -12,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:layout_margin="20dp"
         >
         <ProgressBar
             android:id="@+id/loadingBar"
@@ -30,6 +30,17 @@
             android:layout_marginTop="10dp"
             android:text="@string/syncing"/>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/syncingText"
+            android:gravity="bottom"
+            android:textSize="12sp"
+            android:text="@string/syncing_warning"
+            android:textColor="@color/secondaryText"
+            android:layout_alignParentBottom="true"
+            />
+
 
     </RelativeLayout>
 
@@ -42,6 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
+            android:layout_margin="20dp"
             android:visibility="gone"
 
             >
@@ -142,6 +154,15 @@
                 android:textSize="14sp"
                 android:textIsSelectable="true"
                 />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="20dp"
+                android:paddingBottom="100dp"
+                android:textSize="12sp"
+                android:textColor="@color/secondaryText"
+                android:text="@string/wallet_warning"/>
 
         </LinearLayout>
     </ScrollView>

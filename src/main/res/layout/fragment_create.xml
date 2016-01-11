@@ -121,6 +121,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/txtDisclaimer"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:textColor="@color/red"
                 android:layout_below="@+id/etPassword" />
         </LinearLayout>
     </ScrollView>
