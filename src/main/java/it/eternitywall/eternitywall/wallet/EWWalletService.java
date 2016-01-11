@@ -456,11 +456,13 @@ public class EWWalletService extends Service implements Runnable {
                     boolean portOpen = isPortOpen(current, 8333, 1000);
                     if(portOpen) {
                         Log.i(TAG,"port is reachable! " + current + ":8333" );
-                        peerGroup.addAddress(InetAddress.getByName("10.106.137.73"));
+                        peerGroup.addAddress(InetAddress.getByName(current));
                     } else {
                         Log.i(TAG,"port is unreachable! " + current + ":8333" );
                     }
                 }
+            } else {
+                Log.i(TAG,"There are no personal nodes");
             }
 
             //peerGroup.setMaxConnections(1);
