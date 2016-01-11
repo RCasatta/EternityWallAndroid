@@ -161,7 +161,7 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
         });
 
         // Show / Hide write button
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        /*SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String passphrase=sharedPref.getString(Preferences.PASSPHRASE, null);
         if (passphrase==null){
             // Show write button on activity if there is one account
@@ -175,7 +175,14 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
         } else {
             // Hide write button on activity if there is no account
             v.findViewById(R.id.payButton).setVisibility(View.GONE);
-        }
+        }*/
+        v.findViewById(R.id.payButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), WriteActivity.class);
+                startActivity(i);
+            }
+        });
 
         return v;
     }

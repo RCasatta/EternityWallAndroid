@@ -7,12 +7,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -34,7 +36,9 @@ import java.util.Observable;
 import java.util.Observer;
 
 import it.eternitywall.eternitywall.EWApplication;
+import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
+import it.eternitywall.eternitywall.activity.WriteActivity;
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 import it.eternitywall.eternitywall.components.CurrencyView;
 import it.eternitywall.eternitywall.dialogfragments.RegAliasDialogFragment;
@@ -63,6 +67,7 @@ public class WalletFragment extends Fragment {
     private ImageView identicon;
     private CurrencyView btcBalance;
     private Button setAliasButton;
+    private android.support.design.widget.FloatingActionButton payButton;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -112,6 +117,7 @@ public class WalletFragment extends Fragment {
             final Intent intent = new Intent(activity, EWWalletService.class);
             activity.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         }
+
 
     }
     @Override
@@ -203,14 +209,27 @@ public class WalletFragment extends Fragment {
                         } else {
                             btcBalanceUnconfirmed.setVisibility(View.GONE);
                         }
+                        payButton.setVisibility(View.VISIBLE);
 
                     } else if (walletObservable.getState() == WalletObservable.State.SYNCING) {
                         if (activity!=null && activity.isFinishing())
                             return;
                         syncedLayout.setVisibility(View.GONE);
                         syncingLayout.setVisibility(View.VISIBLE);
+                        payButton.setVisibility(View.GONE);
                         if (walletObservable.getPercSync() != null)
                             syncingText.setText(String.format("Syncing (%d%%)", walletObservable.getPercSync()));
+                    } else {
+                        payButton.setVisibility(View.GONE);
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                        String passphrase=sharedPref.getString(Preferences.PASSPHRASE,null);
+                        if (passphrase==null) {
+                            transaction.replace(R.id.root_frame, new HelloFragment());
+                            transaction.commit();
+                        }else {
+                            ;//nothing = transaction.replace(R.id.root_frame, new WalletFragment());
+                        }
                     }
                 }
             });
@@ -296,6 +315,25 @@ public class WalletFragment extends Fragment {
         if(walletObservable!=null && walletObservable.getState()== WalletObservable.State.SYNCED) {
             syncedLayout.setVisibility(View.VISIBLE);
             syncingLayout.setVisibility(View.GONE);
+        }
+
+        // Show / Hide write button
+        payButton=(android.support.design.widget.FloatingActionButton)view.findViewById(R.id.payButton);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String passphrase=sharedPref.getString(Preferences.PASSPHRASE, null);
+        if (passphrase==null){
+            // Hide write button on activity if there is no account
+            payButton.setVisibility(View.GONE);
+        } else {
+            // Show write button on activity if there is one account
+            payButton.setVisibility(View.VISIBLE);
+            payButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(getActivity(), WriteActivity.class);
+                    startActivity(i);
+                }
+            });
         }
 
         return view;

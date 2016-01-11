@@ -79,7 +79,7 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         changeTabsFont();
 
         // Show / Hide write button
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        /*SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         String passphrase=sharedPref.getString(Preferences.PASSPHRASE, null);
         if (passphrase==null){
             // Hide write button on activity if there is no account
@@ -93,7 +93,7 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
                     startActivity(i);
                 }
             });
-        }
+        }*/
     }
 
     private void changeTabsFont() {
