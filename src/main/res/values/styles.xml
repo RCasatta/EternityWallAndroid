@@ -80,7 +80,7 @@
     </style>
 
 <style name="ButtonStyle" parent="Base.Widget.AppCompat.Button">
-    <item name="android:background">@drawable/style_button_background</item>
+    <item name="android:background">@drawable/style_button_ripple</item>
     <!--<item name="android:background">@color/accent</item>-->
     <item name="background">@color/accent</item>
     <item name="colorButtonNormal">@color/accent</item>
