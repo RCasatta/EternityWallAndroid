@@ -53,10 +53,7 @@ public class PreferencesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (existAccount()) {
-                    EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
-                    ewWalletService.stopSync();
-                    ewWalletService.startSync();
-                    Toast.makeText(PreferencesActivity.this,"Resync started", Toast.LENGTH_LONG).show();
+                    dialogPin_resyncAccount();
                 } else
                     dialogCreateAccount();
             }
@@ -71,9 +68,7 @@ public class PreferencesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (existAccount()) {
-                    EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
-                    ewWalletService.stopSync();
-                    dialogPin_removePassphrase();
+                    dialogPin_removeAccount();
                 } else
                     dialogCreateAccount();
             }
@@ -204,7 +199,28 @@ public class PreferencesActivity extends AppCompatActivity {
 
     }
 
-    private void dialogPin_removePassphrase(){
+    private void dialogPin_resyncAccount(){
+        new AlertDialog.Builder(PreferencesActivity.this)
+                .setTitle("Attention")
+                .setMessage("Are you sure to resync?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
+                        ewWalletService.stopSync();
+                        ewWalletService.startSync();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    private void dialogPin_removeAccount(){
         final PinAlertDialogFragment pinAlertDialogFragment= PinAlertDialogFragment.newInstance(R.string.confirm_pin);
         pinAlertDialogFragment.setPositive(new Runnable() {
             @Override
