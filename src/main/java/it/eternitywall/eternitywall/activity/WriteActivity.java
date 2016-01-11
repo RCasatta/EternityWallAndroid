@@ -76,12 +76,41 @@ public class WriteActivity extends ActionBarActivity {
         setContentView(R.layout.activity_write);
 
         txtMessage = (EditText) findViewById(R.id.txtMessage);
-        if(getIntent().getExtras() != null && getIntent().getStringExtra("sharedText") != null)
+        txtCounter = (TextView) findViewById(R.id.txtCounter);
+        if(getIntent().getExtras() != null && getIntent().getStringExtra("sharedText") != null) {
             txtMessage.setText(getIntent().getStringExtra("sharedText"));
+            curmsg = txtMessage.getText().toString();
+            if(calcRemainingBytes() < 0) {
+                txtMessage.setText(curmsg);
+                txtMessage.setSelection(curmsg.length());
+                txtCounter.setText(Math.abs(calcRemainingBytes()) +" "+"characters exceeds");
+            }else {
+                txtCounter.setText(calcRemainingBytes() + " " + "characters available");
+            }
+        }
+        if(getIntent().getExtras() != null && getIntent().getExtras().getString(android.content.Intent.EXTRA_TEXT) != null) {
+            txtMessage.setText(getIntent().getExtras().getString(android.content.Intent.EXTRA_TEXT));
+            curmsg = txtMessage.getText().toString();
+            if(calcRemainingBytes() < 0) {
+                txtMessage.setText(curmsg);
+                txtMessage.setSelection(curmsg.length());
+                txtCounter.setText(Math.abs(calcRemainingBytes()) +" "+"characters exceeds");
+            }else {
+                txtCounter.setText(calcRemainingBytes() + " " + "characters available");
+            }
+        }
 
         if(getIntent().getExtras() != null && getIntent().getStringExtra("replyFrom") != null) {
             txtMessage.setHint("reply from message id " + getIntent().getStringExtra("replyFrom"));
             replyFrom=getIntent().getStringExtra("replyFrom");
+            curmsg = txtMessage.getText().toString();
+            if(calcRemainingBytes() < 0) {
+                txtMessage.setText(curmsg);
+                txtMessage.setSelection(curmsg.length());
+                txtCounter.setText(Math.abs(calcRemainingBytes()) +" "+"characters exceeds");
+            }else {
+                txtCounter.setText(calcRemainingBytes() + " " + "characters available");
+            }
         }
 
         spnrSender = (Spinner) findViewById(R.id.spnrSender);
@@ -126,7 +155,6 @@ public class WriteActivity extends ActionBarActivity {
                 txtCounter.setText(calcRemainingBytes()+" "+"characters available");
             }
         });
-        txtCounter = (TextView) findViewById(R.id.txtCounter);
 
         progress = (ProgressBar) findViewById(R.id.progress);
 
