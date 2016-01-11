@@ -127,6 +127,7 @@
                 android:textSize="20sp"
                 android:textColor="@color/accent"
                 android:background="@color/alpha"
+                android:visibility="gone"
                 android:layout_weight="1" />
 
             <Button
