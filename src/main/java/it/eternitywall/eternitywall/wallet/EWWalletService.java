@@ -36,6 +36,7 @@ import org.bitcoinj.wallet.WalletTransaction;
 import org.spongycastle.util.encoders.Hex;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -681,6 +682,15 @@ public class EWWalletService extends Service implements Runnable {
         boolean walletDeleted =  walletFile.delete();
         Log.i(TAG, "blockDeleted: "  + blockDeleted);
         Log.i(TAG, "walletDeleted: " + walletDeleted);
+
+        try {
+            blockDeleted  = blockFile.getCanonicalFile().delete();
+            walletDeleted =  walletFile.getCanonicalFile().delete();
+            Log.i(TAG, "blockDeleted: "  + blockDeleted);
+            Log.i(TAG, "walletDeleted: " + walletDeleted);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void removePasshrase() {
