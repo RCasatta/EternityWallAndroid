@@ -21,7 +21,7 @@
         <item name="colorAccent">@color/accent</item>
         <!-- colorButtonNormal is used as the default value for background buttons -->
         <item name="colorButtonNormal">@color/accent</item>
-       <!--<item name="android:buttonStyle">@style/ButtonStyle</item>-->
+        <item name="android:buttonStyle">@style/ButtonStyle</item>
 
         <!-- Text styles -->
         <item name="android:textViewStyle">@style/TextStyle</item>
@@ -30,6 +30,13 @@
         <item name="android:textColorSecondary">@color/secondaryText</item>
         <item name="android:textColorPrimaryInverse">@color/primaryLight</item>
         <item name="android:textColorSecondaryInverse">@color/primaryLight</item>
+
+        <!--<item name="android:textViewStyle">@style/TextStyle</item>
+        <item name="android:editTextColor">@color/icons</item>
+        <item name="android:textColorPrimary">@color/icons</item>
+        <item name="android:textColorSecondary">@color/whiteText</item>
+        <item name="android:textColorPrimaryInverse">@color/primaryLight</item>
+        <item name="android:textColorSecondaryInverse">@color/primaryLight</item>-->
 
     </style>
 
@@ -58,15 +65,13 @@
     <!-- colorButtonNormal is used as the default value for background buttons -->
         <item name="colorButtonNormal">@color/accent</item>
         <item name="android:textColor">@color/icons</item>
-
-
-        <!--<item name="android:buttonStyle">@style/ButtonStyle</item>-->
+        <item name="android:buttonStyle">@style/ButtonStyle</item>
 
         <!-- Text styles -->
         <item name="android:textViewStyle">@style/TextStyle</item>
         <item name="android:editTextColor">@color/icons</item>
         <item name="android:textColorPrimary">@color/icons</item>
-        <item name="android:textColorSecondary">@color/secondaryText</item>
+        <item name="android:textColorSecondary">@color/whiteText</item>
         <item name="android:textColorPrimaryInverse">@color/primaryLight</item>
         <item name="android:textColorSecondaryInverse">@color/primaryLight</item>
 
@@ -74,11 +79,11 @@
 
     </style>
 
-<style name="ButtonStyle" parent="android:Widget.Button">
-    <item name="android:background">@color/accent</item>
+<style name="ButtonStyle" parent="android:Widget.Material.Button">
+    <item name="android:background">@drawable/style_button_background</item>
     <item name="background">@color/accent</item>
     <item name="colorButtonNormal">@color/accent</item>
-    <item name="android:textColor">@color/action_bar_background</item>
+    <item name="android:textColor">@color/whiteText</item>
 </style>
 
     <!--<style name="DialogStyle" parent="AlertDialog.AppCompat.Light.Dialog">
