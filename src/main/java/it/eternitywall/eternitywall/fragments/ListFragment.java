@@ -2,11 +2,9 @@ package it.eternitywall.eternitywall.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.SearchView;
@@ -31,7 +29,6 @@ import java.util.List;
 
 import it.eternitywall.eternitywall.Http;
 import it.eternitywall.eternitywall.Message;
-import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.activity.WriteActivity;
 import it.eternitywall.eternitywall.adapters.MessageListAdapter;
@@ -221,8 +218,8 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
                     txtHeader.setVisibility(View.GONE);
 
                 if(ok) {
-                    if(messages != null && !messages.isEmpty()) {
-                        MessageListAdapter messageListAdapter = (MessageListAdapter) lstMessages.getAdapter();
+                    if(messages != null && !messages.isEmpty() && lstMessages!=null ) {
+                        MessageListAdapter messageListAdapter = (MessageListAdapter) lstMessages.getAdapter();  //TODO Franco exception here. added lstMessages!=null HACK!
                         for (int i=0;i<mMessages.size();i++) {
                             messageListAdapter.add(mMessages.get(i));
                             messageListAdapter.notifyDataSetChanged();
