@@ -109,7 +109,7 @@
                     android:text="@string/set_alias"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/alphaText"
+                    android:textColor="@color/whiteText"
                     android:layout_toRightOf="@id/identicon"
                     android:layout_centerVertical="true"
 

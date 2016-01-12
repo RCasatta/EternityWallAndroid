@@ -14,8 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -26,7 +24,6 @@ import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.dialogfragments.EmptyWalletDialogFragment;
 import it.eternitywall.eternitywall.dialogfragments.PersonalNodeDialogFragment;
-
 import it.eternitywall.eternitywall.dialogfragments.PinAlertDialogFragment;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
 
@@ -201,8 +198,8 @@ public class PreferencesActivity extends AppCompatActivity {
 
     private void dialogPin_resyncAccount(){
         new AlertDialog.Builder(PreferencesActivity.this)
-                .setTitle("Attention")
-                .setMessage("Are you sure to resync?")
+                .setTitle("Are you sure to resync?")
+                .setMessage("Resyncing is necessary only if wallet can't see some transactions and it could take some minutes.")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // continue with delete
