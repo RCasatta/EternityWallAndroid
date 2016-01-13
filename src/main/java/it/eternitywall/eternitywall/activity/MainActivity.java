@@ -16,6 +16,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,12 +27,10 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
-import it.eternitywall.eternitywall.TimedLogStat;
 import it.eternitywall.eternitywall.fragments.AccountFragment;
 import it.eternitywall.eternitywall.fragments.CreateFragment;
 import it.eternitywall.eternitywall.fragments.HelloFragment;
@@ -77,6 +77,15 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         changeTabsFont();
+
+        //TODO DEBUG for density
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        Log.i(TAG, "Density:" + metrics.densityDpi);
+        Log.i(TAG, "WidthPixels:" + metrics.widthPixels);
+
+
+
 
         // Show / Hide write button
         /*SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);

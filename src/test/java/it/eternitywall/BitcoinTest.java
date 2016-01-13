@@ -1,12 +1,17 @@
 package it.eternitywall;
 
 import org.bitcoinj.core.Address;
+import org.bitcoinj.core.ScriptException;
+import org.bitcoinj.core.Transaction;
+import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.crypto.ChildNumber;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.crypto.HDKeyDerivation;
 import org.bitcoinj.params.MainNetParams;
 import org.junit.Test;
 import org.spongycastle.util.encoders.Hex;
+
+import java.util.List;
 
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 import it.eternitywall.eternitywall.wallet.EWDerivation;
@@ -76,6 +81,23 @@ public class BitcoinTest {
             System.out.println(address.toString());
         }
 
+
+    }
+
+    @Test
+    public void pshTx() {
+        byte[] b = Bitcoin.fromHex("01000000011c3bef15830dade3d87018b1921bb2512ad547ec8194c1ff4736b7ca1ddc634d01000000db00483045022100dd3ff5c3b5916ff76506029563bcf0fb10b3195551299b414920f0edc08d7f91022011d07099e4e3e5e79749089d59eb04487aabea0dfc1a4603319ee53254a5942101483045022100f6b3435105557a39f105586bbd99c7b7bb726e44c0802f59550def2ce790286002206c1009f0ee6dadb1503e777992cfedb3cd07d22aaa858eb8d5eb515908bdfd090147522103c1706fdb635b183fa772c624ffcf373367bd1ee10ab564f2d95daf863a9a6cf62103ecd758a7efecb676b8d0a6ee1200cd4538b78bbe800d06b9b655977e0dae6fb152aeffffffff02b082d0010000000017a914d90d066c1339766b26191cf2f3b623d82734d1b1871f5e0700000000001976a91470e0efeecb2d6d93180c74ff236da6e179806c5988ac00000000");
+        Transaction tx =new Transaction(MainNetParams.get(), b);
+        final List<TransactionInput> inputs = tx.getInputs();
+        for (TransactionInput input : inputs) {
+            try {
+                Address current = input.getScriptSig().getFromAddress(MainNetParams.get());
+                System.out.println(current.toString());
+            } catch (ScriptException e) {
+                System.out.println("exception");
+            }
+
+        }
 
     }
 

@@ -16,6 +16,7 @@ import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.PeerGroup;
+import org.bitcoinj.core.ScriptException;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.StoredBlock;
 import org.bitcoinj.core.Transaction;
@@ -516,9 +517,14 @@ public class EWWalletService extends Service implements Runnable {
             Log.i(TAG,"tx=" + tx);
             final List<TransactionInput> inputs = tx.getInputs();
             for (TransactionInput input : inputs) {
-                Address current = input.getScriptSig().getFromAddress(MainNetParams.get());
-                if(all.contains(current)) {
-                    used.add(current);
+                try {
+                    Address current = input.getScriptSig().getFromAddress(MainNetParams.get());
+                    if (all.contains(current)) {
+                        used.add(current);
+                    }
+                } catch (ScriptException e) {   //needed for p2sh input, eg:
+                    Log.i(TAG,"p2sh input");
+
                 }
             }
 

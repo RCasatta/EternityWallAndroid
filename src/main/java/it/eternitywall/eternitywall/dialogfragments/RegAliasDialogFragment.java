@@ -8,10 +8,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -119,7 +117,7 @@ public class RegAliasDialogFragment extends DialogFragment {
                 Toast.makeText(getActivity(), "hash is null", Toast.LENGTH_LONG).show();
 
             } else {
-                Toast.makeText(getActivity(), "register alias tx created", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Alias created!", Toast.LENGTH_LONG).show();
             }
 
         } catch (InterruptedException | ExecutionException e) {
