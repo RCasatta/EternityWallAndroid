@@ -156,6 +156,7 @@ public class MyBlockchainListener implements BlockChainListener {
     @Override
     public boolean notifyTransactionIsInBlock(Sha256Hash txHash, StoredBlock block, AbstractBlockChain.NewBlockType blockType, int relativityOffset) throws VerificationException {
         Log.i(TAG,"notifyTransactionIsInBlock " + txHash.toString());
+        //TODO write notification code here
 
         return false;
     }

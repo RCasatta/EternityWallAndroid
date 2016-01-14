@@ -21,6 +21,7 @@ public class WalletObservable extends Observable {
     private String unconfirmedAliasName;
     private Bitmap currentQrCode;
     private Bitmap currentIdenticon;
+    private Integer messagePending=0;
 
     private String currentQrCodeSource;     //which data has been used to create the qrcode bitmap
     private String currentIdenticonSource;  //which data has been used to create the identicon bitmap
@@ -37,6 +38,17 @@ public class WalletObservable extends Observable {
     public void setAlias(String alias) {
         if(!alias.equals(this.alias)) {
             this.alias = alias;
+            setChanged();
+        }
+    }
+
+    public Integer getMessagePending() {
+        return messagePending;
+    }
+
+    public void setMessagePending(Integer messagePending) {
+        if( messagePending!=null && !messagePending.equals(this.messagePending) ) {
+            this.messagePending = messagePending;
             setChanged();
         }
     }
@@ -186,6 +198,7 @@ public class WalletObservable extends Observable {
                 ", walletUnconfirmedBalance=" + walletUnconfirmedBalance +
                 ", state=" + state +
                 ", current=" + current +
+                ", messagePending=" + messagePending +
                 ", percSync=" + percSync +
                 ", aliasName='" + aliasName + '\'' +
                 ", currentQrCodeSource='" + currentQrCodeSource + '\'' +

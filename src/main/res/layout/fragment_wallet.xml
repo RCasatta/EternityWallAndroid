@@ -143,6 +143,15 @@
                     android:layout_below="@id/btcBalance"
                     android:visibility="gone"
                     />
+                <TextView
+                    android:id="@+id/messagePending"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="@color/secondaryText"
+                    android:layout_below="@id/btcBalanceUnconfirmed"
+                    android:visibility="gone"
+                    />
 
             </RelativeLayout>
 

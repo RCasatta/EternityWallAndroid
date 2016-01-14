@@ -9,6 +9,7 @@ import org.bitcoinj.core.Wallet;
 import org.bitcoinj.core.WalletEventListener;
 import org.bitcoinj.script.Script;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -51,6 +52,17 @@ public class EWWalletEventListener implements WalletEventListener {
             Log.i(TAG, "onTransactionConfidenceChanged " + tx.getHash().toString() + " " + tx.getConfidence() + " " + tx.getConfidence().getConfidenceType());
             walletObservable.setWalletBalance(wallet.getBalance());
             walletObservable.setWalletUnconfirmedBalance(wallet.getBalance(Wallet.BalanceType.ESTIMATED));
+
+            //TODO update messagePending
+            Collection<Transaction> pendingTransactions = wallet.getPendingTransactions();
+            int messagePending=0;
+            for (Transaction current : pendingTransactions) {
+                if( EWWalletService.isEWMessage(current) ) {
+                    messagePending++;
+                }
+
+            }
+            walletObservable.setMessagePending(messagePending);
             walletObservable.notifyObservers();
         }
     }

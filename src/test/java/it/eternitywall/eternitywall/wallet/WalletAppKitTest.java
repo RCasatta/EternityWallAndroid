@@ -50,7 +50,7 @@ public class WalletAppKitTest {
         Service service = kit.startAsync();
 
         service.awaitRunning();
-        kit.peerGroup().addPeerFilterProvider(new EWFilterProvider());
+        //kit.peerGroup().addPeerFilterProvider(new EWFilterProvider());
         EWChainListener listener = new EWChainListener();
         kit.chain().addListener(listener);
 

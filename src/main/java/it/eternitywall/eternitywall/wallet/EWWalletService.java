@@ -135,8 +135,8 @@ public class EWWalletService extends Service implements Runnable {
         return ewMessageData;
     }
 
-    public Transaction createMessageTx(String message) {
-        Log.i(TAG,"createMessageTx " +message );
+    public Transaction createMessageTx(String message, String answerTo) {
+        Log.i(TAG,"createMessageTx " +message + " " + answerTo );
 
         if(!isSynced || nextChange==0 || nextChange>99 || nextMessageId>99) {
             Log.i(TAG, "sendMessage returning null " + isSynced + " " + nextChange + " " + nextMessageId);   //TODO manage nextChange>99 or nextMessageId>0
@@ -154,9 +154,12 @@ public class EWWalletService extends Service implements Runnable {
         List<TransactionOutput> transactionOutputList = getMines(inputAddress);
         Long totalAvailable = 0L;
         for (TransactionOutput to  : transactionOutputList) {
-            totalAvailable += to.getValue().getValue();
-
+            //0.00001
+            long value = to.getValue().getValue();
+            Log.i(TAG,to.getParentTransactionHash().toString() + ":" + to.getIndex() + " outputvalue:" + value);
+            totalAvailable += value;
             newTx.addInput(to);
+
         }
 
         Log.i(TAG,"total available " + totalAvailable);
@@ -164,15 +167,26 @@ public class EWWalletService extends Service implements Runnable {
         if(donation)
             toSend = toSend-DONATION;
 
+        message = EW_MESSAGE_TAG + message;
+        final byte[] toWrite = message.getBytes();
+
+        newTx.addOutput(Coin.valueOf(DUST), ewMessageData.getMessageId());
+
+        if(answerTo!=null) {
+            if(Bitcoin.isValidAddress(answerTo))
+                try {
+                    newTx.addOutput(Coin.valueOf(DUST), new Address(PARAMS,answerTo));
+                    toSend-=DUST;
+                } catch (AddressFormatException e) {
+                    Log.e(TAG,"should not happen! " + e.getMessage() );
+                }
+        }
+
         if(toSend < DUST) {
             Log.i(TAG, "toSend is less than dust");
             return null;
         }
 
-        message = EW_MESSAGE_TAG + message;
-        final byte[] toWrite = message.getBytes();
-
-        newTx.addOutput(Coin.valueOf(DUST), ewMessageData.getMessageId());
         newTx.addOutput(Coin.ZERO,
                 new ScriptBuilder()
                         .op(ScriptOpCodes.OP_RETURN)
@@ -201,15 +215,6 @@ public class EWWalletService extends Service implements Runnable {
         TransactionBroadcast transactionBroadcast = peerGroup.broadcastTransaction(tx);
         return transactionBroadcast;
     }
-    
-
-    public TransactionBroadcast sendMessage(String message) {
-        Log.i(TAG, "sendMessage " + message);
-        Transaction newTx = createMessageTx(message);
-
-        return broadcastTransaction(newTx);
-    }
-
 
     public Transaction createExitTransaction(String bitcoinAddress) {
         Log.i(TAG,"createExitTransaction to " +bitcoinAddress );
@@ -323,15 +328,19 @@ public class EWWalletService extends Service implements Runnable {
     }
 
     private List<TransactionOutput> getMines(Address address) {
+
         Map<Sha256Hash, Transaction> unspent = wallet.getTransactionPool(WalletTransaction.Pool.UNSPENT);
         List<TransactionOutput> transactionOutputList= new ArrayList<>();
         for (Map.Entry<Sha256Hash, Transaction> entry : unspent.entrySet()) {
             Transaction current = entry.getValue();
             List<TransactionOutput> outputs = current.getOutputs();
             for (TransactionOutput o : outputs) {
-                Address a = o.getAddressFromP2PKHScript(PARAMS);
-                if(address.equals(a))
-                    transactionOutputList.add(o);
+                if(o.isAvailableForSpending()) {
+                    Address a = o.getAddressFromP2PKHScript(PARAMS);
+                    if(address.equals(a)) {
+                        transactionOutputList.add(o);
+                    }
+                }
             }
         }
         return transactionOutputList;
@@ -587,6 +596,22 @@ public class EWWalletService extends Service implements Runnable {
 
 
 
+    public static boolean isEWMessage(Transaction tx) {
+        List<TransactionOutput> outputs = tx.getOutputs();
+        for (TransactionOutput out : outputs) {
+            byte[] scriptBytes = out.getScriptBytes();
+            if(scriptBytes.length>0) {
+                String hexString = Hex.toHexString(scriptBytes);
+                if(hexString.startsWith("6a")) {
+                    hexString=hexString.substring(2);
+                    if( hexString.startsWith("455720") || hexString.substring(2).startsWith("455720") ) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
     private static String EWA_PREFIX = "455741";
     public static void checkAlias(Transaction tx, WalletObservable walletObservable) {

@@ -226,7 +226,7 @@ public class WriteActivity extends ActionBarActivity {
         Log.i(TAG,"sendFromWallet " + curmsg);
         if(curmsg!=null && !curmsg.isEmpty()) {
             final EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
-            curTx= ewWalletService.createMessageTx(curmsg);
+            curTx= ewWalletService.createMessageTx(curmsg,replyFrom);
 
             final TransactionBroadcast transactionBroadcast = ewWalletService.broadcastTransaction(curTx);
 

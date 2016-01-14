@@ -63,6 +63,7 @@ public class WalletFragment extends Fragment {
     private TextView aliasNameText;
     private TextView aliasNameUnconfirmed;
     private TextView btcBalanceUnconfirmed;
+    private TextView messagePending;
     private ImageView currentQrCode;
     private ImageView identicon;
     private CurrencyView btcBalance;
@@ -211,6 +212,13 @@ public class WalletFragment extends Fragment {
                         }
                         payButton.setVisibility(View.VISIBLE);
 
+                        if(walletObservable.getMessagePending()>0) {
+                            messagePending.setVisibility(View.VISIBLE);
+                            messagePending.setText( walletObservable.getMessagePending() + " message" + (walletObservable.getMessagePending()>1 ? "s" : "") + " pending" );
+                        } else {
+                            messagePending.setVisibility(View.GONE);
+                        }
+
                     } else if (walletObservable.getState() == WalletObservable.State.SYNCING) {
                         if (activity!=null && activity.isFinishing())
                             return;
@@ -256,6 +264,7 @@ public class WalletFragment extends Fragment {
         btcBalance            = (CurrencyView) view.findViewById(R.id.btcBalance);
         setAliasButton        = (Button) view.findViewById(R.id.setAlias);
         btcBalanceUnconfirmed = (TextView) view.findViewById(R.id.btcBalanceUnconfirmed);
+        messagePending        = (TextView) view.findViewById(R.id.messagePending);
 
         setAliasButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -335,6 +344,7 @@ public class WalletFragment extends Fragment {
                 }
             });
         }
+
 
         return view;
     }

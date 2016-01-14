@@ -128,10 +128,10 @@ public class EWWalletServiceTest {
         peerGroup.setDownloadTxDependencies(false);
 
         //peerGroup.addPeerDiscovery(new DnsDiscovery(params));
-        EWFilterProvider provider = new EWFilterProvider( );
-        System.out.println("provider " + provider);
+        //EWFilterProvider provider = new EWFilterProvider( );
+        //System.out.println("provider " + provider);
 
-        peerGroup.addPeerFilterProvider(provider);
+        //peerGroup.addPeerFilterProvider(provider);
 
         DownloadProgressTracker downloadProgressTracker = new DownloadProgressTracker();
 
