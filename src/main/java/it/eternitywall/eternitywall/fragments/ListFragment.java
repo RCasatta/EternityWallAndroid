@@ -237,10 +237,12 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
                 }
                 else {
                     //succhia!
-                    if (statusMessage!=null)
-                        Toast.makeText(getActivity(), statusMessage, Toast.LENGTH_SHORT).show();
-                    else
-                        Toast.makeText(getActivity(), getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
+                    if(isAdded()) {
+                        if (statusMessage != null)
+                            Toast.makeText(getActivity(), statusMessage, Toast.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(getActivity(), getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 

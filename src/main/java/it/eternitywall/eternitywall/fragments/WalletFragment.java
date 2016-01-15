@@ -29,6 +29,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
 
 import java.util.List;
@@ -182,7 +183,8 @@ public class WalletFragment extends Fragment {
 
                         syncedLayout.setVisibility(View.VISIBLE);
                         syncingLayout.setVisibility(View.GONE);
-                        currentAddressText.setText(walletObservable.getCurrent().toString());
+                        Address current = walletObservable.getCurrent();
+                        currentAddressText.setText(current!=null ? current.toString() : "");
                         btcBalance.setUnits(units);
                         btcBalance.refreshUI();
                         if (QrCodeBitmap != null)

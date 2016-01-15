@@ -25,6 +25,7 @@ import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.adapters.DebugListAdapter;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
+import it.eternitywall.eternitywall.wallet.WalletObservable;
 
 public class DebugActivity extends AppCompatActivity implements DebugListAdapter.MessageListAdapterManager {
     private static final String TAG = "DebugActivity";
@@ -96,7 +97,7 @@ public class DebugActivity extends AppCompatActivity implements DebugListAdapter
         } else {
             final EWApplication application = (EWApplication) getApplication();
             final EWWalletService ewWalletService = application.getEwWalletService();
-            //final WalletObservable walletObservable = application.getWalletObservable();
+            final WalletObservable walletObservable = application.getWalletObservable();
 
             if(ewWalletService!=null) {
                 PeerGroup peerGroup = ewWalletService.getPeerGroup();
@@ -123,6 +124,9 @@ public class DebugActivity extends AppCompatActivity implements DebugListAdapter
 
                 Set<String> stringSet = sharedPref.getStringSet(Preferences.TO_NOTIFY, new HashSet<String>());
                 debugListAdapter.add(new Debug("Txs to notify", "" + stringSet.size()));
+
+                debugListAdapter.add(new Debug("State", "" + walletObservable.getState() ));
+
 
             }
         }
