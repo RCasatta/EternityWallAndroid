@@ -38,6 +38,9 @@
         <item name="android:textColorPrimaryInverse">@color/primaryLight</item>
         <item name="android:textColorSecondaryInverse">@color/primaryLight</item>-->
 
+        <item name="android:dialogTheme">@style/DialogStyle</item>
+        <item name="android:alertDialogTheme">@style/DialogStyle</item>
+
     </style>
 
 
@@ -76,6 +79,8 @@
         <item name="android:textColorSecondaryInverse">@color/primaryLight</item>
 
 
+        <item name="android:dialogTheme">@style/DialogStyle</item>
+        <item name="android:alertDialogTheme">@style/DialogStyle</item>
 
     </style>
 
