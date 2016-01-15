@@ -90,10 +90,14 @@ public class EWWalletService extends Service implements Runnable {
     private BlockChain blockChain;
     private PeerGroup peerGroup;
     private Wallet wallet;
-    private boolean isSynced = false;
+    private boolean isSynced = false;  //TODO to remove, use only wallet observable state
 
     public void setIsSynced(boolean isSynced) {
         this.isSynced = isSynced;
+    }
+
+    public boolean isSynced() {
+        return isSynced;
     }
 
     public Integer getNextMessageId() {

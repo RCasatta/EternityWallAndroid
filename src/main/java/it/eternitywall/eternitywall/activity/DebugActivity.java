@@ -127,6 +127,8 @@ public class DebugActivity extends AppCompatActivity implements DebugListAdapter
 
                 debugListAdapter.add(new Debug("State", "" + walletObservable.getState() ));
 
+                debugListAdapter.add(new Debug("Working", "" + ewWalletService.isSynced() ));
+
 
             }
         }
