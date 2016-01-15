@@ -230,7 +230,7 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
                 }
             });
             TextView txtPreferences = new TextView(MainActivity.this);
-            txtPreferences.setPadding(6, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
+            txtPreferences.setPadding(0, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
             txtPreferences.setText(getResources().getString(R.string.action_preferences));
             txtPreferences.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
             txtPreferences.setTypeface(font);
@@ -327,7 +327,7 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
             }
 
             TextView txtPreferences = new TextView(MainActivity.this);
-            txtPreferences.setPadding(6, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
+            txtPreferences.setPadding(0, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
             txtPreferences.setText(getResources().getString(R.string.action_preferences));
             txtPreferences.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
             txtPreferences.setTypeface(font);
