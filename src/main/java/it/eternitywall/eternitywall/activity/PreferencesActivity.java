@@ -230,8 +230,8 @@ public class PreferencesActivity extends AppCompatActivity {
                     if (passphrase!=null){
                         // stop & remove
                         EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
-                        ewWalletService.stopSync();
                         ewWalletService.removePasshrase();
+                        ewWalletService.stopSync();
                         Toast.makeText(PreferencesActivity.this,"Account removed!",Toast.LENGTH_LONG).show();
                     }
                 }else {
