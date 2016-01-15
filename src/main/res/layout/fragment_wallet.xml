@@ -10,7 +10,7 @@
         android:id="@+id/payButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_add_white_18dp"
+        android:src="@drawable/ic_send_white_24dp"
         android:layout_gravity="bottom|end"
         app:borderWidth="0dp"
         app:elevation="4dp"
