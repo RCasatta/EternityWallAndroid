@@ -179,6 +179,7 @@ public class PreferencesActivity extends AppCompatActivity {
                         // SHOW
                         TextView txtPassphrase = (TextView) findViewById(R.id.txtPassphrase);
                         txtPassphrase.setText(passphrase);
+                        txtPassphrase.setTextColor(getResources().getColor(R.color.black));
                     }
                 }else {
                     new AlertDialog.Builder(PreferencesActivity.this)
