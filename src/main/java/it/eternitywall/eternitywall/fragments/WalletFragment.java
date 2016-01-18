@@ -236,7 +236,8 @@ public class WalletFragment extends Fragment {
                         String passphrase=sharedPref.getString(Preferences.PASSPHRASE,null);
                         if (passphrase==null) {
                             transaction.replace(R.id.root_frame, new HelloFragment());
-                            transaction.commit();
+                            transaction.commitAllowingStateLoss();
+                            getFragmentManager().executePendingTransactions();
                         }else {
                             ;//nothing = transaction.replace(R.id.root_frame, new WalletFragment());
                         }
