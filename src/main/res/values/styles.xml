@@ -38,9 +38,15 @@
         <item name="android:textColorPrimaryInverse">@color/primaryLight</item>
         <item name="android:textColorSecondaryInverse">@color/primaryLight</item>-->
 
+        <!-- Alert Dialog -->
+        <item name="android:alertDialogStyle">@style/AppCompatAlertDialogStyle</item>
+        <item name="android:alertDialogTheme">@style/AppCompatAlertDialogStyle</item>
+        <item name="android:dialogTheme">@style/AppCompatAlertDialogStyle</item>
+        <item name="alertDialogStyle">@style/AppCompatAlertDialogStyle</item>
+        <item name="alertDialogTheme">@style/AppCompatAlertDialogStyle</item>
+        <item name="dialogTheme">@style/AppCompatAlertDialogStyle</item>
+
     </style>
-
-
 
 
     <!-- Main Activity application theme. -->
@@ -57,12 +63,12 @@
          <item name="android:actionMenuTextColor">@color/action_bar_text_color</item>-->
         <item name="android:windowBackground">@android:color/white</item>
 
-    <item name="colorPrimary">@color/primary</item>
-    <!-- colorPrimaryDark is used for the status bar -->
-    <item name="colorPrimaryDark">@color/primaryDark</item>
-    <!-- colorAccent is used as the default value for colorControlActivated which is used to tint widgets -->
-    <item name="colorAccent">@color/accent</item>
-    <!-- colorButtonNormal is used as the default value for background buttons -->
+        <item name="colorPrimary">@color/primary</item>
+        <!-- colorPrimaryDark is used for the status bar -->
+        <item name="colorPrimaryDark">@color/primaryDark</item>
+        <!-- colorAccent is used as the default value for colorControlActivated which is used to tint widgets -->
+        <item name="colorAccent">@color/accent</item>
+        <!-- colorButtonNormal is used as the default value for background buttons -->
         <item name="colorButtonNormal">@color/accent</item>
         <item name="android:textColor">@color/icons</item>
         <!--<item name="android:buttonStyle">@style/ButtonStyle</item>-->
@@ -75,43 +81,26 @@
         <item name="android:textColorPrimaryInverse">@color/primaryLight</item>
         <item name="android:textColorSecondaryInverse">@color/primaryLight</item>
 
+        <!-- Alert Dialog -->
+        <item name="android:alertDialogStyle">@style/AppCompatAlertDialogStyle</item>
+        <item name="android:alertDialogTheme">@style/AppCompatAlertDialogStyle</item>
+        <item name="android:dialogTheme">@style/AppCompatAlertDialogStyle</item>
+        <item name="alertDialogStyle">@style/AppCompatAlertDialogStyle</item>
+        <item name="alertDialogTheme">@style/AppCompatAlertDialogStyle</item>
+        <item name="dialogTheme">@style/AppCompatAlertDialogStyle</item>
 
 
     </style>
 
-<style name="ButtonStyle" parent="Theme.AppCompat.Light.DarkActionBar">
-    <item name="android:background">@drawable/style_button_ripple</item>
-    <!--<item name="android:background">@color/accent</item>-->
-    <item name="background">@color/accent</item>
-    <item name="colorButtonNormal">@color/accent</item>
-    <item name="android:textColor">@color/whiteText</item>
-</style>
-
-    <!--<style name="DialogStyle" parent="AlertDialog.AppCompat.Light.Dialog">
-        <item name="android:dialogTitle">@color/black</item>
+    <style name="ButtonStyle" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:background">@drawable/style_button_ripple</item>
+        <!--<item name="android:background">@color/accent</item>-->
+        <item name="background">@color/accent</item>
+        <item name="colorButtonNormal">@color/accent</item>
+        <item name="android:textColor">@color/whiteText</item>
     </style>
 
-    <style name="DialogStyle" parent="android:Theme.Holo.Light.Dialog">
-    <style name="DialogStyle" parent="Theme.AppCompat.Dialog.Alert">
-    <style name="DialogStyle" parent="Theme.AppCompat.Light.Dialog">
-    -->
-    <style name="DialogStyle" parent="AlertDialog.AppCompat.Light">
-        <item name="android:dialogTitle">@color/black</item>
-        <!--<item name="windowActionBar">true</item>
-        <item name="android:windowActionBar">true</item>
-        <item name="android:windowNoTitle">false</item>-->
-        <item name="android:windowTitleStyle">@style/dialog_title_style</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:background">@android:color/white</item>
-    </style>
-
-    <style name="dialog_title_style" parent="android:Widget.TextView">
-        <item name="android:background">@android:color/white</item>
-        <item name="android:padding">10dp</item>
-        <item name="android:textColor">@color/black</item>
-    </style>
-
-<!-- ActionBar styles -->
+    <!-- ActionBar styles -->
     <style name="MyActionBar" parent="Widget.AppCompat.ActionBar">
         <item name="android:background">@color/action_bar_background</item>
         <item name="android:titleTextStyle">@style/MyActionBarTitleText</item>
@@ -120,7 +109,6 @@
     </style>
 
     <style name="PopupMenu" parent="Widget.AppCompat.PopupMenu">
-        <!-- ??? -->
         <item name="android:drawable">@drawable/my_menu_background</item>
         <item name="android:panelBackground">@drawable/my_menu_background</item>
         <item name="panelBackground">@drawable/my_menu_background</item>
@@ -162,5 +150,21 @@
 
         <item name="android:color">@color/accent</item>
     </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!--<style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">-->
+    <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/accent</item>
+        <item name="android:textColorPrimary">@color/primaryText</item>
+    </style>
+
 
 </resources>

@@ -1,6 +1,5 @@
 package it.eternitywall.eternitywall.activity;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -214,7 +214,6 @@ public class PreferencesActivity extends AppCompatActivity {
                         // do nothing
                     }
                 })
-                .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
     }
 
