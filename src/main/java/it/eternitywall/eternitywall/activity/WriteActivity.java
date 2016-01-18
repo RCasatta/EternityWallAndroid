@@ -29,6 +29,8 @@ import android.widget.Toast;
 
 import com.google.common.base.Optional;
 
+import org.bitcoinj.core.AddressFormatException;
+import org.bitcoinj.core.InsufficientMoneyException;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionBroadcast;
 import org.json.JSONObject;
@@ -148,9 +150,17 @@ public class WriteActivity extends ActionBarActivity {
             public void afterTextChanged(Editable s) {
                 curmsg = s.toString();
                 if(calcRemainingBytes() < 0) {
-                    curmsg = oldText;
-                    txtMessage.setText(curmsg);
-                    txtMessage.setSelection(curmsg.length());
+
+                    if(calcRemainingBytes(oldText) < 0) {
+                        txtMessage.setText(curmsg);
+                        txtMessage.setSelection(curmsg.length());
+                        txtCounter.setText(Math.abs(calcRemainingBytes()) +" "+"characters exceeds");
+                    } else {
+                        curmsg = oldText;
+                        txtMessage.setText(curmsg);
+                        txtMessage.setSelection(curmsg.length());
+                        txtCounter.setText(Math.abs(calcRemainingBytes()) +" "+"characters exceeds");
+                    }
                 }
                 txtCounter.setText(calcRemainingBytes()+" "+"characters available");
             }
@@ -226,7 +236,24 @@ public class WriteActivity extends ActionBarActivity {
         Log.i(TAG,"sendFromWallet " + curmsg);
         if(curmsg!=null && !curmsg.isEmpty()) {
             final EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
-            curTx= ewWalletService.createMessageTx(curmsg,replyFrom);
+            try {
+                curTx= ewWalletService.createMessageTx(curmsg,replyFrom);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+                Toast.makeText(this,"Wait the pending message",Toast.LENGTH_LONG).show();
+                return;
+            } catch (AddressFormatException e) {
+                Toast.makeText(this,"Not more 100 messages available",Toast.LENGTH_LONG).show();
+                return;
+            } catch (InsufficientMoneyException e) {
+                e.printStackTrace();
+                Toast.makeText(this,"Insufficient coin",Toast.LENGTH_LONG).show();
+                return;
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this,"Exception",Toast.LENGTH_LONG).show();
+                return;
+            }
 
             final TransactionBroadcast transactionBroadcast = ewWalletService.broadcastTransaction(curTx);
 
@@ -397,6 +424,16 @@ public class WriteActivity extends ActionBarActivity {
             return MAX_LENGTH;
         }
     }
+    private Integer calcRemainingBytes(String string) {
+        try {
+            int length = string.getBytes("UTF-8").length;
+            return MAX_LENGTH-length;
+        }
+        catch (Exception ex) {
+            return MAX_LENGTH;
+        }
+    }
+
 
     private boolean isAvailable(Intent intent) {
         final PackageManager mgr = getPackageManager();

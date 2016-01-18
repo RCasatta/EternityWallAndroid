@@ -14,6 +14,7 @@ import org.bitcoinj.core.BlockChain;
 import org.bitcoinj.core.CheckpointManager;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.ECKey;
+import org.bitcoinj.core.InsufficientMoneyException;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.PeerGroup;
 import org.bitcoinj.core.ScriptException;
@@ -139,12 +140,17 @@ public class EWWalletService extends Service implements Runnable {
         return ewMessageData;
     }
 
-    public Transaction createMessageTx(String message, String answerTo) {
+    public Transaction createMessageTx(String message, String answerTo) throws Exception {
         Log.i(TAG,"createMessageTx " +message + " " + answerTo );
 
-        if(!isSynced || nextChange==0 || nextChange>99 || nextMessageId>99) {
-            Log.i(TAG, "sendMessage returning null " + isSynced + " " + nextChange + " " + nextMessageId);   //TODO manage nextChange>99 or nextMessageId>0
-            return null;
+        if(!isSynced || nextChange==0){
+            String msg = "sendMessage returning null " + isSynced + " " + nextChange + " " + nextMessageId;
+            Log.i(TAG, msg);   //TODO manage nextChange>99 or nextMessageId>0
+            throw new IllegalArgumentException(msg);
+        } else if (nextChange>99 || nextMessageId>99) {
+            String msg = "sendMessage returning null " + isSynced + " " + nextChange + " " + nextMessageId;
+            Log.i(TAG, msg);   //TODO manage nextChange>99 or nextMessageId>0
+            throw new IllegalArgumentException(msg);
         }
         EWMessageData ewMessageData= getNextMessageData();
         isSynced=false;  //TODO
@@ -177,18 +183,20 @@ public class EWWalletService extends Service implements Runnable {
         newTx.addOutput(Coin.valueOf(DUST), ewMessageData.getMessageId());
 
         if(answerTo!=null) {
-            if(Bitcoin.isValidAddress(answerTo))
                 try {
                     newTx.addOutput(Coin.valueOf(DUST), new Address(PARAMS,answerTo));
                     toSend-=DUST;
                 } catch (AddressFormatException e) {
-                    Log.e(TAG,"should not happen! " + e.getMessage() );
+                    String msg = "should not happen! " + e.getMessage();
+                    Log.e(TAG, msg);
+                    throw new AddressFormatException(msg);
                 }
         }
 
         if(toSend < DUST) {
-            Log.i(TAG, "toSend is less than dust");
-            return null;
+            String msg = "toSend is less than dust";
+            Log.i(TAG, msg);
+            throw new InsufficientMoneyException(Coin.valueOf(toSend));
         }
 
         newTx.addOutput(Coin.ZERO,
