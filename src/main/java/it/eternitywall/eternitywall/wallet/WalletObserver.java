@@ -20,6 +20,7 @@ public class WalletObserver implements Observer {
 
     public WalletObserver(EWWalletService ewWalletService) {
         this.ewWalletService = ewWalletService;
+        was= WalletObservable.State.STARTED;
     }
 
     @Override
