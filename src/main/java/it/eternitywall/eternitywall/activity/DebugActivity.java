@@ -1,6 +1,8 @@
 package it.eternitywall.eternitywall.activity;
 
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -128,6 +130,18 @@ public class DebugActivity extends AppCompatActivity implements DebugListAdapter
                 debugListAdapter.add(new Debug("State", "" + walletObservable.getState() ));
 
                 debugListAdapter.add(new Debug("Working", "" + ewWalletService.isSynced() ));
+
+                try {
+                    PackageManager manager = getPackageManager();
+                    PackageInfo info = manager.getPackageInfo(getPackageName(), 0);
+                    final String version = info.versionName;
+                    debugListAdapter.add(new Debug("App version", version ));
+                } catch (PackageManager.NameNotFoundException e) {
+                    Log.i(TAG,"NameNotFoundException version exception! " + e.getMessage());
+                    e.printStackTrace();
+                }
+
+
 
 
             }
