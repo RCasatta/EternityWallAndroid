@@ -103,10 +103,7 @@ public class PreferencesActivity extends AppCompatActivity {
         llDebug.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (existAccount())
                     startActivity(new Intent(PreferencesActivity.this, DebugActivity.class));
-                else
-                    dialogCreateAccount();
             }
         });
 
