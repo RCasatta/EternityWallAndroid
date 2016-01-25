@@ -218,6 +218,7 @@ public class EWWalletService extends Service implements Runnable {
         Log.i(TAG,"sendTransaction " +tx );
         TransactionBroadcast transactionBroadcast = peerGroup.broadcastTransaction(tx);
         walletObservable.setState(WalletObservable.State.PENDING);
+        walletObservable.notifyObservers();
         return transactionBroadcast;
     }
 

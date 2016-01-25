@@ -59,6 +59,7 @@ public class MyBlockchainListener implements BlockChainListener {
             Wallet wallet = ewWalletService.getWallet();
             if(wallet.getPendingTransactions().size()==0) {
                 walletObservable.setState(WalletObservable.State.SYNCED);
+                walletObservable.notifyObservers();
             }
         }
 
