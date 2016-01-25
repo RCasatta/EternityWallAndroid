@@ -91,15 +91,10 @@ public class EWWalletService extends Service implements Runnable {
     private BlockChain blockChain;
     private PeerGroup peerGroup;
     private Wallet wallet;
-    private boolean isSynced = false;  //TODO to remove, use only wallet observable state
 
-    public void setIsSynced(boolean isSynced) {
-        this.isSynced = isSynced;
-    }
+    private WalletObservable walletObservable = new WalletObservable();
+    private EWBinder mBinder= new EWBinder(this, walletObservable);
 
-    public boolean isSynced() {
-        return isSynced;
-    }
 
     public Integer getNextMessageId() {
         return nextMessageId;
@@ -114,23 +109,22 @@ public class EWWalletService extends Service implements Runnable {
     }
 
     private Address getCurrent() {  //watch observable
-        if(!isSynced || nextChange==0 || nextChange>99) //TODO manage nextChange>99
+        if(!walletObservable.isSynced() || nextChange==0 || nextChange>99) //TODO manage nextChange>99
             return null;
         return changes.get( nextChange-1 ).toAddress(PARAMS);
     }
 
     private Address getNext() {  //watch observable
-        if(!isSynced || nextChange>99)  //TODO manage nextChange>99
+        if(!walletObservable.isSynced() || nextChange>99)  //TODO manage nextChange>99
             return null;
         return changes.get( nextChange ).toAddress(PARAMS);
     }
 
     private EWMessageData getNextMessageData() {
-        if(!isSynced || nextChange ==0 || nextChange>99) { //TODO manage nextChange>99
-            Log.i(TAG, "getNextMessageData returning null " + isSynced + " " + nextChange);
+        if(!walletObservable.isSynced() || nextChange ==0 || nextChange>99) { //TODO manage nextChange>99
+            Log.i(TAG, "getNextMessageData returning null " + walletObservable.isSynced() + " " + nextChange);
             return null;
         }
-        isSynced=false;  //TODO
         EWMessageData ewMessageData = new EWMessageData();
         ewMessageData.setMessageId(messagesId.get(nextMessageId).toAddress(PARAMS));
         ewMessageData.setChange(changes.get(nextChange).toAddress(PARAMS));
@@ -143,17 +137,16 @@ public class EWWalletService extends Service implements Runnable {
     public Transaction createMessageTx(String message, String answerTo) throws Exception {
         Log.i(TAG,"createMessageTx " +message + " " + answerTo );
 
-        if(!isSynced || nextChange==0){
-            String msg = "sendMessage returning null " + isSynced + " " + nextChange + " " + nextMessageId;
+        if(!walletObservable.isSynced() || nextChange==0){
+            String msg = "sendMessage returning null " + walletObservable.isSynced() + " " + nextChange + " " + nextMessageId;
             Log.i(TAG, msg);   //TODO manage nextChange>99 or nextMessageId>0
             throw new IllegalArgumentException(msg);
         } else if (nextChange>99 || nextMessageId>99) {
-            String msg = "sendMessage returning null " + isSynced + " " + nextChange + " " + nextMessageId;
+            String msg = "sendMessage returning null " + walletObservable.isSynced() + " " + nextChange + " " + nextMessageId;
             Log.i(TAG, msg);   //TODO manage nextChange>99 or nextMessageId>0
             throw new IllegalArgumentException(msg);
         }
         EWMessageData ewMessageData= getNextMessageData();
-        isSynced=false;  //TODO
         final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         final boolean donation = sharedPref.getBoolean(Preferences.DONATION, false);
 
@@ -223,16 +216,16 @@ public class EWWalletService extends Service implements Runnable {
 
     public TransactionBroadcast broadcastTransaction(Transaction tx) {
         Log.i(TAG,"sendTransaction " +tx );
-
         TransactionBroadcast transactionBroadcast = peerGroup.broadcastTransaction(tx);
+        walletObservable.setState(WalletObservable.State.PENDING);
         return transactionBroadcast;
     }
 
     public Transaction createExitTransaction(String bitcoinAddress) {
         Log.i(TAG,"createExitTransaction to " +bitcoinAddress );
 
-        if(!isSynced || nextChange==0 || nextChange>99 ) {
-            Log.w(TAG, "createExitTransaction returning null " + isSynced + " " + nextChange);   //TODO manage nextChange>99 or nextMessageId>0
+        if(!walletObservable.isSynced() || nextChange==0 || nextChange>99 ) {
+            Log.w(TAG, "createExitTransaction returning null " + walletObservable.isSynced() + " " + nextChange);   //TODO manage nextChange>99 or nextMessageId>0
             return null;
         }
 
@@ -247,8 +240,6 @@ public class EWWalletService extends Service implements Runnable {
                 Log.wtf(TAG,"should not happen, just verified");
             }
         }
-
-        isSynced=false;  //TODO
 
         final Transaction newTx = new Transaction(PARAMS);
 
@@ -288,12 +279,11 @@ public class EWWalletService extends Service implements Runnable {
         return newTx;
     }
 
-    public TransactionBroadcast registerAlias(String aliasName) {
-        if(!isSynced || nextChange != 1) {
-            Log.i(TAG,"not synced or next change different from zero " + isSynced + " " + nextChange);
+    public Transaction registerAlias(String aliasName) {
+        if(!walletObservable.isSynced() || nextChange != 1) {
+            Log.i(TAG,"not synced or next change different from zero " + walletObservable.isSynced() + " " + nextChange);
             return null;
         }
-        isSynced=false;  //TODO
 
         ECKey aliasKey = changes.get(0);
         ECKey firstChange = changes.get(1);
@@ -333,10 +323,8 @@ public class EWWalletService extends Service implements Runnable {
         final String newTxHex = Bitcoin.transactionToHex(newTx);
 
         Log.i(TAG, newTxHex);
-        TransactionBroadcast transactionBroadcast = peerGroup.broadcastTransaction(newTx);
-        Log.i(TAG, "TxBroadcasted " + newTx.getHash().toString());
 
-        return  transactionBroadcast;
+        return  newTx;
     }
 
     private List<TransactionOutput> getMines(Address address) {
@@ -358,8 +346,6 @@ public class EWWalletService extends Service implements Runnable {
         return transactionOutputList;
     }
 
-    private WalletObservable walletObservable = new WalletObservable();
-    private EWBinder mBinder= new EWBinder(this, walletObservable);
     @Override
     public IBinder onBind(final Intent intent) {
         Log.i(TAG, ".onBind() " + intent);
@@ -576,7 +562,6 @@ public class EWWalletService extends Service implements Runnable {
             else
                 break;
         }
-        isSynced = true;
 
         Log.i(TAG, "peerGroup.getConnectedPeers()=" + peerGroup.getConnectedPeers());
         Log.i(TAG, "chain.getBestChainHeight()=" + blockChain.getBestChainHeight());

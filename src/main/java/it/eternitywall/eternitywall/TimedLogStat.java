@@ -35,11 +35,15 @@ public class TimedLogStat extends TimerTask {
         if(walletObservable!=null) {
             Log.i(TAG, walletObservable.toString());
             final EWWalletService ewWalletService = ewApplication.getEwWalletService();
-            if(ewWalletService.getBlockChain()!=null) Log.i(TAG, "blockchain height: " + ewWalletService.getBlockChain().getBestChainHeight() );
+            if(ewWalletService.getBlockChain()!=null) {
+                final int bestChainHeight = ewWalletService.getBlockChain().getBestChainHeight();
+                Log.i(TAG, "blockchain height: " + bestChainHeight);
+            }
             final PeerGroup peerGroup = ewWalletService.getPeerGroup();
             if(peerGroup !=null) {
                 Log.i(TAG, "peerGroup is running? " + peerGroup.isRunning());
                 Log.i(TAG, "peerGroup connected peers? " + peerGroup.numConnectedPeers());
+                
             }
             final Wallet wallet = ewWalletService.getWallet();
             if(wallet !=null) {

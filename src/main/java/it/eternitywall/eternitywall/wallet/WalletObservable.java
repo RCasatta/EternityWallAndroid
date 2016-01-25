@@ -26,9 +26,21 @@ public class WalletObservable extends Observable {
     private String currentQrCodeSource;     //which data has been used to create the qrcode bitmap
     private String currentIdenticonSource;  //which data has been used to create the identicon bitmap
 
+    public boolean isSyncedOrPending() {
+        return isSynced() || isPending();
+    }
+
+    public boolean isSynced() {
+        return state==State.SYNCED ;
+    }
+
+    public boolean isPending() {
+        return state==State.PENDING ;
+    }
+
     public enum State
     {
-        NOT_STARTED, STARTED, NULL_PASSPHRASE, SYNCING, DOWNLOADED, SYNCED
+        NOT_STARTED, STARTED, NULL_PASSPHRASE, SYNCING, DOWNLOADED, SYNCED, PENDING
     }
 
     public String getAlias() {

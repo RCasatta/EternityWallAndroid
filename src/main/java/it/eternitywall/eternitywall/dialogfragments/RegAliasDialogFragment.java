@@ -88,7 +88,8 @@ public class RegAliasDialogFragment extends DialogFragment {
         EWWalletService ewWalletService = ((EWApplication) getActivity().getApplication()).getEwWalletService();
 
         //TODO check messages
-        TransactionBroadcast transactionBroadcast = ewWalletService.registerAlias(aliasString);
+        final Transaction transaction = ewWalletService.registerAlias(aliasString);
+        final TransactionBroadcast transactionBroadcast = ewWalletService.broadcastTransaction(transaction);
 
         if(transactionBroadcast==null) {
             Toast.makeText(getActivity(), "Cannot broadcast", Toast.LENGTH_LONG).show();
@@ -112,8 +113,8 @@ public class RegAliasDialogFragment extends DialogFragment {
 
                 }
             });
-            Transaction transaction = future.get();
-            if (transaction == null) {
+            Transaction transactionFuture = future.get();
+            if (transactionFuture == null) {
                 Toast.makeText(getActivity(), "hash is null", Toast.LENGTH_LONG).show();
 
             } else {
