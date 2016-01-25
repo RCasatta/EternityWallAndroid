@@ -26,6 +26,7 @@ import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.adapters.DebugListAdapter;
+import it.eternitywall.eternitywall.bitcoin.BitcoinNetwork;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
 import it.eternitywall.eternitywall.wallet.WalletObservable;
 
@@ -138,6 +139,9 @@ public class DebugActivity extends AppCompatActivity implements DebugListAdapter
                     Log.i(TAG,"NameNotFoundException version exception! " + e.getMessage());
                     e.printStackTrace();
                 }
+
+
+                debugListAdapter.add(new Debug("Network",  BitcoinNetwork.getInstance().get().getParams().getId() ));
 
 
 

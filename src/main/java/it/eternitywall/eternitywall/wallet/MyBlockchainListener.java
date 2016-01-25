@@ -11,6 +11,7 @@ import android.util.Log;
 import org.bitcoinj.core.AbstractBlockChain;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.BlockChainListener;
+import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.ScriptException;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.StoredBlock;
@@ -20,7 +21,6 @@ import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.core.VerificationException;
 import org.bitcoinj.core.Wallet;
-import org.bitcoinj.params.MainNetParams;
 
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +31,7 @@ import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.activity.DetailActivity;
+import it.eternitywall.eternitywall.bitcoin.BitcoinNetwork;
 
 /**
  * Created by Riccardo Casatta @RCasatta on 26/11/15.
@@ -41,6 +42,8 @@ public class MyBlockchainListener implements BlockChainListener {
     private int bloomMatches=0;
     private WalletObservable walletObservable;
     private EWApplication ewApplication;
+    private final static NetworkParameters PARAMS= BitcoinNetwork.getInstance().get().getParams();
+
 
     public MyBlockchainListener( Set<Address> all , EWApplication ewApplication) {
         this.all = all;
@@ -78,7 +81,7 @@ public class MyBlockchainListener implements BlockChainListener {
 
         final List<TransactionInput> inputs = tx.getInputs();
         for (TransactionInput input : inputs) {
-            Address current = input.getScriptSig().getFromAddress(MainNetParams.get());
+            Address current = input.getScriptSig().getFromAddress(PARAMS);
             if(all.contains(current)) {
                 isRelevant = true;
             }
@@ -86,7 +89,7 @@ public class MyBlockchainListener implements BlockChainListener {
 
         final List<TransactionOutput> outputs = tx.getOutputs();
         for (TransactionOutput output : outputs) {
-            Address current = output.getAddressFromP2PKHScript(MainNetParams.get());
+            Address current = output.getAddressFromP2PKHScript(PARAMS);
             if(all.contains(current)) {
                 isRelevant = true;
             }

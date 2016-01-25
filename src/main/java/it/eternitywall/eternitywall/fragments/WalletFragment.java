@@ -169,7 +169,7 @@ public class WalletFragment extends Fragment {
                 @Override
                 public void run() {
                     Log.i(TAG, android.os.Process.myTid() + " TID UI : Refreshing wallet fragment " + walletObservable);
-                    if (walletObservable.getState() == WalletObservable.State.SYNCED) {
+                    if (walletObservable.isSyncedOrPending()) {
                         final Coin walletBalance = walletObservable.getWalletBalance();
                         final Coin walletUnconfirmedBalance = walletObservable.getWalletUnconfirmedBalance();
                         long value1 = walletBalance.getValue();

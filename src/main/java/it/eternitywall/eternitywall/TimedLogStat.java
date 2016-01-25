@@ -43,7 +43,7 @@ public class TimedLogStat extends TimerTask {
             if(peerGroup !=null) {
                 Log.i(TAG, "peerGroup is running? " + peerGroup.isRunning());
                 Log.i(TAG, "peerGroup connected peers? " + peerGroup.numConnectedPeers());
-                
+
             }
             final Wallet wallet = ewWalletService.getWallet();
             if(wallet !=null) {

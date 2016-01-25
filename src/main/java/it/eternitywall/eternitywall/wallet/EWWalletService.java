@@ -28,7 +28,6 @@ import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.core.Wallet;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.net.discovery.DnsDiscovery;
-import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.script.ScriptBuilder;
 import org.bitcoinj.script.ScriptOpCodes;
 import org.bitcoinj.store.BlockStore;
@@ -54,6 +53,7 @@ import java.util.concurrent.TimeUnit;
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
+import it.eternitywall.eternitywall.bitcoin.BitcoinNetwork;
 
 
 /**
@@ -65,7 +65,7 @@ public class EWWalletService extends Service implements Runnable {
     private static String REGISTER_ALIAS_TAG = "EWA ";
     private static String EW_MESSAGE_TAG     = "EW ";
 
-    private final static NetworkParameters PARAMS=MainNetParams.get();
+    private final static NetworkParameters PARAMS= BitcoinNetwork.getInstance().get().getParams();
     private final static int EPOCH     = 1447891200;  //19 Novembre 2015 00:00 first EWA 5f362444d23dd258ae1c2b60b1d79cb2c5231fc50df50713a415e13502fc1da9
     private final static int PER_CHUNK = 100;
     public static final Long DUST      = 5000L ;
@@ -446,7 +446,7 @@ public class EWWalletService extends Service implements Runnable {
 
             if (chainHead.getHeight() == 0) {  //first run
                 Log.i(TAG, "First run");
-                CheckpointManager.checkpoint(PARAMS, Checkpoints.getAsStream(), blockStore, EPOCH);
+                CheckpointManager.checkpoint(PARAMS, BitcoinNetwork.getInstance().getCheckPointsStream() , blockStore, EPOCH);
             }
             wallet.addEventListener(new EWWalletEventListener(walletObservable), Threading.SAME_THREAD);
             //wallet.setRiskAnalyzer(new DefaultRiskAnalysis.Analyzer());
@@ -525,7 +525,7 @@ public class EWWalletService extends Service implements Runnable {
             final List<TransactionInput> inputs = tx.getInputs();
             for (TransactionInput input : inputs) {
                 try {
-                    Address current = input.getScriptSig().getFromAddress(MainNetParams.get());
+                    Address current = input.getScriptSig().getFromAddress(PARAMS);
                     if (all.contains(current)) {
                         used.add(current);
                     }
@@ -537,7 +537,7 @@ public class EWWalletService extends Service implements Runnable {
 
             final List<TransactionOutput> outputs = tx.getOutputs();
             for (TransactionOutput output : outputs) {
-                Address current = output.getAddressFromP2PKHScript(MainNetParams.get());
+                Address current = output.getAddressFromP2PKHScript(PARAMS);
                 if(all.contains(current)) {
                     used.add(current);
                 }

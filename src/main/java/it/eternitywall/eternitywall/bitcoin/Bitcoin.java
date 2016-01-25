@@ -13,7 +13,6 @@ import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.crypto.HDKeyDerivation;
 import org.bitcoinj.crypto.MnemonicCode;
 import org.bitcoinj.crypto.MnemonicException;
-import org.bitcoinj.params.MainNetParams;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -49,7 +48,7 @@ public class Bitcoin {
         if (!basicValidation(address))
             return false;
         try {
-            new Address(MainNetParams.get(), address);
+            new Address( BitcoinNetwork.getInstance().get().getParams() , address);
             return true;
         } catch (AddressFormatException e) {
             return false;
@@ -118,7 +117,7 @@ public class Bitcoin {
 
     public static String keyToStringAddress(ECKey key) {
 
-        return key.toAddress(MainNetParams.get()).toString();
+        return key.toAddress(BitcoinNetwork.getInstance().get().getParams()).toString();
     }
 
 
@@ -177,11 +176,11 @@ public class Bitcoin {
             boolean isMine = false;
 
             String to = null;
-            Address add = curr.getAddressFromP2PKHScript(MainNetParams.get());
+            Address add = curr.getAddressFromP2PKHScript(BitcoinNetwork.getInstance().get().getParams());
             if (add != null)
                 to = add.toString();
             else {
-                add = curr.getAddressFromP2SH(MainNetParams.get());
+                add = curr.getAddressFromP2SH(BitcoinNetwork.getInstance().get().getParams());
                 if (add != null)
                     to = add.toString();
             }

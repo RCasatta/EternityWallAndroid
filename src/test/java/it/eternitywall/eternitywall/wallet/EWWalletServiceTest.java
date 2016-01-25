@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
+import it.eternitywall.eternitywall.bitcoin.BitcoinNetwork;
 
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
@@ -113,7 +114,7 @@ public class EWWalletServiceTest {
         BlockStore blockStore = new SPVBlockStore(params, blockFile);
         StoredBlock chainHead = blockStore.getChainHead();
         if(chainHead.getHeight()==0) {  //first run
-            CheckpointManager.checkpoint(PARAMS, Checkpoints.getAsStream(), blockStore, EPOCH);
+            CheckpointManager.checkpoint(PARAMS, BitcoinNetwork.getInstance().getCheckPointsStream() , blockStore, EPOCH);
         }
         //final StoredBlock checkpointBefore = manager.getCheckpointBefore(startFrom);
         //blockStore.setChainHead(checkpointBefore);
@@ -123,7 +124,7 @@ public class EWWalletServiceTest {
         BlockChain chain = new BlockChain(params, wallet, blockStore);
         //BlockChain chain = new BlockChain(params, blockStore);
         PeerGroup peerGroup = new PeerGroup(params, chain);
-        peerGroup.addAddress(InetAddress.getByName("10.106.137.73"));
+        //peerGroup.addAddress(InetAddress.getByName("10.106.137.73"));
         peerGroup.setMaxConnections(1);
         peerGroup.setDownloadTxDependencies(false);
 
