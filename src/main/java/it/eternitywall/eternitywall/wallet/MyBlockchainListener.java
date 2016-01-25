@@ -40,7 +40,6 @@ public class MyBlockchainListener implements BlockChainListener {
     private static final String TAG = "MyBlockchainListener";
     private Set<Address> all;
     private int bloomMatches=0;
-    private WalletObservable walletObservable;
     private EWApplication ewApplication;
     private final static NetworkParameters PARAMS= BitcoinNetwork.getInstance().get().getParams();
 
@@ -48,11 +47,12 @@ public class MyBlockchainListener implements BlockChainListener {
     public MyBlockchainListener( Set<Address> all , EWApplication ewApplication) {
         this.all = all;
         this.ewApplication = ewApplication;
-        this.walletObservable = ewApplication.getWalletObservable();
+
     }
 
     @Override
     public void notifyNewBestBlock(StoredBlock block) throws VerificationException {
+        WalletObservable walletObservable = ewApplication.getWalletObservable();
         //Log.d(TAG, "notifyNewBestBlock " + block.getHeight());
         EWWalletService ewWalletService = ewApplication.getEwWalletService();
         if(ewWalletService!=null) {
@@ -103,7 +103,7 @@ public class MyBlockchainListener implements BlockChainListener {
     @Override
     public void receiveFromBlock(Transaction tx, StoredBlock block, AbstractBlockChain.NewBlockType blockType, int relativityOffset) throws VerificationException {
         Log.i(TAG, "receiveFromBlock " + tx.getHashAsString() + " in block " + block);
-
+        WalletObservable walletObservable = ewApplication.getWalletObservable();
         EWWalletService.checkAlias(tx, walletObservable);
         createNotification(tx);
         //TODO add listener to confidence change
