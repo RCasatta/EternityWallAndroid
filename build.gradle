@@ -55,6 +55,11 @@ android {
 
         }
 
+        devReg {
+            applicationId "it.eternitywall.ewdevreg"
+
+        }
+
     }
 
     testOptions {

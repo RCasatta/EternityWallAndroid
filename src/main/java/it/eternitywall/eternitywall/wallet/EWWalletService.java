@@ -28,6 +28,7 @@ import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.core.Wallet;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.net.discovery.DnsDiscovery;
+import org.bitcoinj.params.RegTestParams;
 import org.bitcoinj.script.ScriptBuilder;
 import org.bitcoinj.script.ScriptOpCodes;
 import org.bitcoinj.store.BlockStore;
@@ -375,6 +376,9 @@ public class EWWalletService extends Service implements Runnable {
     @Override
     public void run() {
         try {
+            Log.i(TAG,"my network is " + BitcoinNetwork.getInstance().get().getParams().getId() );
+            final boolean isRegtest = BitcoinNetwork.getInstance().get().getParams().getId().equals(RegTestParams.get().getId());
+
             org.bitcoinj.core.Context.getOrCreate(PARAMS);
             walletObservable.setState(WalletObservable.State.STARTED);
             walletObservable.notifyObservers();
@@ -428,14 +432,11 @@ public class EWWalletService extends Service implements Runnable {
                 wallet = Wallet.fromKeys(PARAMS,ecKeyList);
             }
 
-
             Log.i(TAG, "wallet key size " + wallet.getKeychainSize());
-
             Log.i(TAG, "wallet bloom " + wallet.getBloomFilter(1E-5));
             wallet.autosaveToFile(walletFile, 30, TimeUnit.SECONDS, new WalletSaveListener());
             wallet.setAcceptRiskyTransactions(true);
             //wallet.cleanup();
-
             final long l = System.currentTimeMillis() - start;
             Log.i(TAG, "My messages id are " + messagesId);
             Log.i(TAG, "My changes are " + changes);
@@ -445,7 +446,7 @@ public class EWWalletService extends Service implements Runnable {
             chainHead = blockStore.getChainHead();
             Log.i(TAG, "BlockStoreAtStartHeight " + chainHead.getHeight());
 
-            if (chainHead.getHeight() == 0) {  //first run
+            if ( chainHead.getHeight() == 0 && !isRegtest ) {  //first run
                 Log.i(TAG, "First run");
                 CheckpointManager.checkpoint(PARAMS, BitcoinNetwork.getInstance().getCheckPointsStream() , blockStore, EPOCH);
             }
@@ -459,27 +460,33 @@ public class EWWalletService extends Service implements Runnable {
             peerGroup.addWallet(wallet);  //Unconfirmed wasn't seen because there wasn't this line -> a day spent on this line. Fuck
             //peerGroup.setMaxConnections(40);
 
-            final Set<String> stringSet = sharedPref.getStringSet(Preferences.NODES, new HashSet<String>());
-            if(stringSet.size()>0) {
-                Log.i(TAG,"There are personal nodes " + stringSet.size() );
-                for (String current : stringSet) {
-                    boolean portOpen = isPortOpen(current, 8333, 1000);
-                    if(portOpen) {
-                        Log.i(TAG,"port is reachable! " + current + ":8333" );
-                        peerGroup.addAddress(InetAddress.getByName(current));
-                    } else {
-                        Log.i(TAG,"port is unreachable! " + current + ":8333" );
-                    }
-                }
+            if(isRegtest) {
+                Log.i(TAG,"I am in regtest");
+                peerGroup.addAddress( InetAddress.getByName( "10.106.137.74" ) );
             } else {
-                Log.i(TAG,"There are no personal nodes");
+                final Set<String> stringSet = sharedPref.getStringSet(Preferences.NODES, new HashSet<String>());
+                if(stringSet.size()>0) {
+                    Log.i(TAG,"There are personal nodes " + stringSet.size() );
+                    for (String current : stringSet) {
+                        boolean portOpen = isPortOpen(current, 8333, 1000);
+                        if(portOpen) {
+                            Log.i(TAG,"port is reachable! " + current + ":8333" );
+                            peerGroup.addAddress(InetAddress.getByName(current));
+                        } else {
+                            Log.i(TAG,"port is unreachable! " + current + ":8333" );
+                        }
+                    }
+                } else {
+                    Log.i(TAG,"There are no personal nodes");
+                }
+                peerGroup.addPeerDiscovery(new DnsDiscovery(PARAMS));
+                peerGroup.setFastCatchupTimeSecs(EPOCH);
+
             }
 
             //peerGroup.setMaxConnections(1);
             //peerGroup.addWallet(wallet);
-            peerGroup.addPeerDiscovery(new DnsDiscovery(PARAMS));
             peerGroup.addPeerFilterProvider(new MyPeerFilterProvider(changes, messagesId));
-            peerGroup.setFastCatchupTimeSecs(EPOCH);
             peerGroup.setDownloadTxDependencies(false);
             downloadListener = new MyDownloadListener(walletObservable);
             peerGroup.startAsync();
