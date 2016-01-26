@@ -21,57 +21,28 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-    <RelativeLayout
-        android:id="@+id/syncingLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_margin="20dp"
-        >
-        <ProgressBar
-            android:id="@+id/loadingBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            />
-        <TextView
-            android:id="@+id/syncingText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/loadingBar"
-            android:layout_centerHorizontal="true"
-            android:textSize="20sp"
-            android:layout_marginTop="10dp"
-            android:text="@string/syncing"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/syncingText"
-            android:gravity="bottom"
-            android:textSize="12sp"
-            android:text="@string/syncing_warning"
-            android:textColor="@color/secondaryText"
-            android:layout_alignParentBottom="true"
-            />
-
-
-    </RelativeLayout>
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
         <LinearLayout
-            android:id="@+id/syncedLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_margin="20dp"
-            android:visibility="gone"
+            android:visibility="visible"
 
             >
+
+            <TextView
+                android:text="My Alias"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:id="@+id/textView13" />
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -114,52 +85,105 @@
                     android:layout_centerVertical="true"
 
 
-
-                    />
+                    android:gravity="center" />
 
             </RelativeLayout>
 
-            <RelativeLayout
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/divider"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"></FrameLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp">
+                android:orientation="vertical"
+                android:id="@+id/syncedLayout">
 
-                <it.eternitywall.eternitywall.components.CurrencyView
-                    android:id="@+id/btcBalance"
+                <TextView
+                    android:text="My Wallet"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    blrfl:textSizeSp="34"
-                    blrfl:type="mBTC"
-                    blrfl:units="0"
-                    android:layout_centerHorizontal="true"
-                    />
+                    android:textColor="@color/primary"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:id="@+id/textView14" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:id="@+id/btcQR"
+                        android:text="@string/qr_icon"
+                        android:textSize="34sp"
+                        android:layout_marginRight="20dp"
+                        android:gravity="center" />
+
+                    <it.eternitywall.eternitywall.components.CurrencyView
+                        android:id="@+id/btcBalance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        blrfl:textSizeSp="34"
+                        blrfl:type="mBTC"
+                        blrfl:units="0"
+                        android:layout_centerHorizontal="true"
+                        android:layout_weight="1"
+                        android:gravity="center" />
+                </LinearLayout>
+
+
+                <TextView
+                    android:id="@+id/currentAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:textIsSelectable="true"
+                    android:visibility="visible" />
+
                 <TextView
                     android:id="@+id/btcBalanceUnconfirmed"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:text="@string/unconfirmed"
                     android:textColor="@color/secondaryText"
                     android:layout_below="@id/btcBalance"
                     android:visibility="gone"
-                    />
+                    android:gravity="center" />
                 <TextView
                     android:id="@+id/messagePending"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:textColor="@color/secondaryText"
                     android:layout_below="@id/btcBalanceUnconfirmed"
                     android:visibility="gone"
-                    />
+                    android:gravity="center" />
 
-            </RelativeLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:textColor="@color/secondaryText"
+                    android:text="@string/wallet_warning"
+                    android:layout_marginTop="4dp" />
+
+            </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="240dp"
                 android:layout_height="240dp"
                 android:layout_gravity="center"
-                >
+                android:visibility="gone">
             <ImageView
                 android:id="@+id/currentQrCode"
                 android:layout_width="match_parent"
@@ -170,23 +194,94 @@
                 />
             </RelativeLayout>
 
-            <TextView
-                android:id="@+id/currentAddress"
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textSize="14sp"
-                android:textIsSelectable="true"
-                />
+                android:layout_height="match_parent"
+                android:id="@+id/syncingLayout">
+
+                <TextView
+                    android:text="Blockchain updating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/primary"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:id="@+id/textView17" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ProgressBar
+                        android:id="@+id/loadingBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="20dp" />
+
+                    <TextView
+                        android:id="@+id/syncingText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/loadingBar"
+                        android:layout_centerHorizontal="true"
+                        android:textSize="20sp"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/syncing"/>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/syncingText"
+                    android:gravity="bottom"
+                    android:textSize="12sp"
+                    android:text="@string/syncing_warning"
+                    android:textColor="@color/secondaryText"
+                    android:layout_alignParentBottom="true"
+                    android:id="@+id/textView18" />
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/divider"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginBottom="@dimen/activity_vertical_margin" />
 
             <TextView
+                android:text="My Messages"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:id="@+id/textView16" />
+
+            <TextView
+                android:id="@+id/txtHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="20dp"
-                android:paddingBottom="100dp"
-                android:textSize="12sp"
-                android:textColor="@color/secondaryText"
-                android:text="@string/wallet_warning"/>
+                android:paddingTop="8dp"
+                android:paddingBottom="12dp"
+                android:gravity="center"
+                android:textSize="18sp"
+                android:textColor="@color/primaryText"
+                android:visibility="gone"
+                android:paddingLeft="@dimen/padding_high"
+                android:paddingRight="@dimen/padding_high"
+                android:text="@string/no_msg_found" />
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/lstMessages"
+                android:layout_gravity="right" />
 
         </LinearLayout>
     </ScrollView>

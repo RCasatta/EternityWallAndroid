@@ -11,7 +11,9 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -25,21 +27,31 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.base.Optional;
+
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 import it.eternitywall.eternitywall.EWApplication;
+import it.eternitywall.eternitywall.Http;
+import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.activity.WriteActivity;
+import it.eternitywall.eternitywall.adapters.MessageListAdapter;
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 import it.eternitywall.eternitywall.components.CurrencyView;
 import it.eternitywall.eternitywall.dialogfragments.RegAliasDialogFragment;
@@ -54,10 +66,10 @@ import it.eternitywall.eternitywall.wallet.WalletObservable;
  * Use the {@link WalletFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class WalletFragment extends Fragment {
+public class WalletFragment extends Fragment implements MessageListAdapter.MessageListAdapterManager{
     private static final String TAG = WalletFragment.class.toString();
 
-    private RelativeLayout syncingLayout;
+    private LinearLayout syncingLayout;
     private LinearLayout syncedLayout;
     private TextView syncingText;
     private TextView currentAddressText;
@@ -65,11 +77,18 @@ public class WalletFragment extends Fragment {
     private TextView aliasNameUnconfirmed;
     private TextView btcBalanceUnconfirmed;
     private TextView messagePending;
+    private TextView btcQR;
+    private TextView txtHeader;
     private ImageView currentQrCode;
     private ImageView identicon;
     private CurrencyView btcBalance;
     private Button setAliasButton;
     private android.support.design.widget.FloatingActionButton payButton;
+
+
+    private ListView lstMessages;
+    private List<Message> messages;
+    private Integer inQueue;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -221,6 +240,7 @@ public class WalletFragment extends Fragment {
                             messagePending.setVisibility(View.GONE);
                         }
 
+
                     } else if (walletObservable.getState() == WalletObservable.State.SYNCING) {
                         if (activity!=null && activity.isFinishing())
                             return;
@@ -256,7 +276,7 @@ public class WalletFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_wallet, container, false);
         Log.i(TAG, "onCreateView");
 
-        syncingLayout         = (RelativeLayout) view.findViewById(R.id.syncingLayout);
+        syncingLayout         = (LinearLayout) view.findViewById(R.id.syncingLayout);
         syncedLayout          = (LinearLayout) view.findViewById(R.id.syncedLayout);
         syncingText           = (TextView) view.findViewById(R.id.syncingText);
         aliasNameText         = (TextView) view.findViewById(R.id.aliasName);
@@ -268,6 +288,13 @@ public class WalletFragment extends Fragment {
         setAliasButton        = (Button) view.findViewById(R.id.setAlias);
         btcBalanceUnconfirmed = (TextView) view.findViewById(R.id.btcBalanceUnconfirmed);
         messagePending        = (TextView) view.findViewById(R.id.messagePending);
+        btcQR                 = (TextView) view.findViewById(R.id.btcQR);
+        txtHeader             = (TextView) view.findViewById(R.id.txtHeader);
+        lstMessages           = (ListView) view.findViewById(R.id.lstMessages);
+
+
+        Typeface font = Typeface.createFromAsset(getResources().getAssets(), "fontawesome-webfont.ttf");
+        btcQR.setTypeface(font);
 
         setAliasButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -324,9 +351,14 @@ public class WalletFragment extends Fragment {
         });
 
 
-        if(walletObservable!=null && walletObservable.getState()== WalletObservable.State.SYNCED) {
+        if(walletObservable==null){
+            // do nothig.. wait
+        }else if( walletObservable.isSyncedOrPending()) {
             syncedLayout.setVisibility(View.VISIBLE);
             syncingLayout.setVisibility(View.GONE);
+        }else {
+            syncedLayout.setVisibility(View.GONE);
+            syncingLayout.setVisibility(View.VISIBLE);
         }
 
         // Show / Hide write button
@@ -348,6 +380,10 @@ public class WalletFragment extends Fragment {
             });
         }
 
+        // Load my messages
+        messages = new ArrayList<Message>();
+        inQueue = null;
+        loadMoreData();
 
         return view;
     }
@@ -394,6 +430,7 @@ public class WalletFragment extends Fragment {
 
     }
 
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -407,5 +444,125 @@ public class WalletFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+
+
+    @Override
+    public void loadMoreData() {
+        AsyncTask t = new AsyncTask() {
+
+            private boolean ok = false;
+            private String statusMessage=null;
+            private List<Message> mMessages = new ArrayList<>();
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                txtHeader.setVisibility(View.GONE);
+
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                if (getActivity()!=null && getActivity().isFinishing())  //exception will null pointer happened here, checking getActivity is null or use isAdded()????
+                    return;
+                super.onPostExecute(o);
+
+                if (messages.size()==0 && mMessages.size()==0)
+                    txtHeader.setVisibility(View.VISIBLE);
+                else
+                    txtHeader.setVisibility(View.GONE);
+
+                if(ok) {
+                    if(messages != null && !messages.isEmpty() && lstMessages!=null ) {
+                        MessageListAdapter messageListAdapter = (MessageListAdapter) lstMessages.getAdapter();  //TODO Franco exception here. added lstMessages!=null HACK!
+                        for (int i=0;i<mMessages.size();i++) {
+                            messageListAdapter.add(mMessages.get(i));
+                            messageListAdapter.notifyDataSetChanged();
+                        }
+                    }
+                    else {
+                        MessageListAdapter messageListAdapter = new MessageListAdapter(getActivity(), R.layout.item_message, messages, inQueue, WalletFragment.this);
+                        lstMessages.setAdapter(messageListAdapter);
+                        for (int i=0;i<mMessages.size();i++) {
+                            messageListAdapter.add(mMessages.get(i));
+                            messageListAdapter.notifyDataSetChanged();
+                        }
+
+                    }
+                }
+                else {
+                    //succhia!
+                    if(isAdded()) {
+                        if (statusMessage != null)
+                            Toast.makeText(getActivity(), statusMessage, Toast.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(getActivity(), getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            protected Object doInBackground(Object[] params) {
+
+                if(walletObservable==null) {
+                    ok = true;
+                    return true;
+                }
+
+                //String address=walletObservable.getCurrent().toString();
+                String address="19U9MAyuyrZcMZxP24zXzTYevAAUKvgp3o";
+                Optional<String> json=null;
+                json = Http.get("http://eternitywall.it/from/"+address+"?format=json");
+                /* API EXAMPLE:
+                In the user tab, at the bottom, add user messages.
+                Api: http://eternitywall.it/from/19U9MAyuyrZcMZxP24zXzTYevAAUKvgp3o?format=json
+               Where the address is the alias in the walletobservable
+                */
+
+                if(json!=null && json.isPresent()) {
+                    try {
+                        String jstring = json.get();
+                        JSONObject jo = new JSONObject(jstring);
+
+                        try {
+                            String status = jo.getString("status");
+                            if (status.equals("ko")) {
+                                statusMessage= jo.getString("statusMessage");
+                                return null;
+                            }
+                        } catch (Exception ex){
+                            ex.printStackTrace();
+                        }
+
+                        try {
+                            if (jo.has("messagesInQueue")) {
+                                inQueue = jo.getInt("messagesInQueue");
+                            }
+                        } catch (Exception ex){
+                            ex.printStackTrace();
+                        }
+
+                        JSONArray ja = jo.getJSONArray("messages");
+
+                        for(int m=0; m<ja.length(); m++) {
+                            Message message = Message.buildFromJson(ja.getJSONObject(m));
+                            mMessages.add(message);
+                            Log.i(TAG, message.toString());
+                        }
+
+                        //sort by reverse timestamp only on main messages without parsing
+                        Collections.sort(mMessages);
+                        ok = true;
+                    }
+                    catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+                return null;
+            }
+        };
+        t.execute();
     }
 }
