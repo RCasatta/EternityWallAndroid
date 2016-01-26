@@ -526,6 +526,37 @@ public class EWWalletService extends Service implements Runnable {
 
     public void onSynced() {
 
+        refreshNextsAndAlias();
+
+        Log.i(TAG, "peerGroup.getConnectedPeers()=" + peerGroup.getConnectedPeers());
+        Log.i(TAG, "chain.getBestChainHeight()=" + blockChain.getBestChainHeight());
+        Log.i(TAG, "chainHeadHeightAtBeginning=" + chainHead.getHeight());
+        Log.i(TAG, "bloom matches=" + chainListener.getBloomMatches());
+        Log.i(TAG, "downloaded size=" + downloadListener.getSize() + " bytes");
+        Log.i(TAG, "used address=" + used);
+        Log.i(TAG, "nextMessageId=" + nextMessageId);
+        Log.i(TAG, "nextChange=" + nextChange);
+
+        //Log.i(TAG, "wallet=" + wallet);
+        walletObservable.setState(WalletObservable.State.SYNCED);
+        Log.i(TAG, "Changed state");
+        walletObservable.setWalletBalance(wallet.getBalance());
+        walletObservable.setWalletUnconfirmedBalance(wallet.getBalance(Wallet.BalanceType.ESTIMATED));
+        Log.i(TAG, "Changed wallet balance");
+        final Address current = nextChange==0 ? getAlias() : getCurrent();
+        walletObservable.setCurrent(current);
+
+        //walletObservable.setAliasName("Test");  //TODO DEBUG
+
+        Log.i(TAG, "Changed current");
+
+        Log.i(TAG, "Notifying");
+        walletObservable.notifyObservers();
+        Log.i(TAG, "Ending...");
+
+    }
+
+    public synchronized void refreshNextsAndAlias() {
         List<Transaction> allTx = wallet.getTransactionsByTime();
         Log.i(TAG, "allTx.size()=" + allTx.size());
         for (Transaction tx : allTx) {
@@ -570,35 +601,7 @@ public class EWWalletService extends Service implements Runnable {
             else
                 break;
         }
-
-        Log.i(TAG, "peerGroup.getConnectedPeers()=" + peerGroup.getConnectedPeers());
-        Log.i(TAG, "chain.getBestChainHeight()=" + blockChain.getBestChainHeight());
-        Log.i(TAG, "chainHeadHeightAtBeginning=" + chainHead.getHeight());
-        Log.i(TAG, "bloom matches=" + chainListener.getBloomMatches());
-        Log.i(TAG, "downloaded size=" + downloadListener.getSize() + " bytes");
-        Log.i(TAG, "used address=" + used);
-        Log.i(TAG, "nextMessageId=" + nextMessageId);
-        Log.i(TAG, "nextChange=" + nextChange);
-
-        //Log.i(TAG, "wallet=" + wallet);
-        walletObservable.setState(WalletObservable.State.SYNCED);
-        Log.i(TAG, "Changed state");
-        walletObservable.setWalletBalance(wallet.getBalance());
-        walletObservable.setWalletUnconfirmedBalance(wallet.getBalance(Wallet.BalanceType.ESTIMATED));
-        Log.i(TAG, "Changed wallet balance");
-        final Address current = nextChange==0 ? getAlias() : getCurrent();
-        walletObservable.setCurrent(current);
-
-        //walletObservable.setAliasName("Test");  //TODO DEBUG
-
-        Log.i(TAG, "Changed current");
-
-        Log.i(TAG, "Notifying");
-        walletObservable.notifyObservers();
-        Log.i(TAG, "Ending...");
-
     }
-
 
 
     public static boolean isEWMessage(Transaction tx) {
