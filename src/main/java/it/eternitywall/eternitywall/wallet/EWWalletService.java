@@ -652,9 +652,12 @@ public class EWWalletService extends Service implements Runnable {
                             Log.i(TAG, "Found alias name!! " + aliasName);
 
                             if(tx.getConfidence().getConfidenceType() == TransactionConfidence.ConfidenceType.PENDING ) {
+                                Log.i(TAG, "alias tx is pending");
                                 walletObservable.setUnconfirmedAliasName(aliasName);
                             } else {
+                                walletObservable.setUnconfirmedAliasName(null);
                                 walletObservable.setAliasName(aliasName);
+                                Log.i(TAG, "alias tx is confirmed!");
                             }
                             walletObservable.notifyObservers();
                         }

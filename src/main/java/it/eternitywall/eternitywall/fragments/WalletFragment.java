@@ -191,22 +191,23 @@ public class WalletFragment extends Fragment {
                             currentQrCode.setImageBitmap(QrCodeBitmap);
                         if (IdenticonBitmap != null)
                             identicon.setImageBitmap(IdenticonBitmap);
-                        if(aliasName!=null) {
-                            aliasNameText.setText(aliasName);
-                            aliasNameText.setVisibility(View.VISIBLE);
+
+                        if(aliasName==null && unconfirmedAliasName==null) {  //Alias still to be defined
+                            setAliasButton.setVisibility(View.VISIBLE);
+                            aliasNameText.setVisibility(View.GONE);
+                            aliasNameUnconfirmed.setVisibility(View.GONE);
+                        } else if(aliasName==null) {                      // unconfirmed alias defined!
                             setAliasButton.setVisibility(View.GONE);
-                        } else {
-                            if(unconfirmedAliasName!=null) {
-                                aliasNameText.setText(unconfirmedAliasName);
-                                aliasNameUnconfirmed.setVisibility(View.VISIBLE);
-                                aliasNameText.setVisibility(View.VISIBLE);
-                                setAliasButton.setVisibility(View.GONE);
-                            } else {
-                                aliasNameUnconfirmed.setVisibility(View.GONE);
-                                aliasNameText.setVisibility(View.GONE);
-                                setAliasButton.setVisibility(View.VISIBLE);
-                            }
+                            aliasNameText.setVisibility(View.VISIBLE);
+                            aliasNameUnconfirmed.setVisibility(View.VISIBLE);
+                            aliasNameText.setText(unconfirmedAliasName);
+                        } else {                                           //alias defined and confirmed
+                            setAliasButton.setVisibility(View.GONE);
+                            aliasNameText.setVisibility(View.VISIBLE);
+                            aliasNameUnconfirmed.setVisibility(View.GONE);
+                            aliasNameText.setText(aliasName);
                         }
+
                         if(value1!=value2) {
                             btcBalanceUnconfirmed.setVisibility(View.VISIBLE);
                         } else {
