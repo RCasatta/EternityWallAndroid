@@ -61,6 +61,8 @@ public class MyBlockchainListener implements BlockChainListener {
                 walletObservable.setState(WalletObservable.State.SYNCED);
                 walletObservable.notifyObservers();
             }
+            ewWalletService.refreshNextsAndAlias();
+            Log.i(TAG, "" + walletObservable );
         }
 
     }

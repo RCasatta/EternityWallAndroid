@@ -81,7 +81,10 @@ public class WalletObservable extends Observable {
     }
 
     public void setUnconfirmedAliasName(String unconfirmedAliasName) {
-        if(!unconfirmedAliasName.equals(this.unconfirmedAliasName)) {
+        if (unconfirmedAliasName==null && this.unconfirmedAliasName!=null) {
+            this.unconfirmedAliasName = null;
+            setChanged();
+        } else if (unconfirmedAliasName!=null && !unconfirmedAliasName.equals(this.unconfirmedAliasName)) {
             this.unconfirmedAliasName = unconfirmedAliasName;
             setChanged();
         }
@@ -213,6 +216,7 @@ public class WalletObservable extends Observable {
                 ", messagePending=" + messagePending +
                 ", percSync=" + percSync +
                 ", aliasName='" + aliasName + '\'' +
+                ", unconfirmedAliasName='" + unconfirmedAliasName + '\'' +
                 ", currentQrCodeSource='" + currentQrCodeSource + '\'' +
                 ", currentIdenticonSource='" + currentIdenticonSource + '\'' +
                 '}';
