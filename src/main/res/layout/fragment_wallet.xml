@@ -277,11 +277,11 @@
                 android:paddingRight="@dimen/padding_high"
                 android:text="@string/no_msg_found" />
 
-            <ListView
-                android:layout_width="match_parent"
+            <LinearLayout
                 android:layout_height="wrap_content"
-                android:id="@+id/lstMessages"
-                android:layout_gravity="right" />
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:id="@+id/lstMessages" />
 
         </LinearLayout>
     </ScrollView>

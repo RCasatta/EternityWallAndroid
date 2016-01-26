@@ -86,7 +86,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
     private android.support.design.widget.FloatingActionButton payButton;
 
 
-    private ListView lstMessages;
+    private LinearLayout lstMessages;
     private List<Message> messages;
     private Integer inQueue;
 
@@ -291,7 +291,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
         messagePending        = (TextView) view.findViewById(R.id.messagePending);
         btcQR                 = (TextView) view.findViewById(R.id.btcQR);
         txtHeader             = (TextView) view.findViewById(R.id.txtHeader);
-        lstMessages           = (ListView) view.findViewById(R.id.lstMessages);
+        lstMessages           = (LinearLayout) view.findViewById(R.id.lstMessages);
 
 
         Typeface font = Typeface.createFromAsset(getResources().getAssets(), "fontawesome-webfont.ttf");
@@ -476,6 +476,17 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                     txtHeader.setVisibility(View.GONE);
 
                 if(ok) {
+                    MessageListAdapter messageListAdapter = new MessageListAdapter(getActivity(), R.layout.item_message, messages, inQueue, WalletFragment.this);
+                    for (int i=0;i<mMessages.size();i++) {
+                        messageListAdapter.add(mMessages.get(i));
+                        messageListAdapter.notifyDataSetChanged();
+                    }
+                    for (int i = 0; i < messageListAdapter.getCount(); i++) {
+                        View view = messageListAdapter.getView(i, null, lstMessages);
+                        lstMessages.addView(view);
+                    }
+
+                    /*
                     if(messages != null && !messages.isEmpty() && lstMessages!=null ) {
                         MessageListAdapter messageListAdapter = (MessageListAdapter) lstMessages.getAdapter();  //TODO Franco exception here. added lstMessages!=null HACK!
                         for (int i=0;i<mMessages.size();i++) {
@@ -485,13 +496,22 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                     }
                     else {
                         MessageListAdapter messageListAdapter = new MessageListAdapter(getActivity(), R.layout.item_message, messages, inQueue, WalletFragment.this);
-                        lstMessages.setAdapter(messageListAdapter);
                         for (int i=0;i<mMessages.size();i++) {
                             messageListAdapter.add(mMessages.get(i));
                             messageListAdapter.notifyDataSetChanged();
                         }
-
                     }
+                    for (int i=0; i<products.size(); i++) {
+                        View view = adapter.getView(i, null, listViewReplacement
+                                lstMessages.addView(vi);
+                    }
+
+                    //update
+                    for (int i=0; i<products.size(); i++) {
+                        Product product = products.get(i);
+                        View vi = inflater.inflate(R.layout.product_item, null);
+                        list.addView(vi);
+                    }*/
                 }
                 else {
                     //succhia!
