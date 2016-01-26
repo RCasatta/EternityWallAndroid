@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/activity_horizontal_margin"
+    android:gravity="center_vertical|center_horizontal">
+    <RelativeLayout
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        android:layout_gravity="center"
+        android:visibility="visible">
+        <ImageView
+            android:id="@+id/currentQrCode"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/qrcode_placeholder"
+            android:padding="25dp"
+            android:gravity="center"
+            />
+    </RelativeLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/txtAddress"
+        android:layout_marginTop="@dimen/padding_small" />
+
+</LinearLayout>

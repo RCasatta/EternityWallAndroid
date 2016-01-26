@@ -54,6 +54,8 @@ import it.eternitywall.eternitywall.activity.WriteActivity;
 import it.eternitywall.eternitywall.adapters.MessageListAdapter;
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 import it.eternitywall.eternitywall.components.CurrencyView;
+import it.eternitywall.eternitywall.dialogfragments.PersonalNodeDialogFragment;
+import it.eternitywall.eternitywall.dialogfragments.QRDialogFragment;
 import it.eternitywall.eternitywall.dialogfragments.RegAliasDialogFragment;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
 import it.eternitywall.eternitywall.wallet.WalletObservable;
@@ -241,6 +243,10 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                             messagePending.setVisibility(View.GONE);
                         }
 
+                        // Load my messages
+                        messages = new ArrayList<Message>();
+                        inQueue = null;
+                        loadMoreData();
 
                     } else if (walletObservable.getState() == WalletObservable.State.SYNCING) {
                         if (activity!=null && activity.isFinishing())
@@ -296,6 +302,13 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
 
         Typeface font = Typeface.createFromAsset(getResources().getAssets(), "fontawesome-webfont.ttf");
         btcQR.setTypeface(font);
+        btcQR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                QRDialogFragment qrDialogFragment = new QRDialogFragment();
+                qrDialogFragment.show(getFragmentManager(),PersonalNodeDialogFragment.class.toString());
+            }
+        });
 
         setAliasButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -527,13 +540,14 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
             @Override
             protected Object doInBackground(Object[] params) {
 
-                if(walletObservable==null) {
+                if(walletObservable==null || walletObservable.getCurrent()==null || !walletObservable.isSyncedOrPending()) {
                     ok = true;
                     return true;
                 }
 
-                //String address=walletObservable.getCurrent().toString();
-                String address="19U9MAyuyrZcMZxP24zXzTYevAAUKvgp3o";
+
+                String address=walletObservable.getCurrent().toString();
+                //String address="19U9MAyuyrZcMZxP24zXzTYevAAUKvgp3o";
                 Optional<String> json=null;
                 json = Http.get("http://eternitywall.it/from/"+address+"?format=json");
                 /* API EXAMPLE:

@@ -41,7 +41,8 @@
                 android:textColor="@color/primary"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
-                android:id="@+id/textView13" />
+                android:id="@+id/textView13"
+                android:layout_marginBottom="4dp" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -110,7 +111,8 @@
                     android:textColor="@color/primary"
                     android:paddingLeft="@dimen/activity_horizontal_margin"
                     android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:id="@+id/textView14" />
+                    android:id="@+id/textView14"
+                    android:layout_marginBottom="4dp" />
 
                 <LinearLayout
                     android:orientation="horizontal"
@@ -207,7 +209,8 @@
                     android:textColor="@color/primary"
                     android:paddingLeft="@dimen/activity_horizontal_margin"
                     android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:id="@+id/textView17" />
+                    android:id="@+id/textView17"
+                    android:layout_marginBottom="4dp" />
 
                 <LinearLayout
                     android:orientation="horizontal"
@@ -261,7 +264,8 @@
                 android:textColor="@color/primary"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
-                android:id="@+id/textView16" />
+                android:id="@+id/textView16"
+                android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/txtHeader"
