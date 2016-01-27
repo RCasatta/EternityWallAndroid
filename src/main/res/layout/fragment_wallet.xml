@@ -29,9 +29,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:layout_margin="20dp"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
             android:visibility="visible"
-
             >
 
             <TextView
@@ -42,7 +42,8 @@
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:id="@+id/textView13"
-                android:layout_marginBottom="4dp" />
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="12dp" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -90,20 +91,14 @@
 
             </RelativeLayout>
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_gravity="center_horizontal"
-                android:background="@color/divider"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"></FrameLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:id="@+id/syncedLayout"
-                android:visibility="gone">
+                >
 
                 <TextView
                     android:text="My Wallet"
@@ -113,35 +108,38 @@
                     android:paddingLeft="@dimen/activity_horizontal_margin"
                     android:paddingRight="@dimen/activity_horizontal_margin"
                     android:id="@+id/textView14"
-                    android:layout_marginBottom="4dp" />
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="12dp"
 
-                <LinearLayout
-                    android:orientation="horizontal"
+                    />
+
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:id="@+id/btcQR"
-                        android:text="@string/qr_icon"
-                        android:textSize="34sp"
-                        android:layout_marginRight="20dp"
-                        android:gravity="center" />
+                    android:layout_height="wrap_content"
+                    >
 
                     <it.eternitywall.eternitywall.components.CurrencyView
                         android:id="@+id/btcBalance"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         blrfl:textSizeSp="34"
                         blrfl:type="mBTC"
                         blrfl:units="0"
                         android:layout_centerHorizontal="true"
-                        android:layout_weight="1"
-                        android:gravity="center" />
-                </LinearLayout>
-
+                        android:layout_centerVertical="true"
+                         />
+                    <TextView
+                        android:id="@+id/btcQR"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="@string/qr_icon"
+                        android:textSize="34sp"
+                        android:layout_toLeftOf="@id/btcBalance"
+                        android:layout_marginRight="20dp"
+                        android:layout_centerVertical="true"
+                        />
+                </RelativeLayout>
 
                 <TextView
                     android:id="@+id/currentAddress"
@@ -149,6 +147,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:textSize="14sp"
+                    android:layout_marginTop="6dp"
                     android:textIsSelectable="true"
                     android:visibility="visible" />
 
@@ -161,6 +160,7 @@
                     android:textColor="@color/secondaryText"
                     android:layout_below="@id/btcBalance"
                     android:visibility="gone"
+                    android:layout_marginTop="10dp"
                     android:gravity="center" />
                 <TextView
                     android:id="@+id/messagePending"
@@ -173,6 +173,7 @@
                     android:gravity="center" />
 
                 <TextView
+                    android:id="@+id/wallet_warning"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="12sp"
@@ -251,13 +252,7 @@
 
             </LinearLayout>
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_gravity="center_horizontal"
-                android:background="@color/divider"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:layout_marginBottom="@dimen/activity_vertical_margin" />
+
 
             <TextView
                 android:text="My Messages"
@@ -267,13 +262,14 @@
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:id="@+id/textView16"
-                android:layout_marginBottom="4dp" />
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="12dp" />
 
             <TextView
                 android:id="@+id/txtHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="8dp"
+
                 android:paddingBottom="12dp"
                 android:gravity="center"
                 android:textSize="18sp"

@@ -27,8 +27,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -81,6 +79,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
     private TextView messagePending;
     private TextView btcQR;
     private TextView txtHeader;
+    private TextView walletWarning;
     private ImageView currentQrCode;
     private ImageView identicon;
     private CurrencyView btcBalance;
@@ -195,17 +194,23 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                         final Coin walletUnconfirmedBalance = walletObservable.getWalletUnconfirmedBalance();
                         long value1 = walletBalance.getValue();
                         long value2 = walletUnconfirmedBalance.getValue();
-                        long value = Math.max(value1, value2) ;  //Optimistic view
+                        long value = Math.max(value1, value2);  //Optimistic view
                         final String units = String.valueOf(value);
                         final Bitmap QrCodeBitmap = walletObservable.getCurrentQrCode();
                         final Bitmap IdenticonBitmap = walletObservable.getCurrentIdenticon();
                         final String aliasName = walletObservable.getAliasName();
                         final String unconfirmedAliasName = walletObservable.getUnconfirmedAliasName();
 
+                        if (value > 0) {
+                            walletWarning.setVisibility(View.GONE);
+                        } else {
+                            walletWarning.setVisibility(View.VISIBLE);
+                        }
+
                         syncedLayout.setVisibility(View.VISIBLE);
                         syncingLayout.setVisibility(View.GONE);
                         Address current = walletObservable.getCurrent();
-                        currentAddressText.setText(current!=null ? current.toString() : "");
+                        currentAddressText.setText(current != null ? current.toString() : "");
                         btcBalance.setUnits(units);
                         btcBalance.refreshUI();
                         if (QrCodeBitmap != null)
@@ -213,11 +218,11 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                         if (IdenticonBitmap != null)
                             identicon.setImageBitmap(IdenticonBitmap);
 
-                        if(aliasName==null && unconfirmedAliasName==null) {  //Alias still to be defined
+                        if (aliasName == null && unconfirmedAliasName == null) {  //Alias still to be defined
                             setAliasButton.setVisibility(View.VISIBLE);
                             aliasNameText.setVisibility(View.GONE);
                             aliasNameUnconfirmed.setVisibility(View.GONE);
-                        } else if(aliasName==null) {                      // unconfirmed alias defined!
+                        } else if (aliasName == null) {                      // unconfirmed alias defined!
                             setAliasButton.setVisibility(View.GONE);
                             aliasNameText.setVisibility(View.VISIBLE);
                             aliasNameUnconfirmed.setVisibility(View.VISIBLE);
@@ -229,16 +234,16 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                             aliasNameText.setText(aliasName);
                         }
 
-                        if(value1!=value2) {
+                        if (value1 != value2) {
                             btcBalanceUnconfirmed.setVisibility(View.VISIBLE);
                         } else {
                             btcBalanceUnconfirmed.setVisibility(View.GONE);
                         }
                         payButton.setVisibility(View.VISIBLE);
 
-                        if(walletObservable.getMessagePending()>0) {
+                        if (walletObservable.getMessagePending() > 0) {
                             messagePending.setVisibility(View.VISIBLE);
-                            messagePending.setText( walletObservable.getMessagePending() + " message" + (walletObservable.getMessagePending()>1 ? "s" : "") + " pending" );
+                            messagePending.setText(walletObservable.getMessagePending() + " message" + (walletObservable.getMessagePending() > 1 ? "s" : "") + " pending");
                         } else {
                             messagePending.setVisibility(View.GONE);
                         }
@@ -249,7 +254,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                         loadMoreData();
 
                     } else if (walletObservable.getState() == WalletObservable.State.SYNCING) {
-                        if (activity!=null && activity.isFinishing())
+                        if (activity != null && activity.isFinishing())
                             return;
                         syncedLayout.setVisibility(View.GONE);
                         syncingLayout.setVisibility(View.VISIBLE);
@@ -260,12 +265,12 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                         payButton.setVisibility(View.GONE);
                         FragmentTransaction transaction = getFragmentManager().beginTransaction();
                         final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                        String passphrase=sharedPref.getString(Preferences.PASSPHRASE,null);
-                        if (passphrase==null) {
+                        String passphrase = sharedPref.getString(Preferences.PASSPHRASE, null);
+                        if (passphrase == null) {
                             transaction.replace(R.id.root_frame, new HelloFragment());
                             transaction.commitAllowingStateLoss();
                             getFragmentManager().executePendingTransactions();
-                        }else {
+                        } else {
                             ;//nothing = transaction.replace(R.id.root_frame, new WalletFragment());
                         }
                     }
@@ -298,6 +303,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
         btcQR                 = (TextView) view.findViewById(R.id.btcQR);
         txtHeader             = (TextView) view.findViewById(R.id.txtHeader);
         lstMessages           = (LinearLayout) view.findViewById(R.id.lstMessages);
+        walletWarning         = (TextView) view.findViewById(R.id.wallet_warning);
 
 
         Typeface font = Typeface.createFromAsset(getResources().getAssets(), "fontawesome-webfont.ttf");
@@ -531,8 +537,8 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                     if(isAdded()) {
                         if (statusMessage != null)
                             Toast.makeText(getActivity(), statusMessage, Toast.LENGTH_SHORT).show();
-                        else
-                            Toast.makeText(getActivity(), getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
+                        //else
+                        //    Toast.makeText(getActivity(), getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
