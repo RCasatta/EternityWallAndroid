@@ -3,6 +3,7 @@ package it.eternitywall.eternitywall.activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -38,6 +39,7 @@ public class PreferencesActivity extends AppCompatActivity {
 
         View llResync = findViewById(R.id.llResync);
         View llAbout = findViewById(R.id.llAbout);
+        View llOrbot = findViewById(R.id.llOrbot);
         View llRemove = findViewById(R.id.llRemove);
         View llPassphrase = findViewById(R.id.llPassphrase);
         View llEmpty = findViewById(R.id.llEmpty);
@@ -80,6 +82,15 @@ public class PreferencesActivity extends AppCompatActivity {
             }
         });
 
+        llOrbot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "https://www.torproject.org/docs/android.html.en";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+            }
+        });
 
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(PreferencesActivity.this);
