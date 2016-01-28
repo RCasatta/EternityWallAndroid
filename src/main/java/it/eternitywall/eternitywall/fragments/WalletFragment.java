@@ -189,6 +189,11 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                 @Override
                 public void run() {
                     Log.i(TAG, android.os.Process.myTid() + " TID UI : Refreshing wallet fragment " + walletObservable);
+                    
+                    final Bitmap IdenticonBitmap = walletObservable.getCurrentIdenticon();
+                    if (IdenticonBitmap != null)
+                        identicon.setImageBitmap(IdenticonBitmap);
+
                     if (walletObservable.isSyncedOrPending()) {
                         final Coin walletBalance = walletObservable.getWalletBalance();
                         final Coin walletUnconfirmedBalance = walletObservable.getWalletUnconfirmedBalance();
@@ -197,7 +202,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                         long value = Math.max(value1, value2);  //Optimistic view
                         final String units = String.valueOf(value);
                         final Bitmap QrCodeBitmap = walletObservable.getCurrentQrCode();
-                        final Bitmap IdenticonBitmap = walletObservable.getCurrentIdenticon();
+
                         final String aliasName = walletObservable.getAliasName();
                         final String unconfirmedAliasName = walletObservable.getUnconfirmedAliasName();
 
@@ -215,8 +220,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                         btcBalance.refreshUI();
                         if (QrCodeBitmap != null)
                             currentQrCode.setImageBitmap(QrCodeBitmap);
-                        if (IdenticonBitmap != null)
-                            identicon.setImageBitmap(IdenticonBitmap);
+
 
                         if (aliasName == null && unconfirmedAliasName == null) {  //Alias still to be defined
                             setAliasButton.setVisibility(View.VISIBLE);
@@ -495,7 +499,8 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                 else
                     txtHeader.setVisibility(View.GONE);
 
-                if(ok) {
+                if(ok && getActivity()!=null) {
+                    Log.i(TAG, "1 getActivity=" +getActivity());
                     MessageListAdapter messageListAdapter = new MessageListAdapter(getActivity(), R.layout.item_message, messages, inQueue, WalletFragment.this);
                     for (int i=0;i<mMessages.size();i++) {
                         messageListAdapter.add(mMessages.get(i));

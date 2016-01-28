@@ -226,6 +226,7 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
                         }
                     }
                     else {
+                        Log.i(TAG, "4 getActivity=" + getActivity());
                         MessageListAdapter messageListAdapter = new MessageListAdapter(getActivity(), R.layout.item_message, messages, inQueue, ListFragment.this);
                         lstMessages.setAdapter(messageListAdapter);
                         for (int i=0;i<mMessages.size();i++) {

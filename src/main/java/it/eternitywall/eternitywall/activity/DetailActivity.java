@@ -292,6 +292,7 @@ public class DetailActivity extends ActionBarActivity {
                         messageListAdapter.notifyDataSetChanged();
                     } else {
                         replies.addAll(mReplies);
+                        Log.i(TAG, "2 DetailActivity=" + DetailActivity.this);
                         repliesMessages.setAdapter(new MessageListAdapter(DetailActivity.this, R.layout.item_message, mReplies, 0, null));
                     }
                     if (answers != null && !answers.isEmpty()) {
@@ -300,6 +301,7 @@ public class DetailActivity extends ActionBarActivity {
                         messageListAdapter.notifyDataSetChanged();
                     } else {
                         answers.addAll(mAnswers);
+                        Log.i(TAG, "3 DetailActivity=" + DetailActivity.this);
                         answersMessages.setAdapter(new MessageListAdapter(DetailActivity.this, R.layout.item_message, mAnswers, 0, null));
                     }
                 } else {
