@@ -491,6 +491,9 @@ public class EWWalletService extends Service implements Runnable {
             downloadListener = new MyDownloadListener(walletObservable);
             peerGroup.startAsync();
             walletObservable.setState(WalletObservable.State.SYNCING);
+            String aliasNamePref = sharedPref.getString(Preferences.ALIAS_NAME, null);
+            if(aliasNamePref!=null)
+                walletObservable.setAliasName(aliasNamePref);
             walletObservable.notifyObservers();
 
             Log.i(TAG, "starting download");
@@ -582,7 +585,11 @@ public class EWWalletService extends Service implements Runnable {
                 }
             }
 
-            checkAlias(tx,walletObservable);
+            String aliasName = checkAlias(tx,walletObservable);
+            if(aliasName!=null) {
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+                sharedPref.edit().putString(Preferences.ALIAS_NAME,aliasName);
+            }
         }
 
         nextMessageId=0;
@@ -622,7 +629,7 @@ public class EWWalletService extends Service implements Runnable {
     }
 
     private static String EWA_PREFIX = "455741";
-    public static void checkAlias(Transaction tx, WalletObservable walletObservable) {
+    public static String checkAlias(Transaction tx, WalletObservable walletObservable) {
 
         final List<TransactionOutput> outputs = tx.getOutputs();
         for (TransactionOutput to : outputs) {
@@ -660,12 +667,14 @@ public class EWWalletService extends Service implements Runnable {
                                 Log.i(TAG, "alias tx is confirmed!");
                             }
                             walletObservable.notifyObservers();
+                            return aliasName;
                         }
                     }
 
                 }
             }
         }
+        return null;
     }
 
     public BlockStore getBlockStore() {
