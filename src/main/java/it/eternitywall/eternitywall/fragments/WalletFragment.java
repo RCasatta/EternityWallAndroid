@@ -490,7 +490,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                 super.onPostExecute(o);
 
                 if (messages.size()==0 && mMessages.size()==0)
-                    txtHeader.setVisibility(View.VISIBLE);
+                    txtHeader.setVisibility(View.GONE);  //TODO PUT INVISIBLE UNTIL READY
                 else
                     txtHeader.setVisibility(View.GONE);
 

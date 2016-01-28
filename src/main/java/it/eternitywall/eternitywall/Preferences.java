@@ -11,6 +11,7 @@ public class Preferences {
     public static final String EMAIL      = "email";
     public static final String CHK_ONE    = "ckone";
     public static final String CHK_TWO    = "cktwo";
-    public static final String TO_NOTIFY  = "tonotify";
     public static final String DONATION   = "donation";
+    public static final String TO_NOTIFY  = "tonotify";
+    public static final String ALIAS_NAME = "aliasname";
 }
