@@ -61,8 +61,10 @@ public class MyBlockchainListener implements BlockChainListener {
                 walletObservable.setState(WalletObservable.State.SYNCED);
                 walletObservable.notifyObservers();
             }
-            ewWalletService.refreshNextsAndAlias();
-            Log.i(TAG, "" + walletObservable );
+
+            if(walletObservable.isPending())
+                ewWalletService.refreshNextsAndAlias();
+            //Log.i(TAG, "" + walletObservable );
         }
 
     }
@@ -108,6 +110,10 @@ public class MyBlockchainListener implements BlockChainListener {
         Log.i(TAG, "receiveFromBlock " + tx.getHashAsString() + " in block " + block);
         WalletObservable walletObservable = ewApplication.getWalletObservable();
         String aliasName = EWWalletService.checkAlias(tx, walletObservable);
+        EWWalletService ewWalletService = ewApplication.getEwWalletService();
+        if(ewWalletService!=null) {
+            ewWalletService.refreshNextsAndAlias();
+        }
         if(aliasName!=null) {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(ewApplication);
             sharedPref.edit().putString(Preferences.ALIAS_NAME,aliasName);
