@@ -102,8 +102,8 @@
     <string name="syncing_warning">The first time usually requires three minutes, depending on your connection and network state. Afterwards it\'s faster but it depends how frequent the app sync. In case of problems, try resync from the preferences.</string>
     <string name="long_tap_to_delete">long tap to delete</string>
     <string name="btn_change">CHANGE</string>
-    <string name="tor_title">Tor - Privacy</string>
-    <string name="tor_descript">Install Orbot to protect your IP</string>
+    <string name="tor_title">Privacy</string>
+    <string name="tor_descript">Use the Tor network with Orbot to protect your privacy and hide your IP address</string>
 
 
     <string name="qr_icon">&#xf029;</string>

@@ -84,6 +84,7 @@
                     android:textColor="@color/whiteText"
                     android:layout_toRightOf="@id/identicon"
                     android:layout_centerVertical="true"
+                    android:visibility="invisible"
 
 
                     android:gravity="center" />

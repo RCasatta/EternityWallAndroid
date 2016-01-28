@@ -258,6 +258,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                             return;
                         syncedLayout.setVisibility(View.GONE);
                         syncingLayout.setVisibility(View.VISIBLE);
+                        setAliasButton.setVisibility(View.INVISIBLE);
                         payButton.setVisibility(View.GONE);
                         if (walletObservable.getPercSync() != null)
                             syncingText.setText(String.format("Syncing (%d%%)", walletObservable.getPercSync()));
