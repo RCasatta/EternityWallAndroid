@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,6 +72,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
 
     private LinearLayout syncingLayout;
     private LinearLayout syncedLayout;
+    private LinearLayout linearLayout;
     private TextView syncingText;
     private TextView currentAddressText;
     private TextView aliasNameText;
@@ -85,9 +87,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
     private CurrencyView btcBalance;
     private Button setAliasButton;
     private android.support.design.widget.FloatingActionButton payButton;
-
-
-    private LinearLayout lstMessages;
+    private ListView myMessageList;
     private List<Message> messages;
     private Integer inQueue;
 
@@ -295,6 +295,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
 
         syncingLayout         = (LinearLayout) view.findViewById(R.id.syncingLayout);
         syncedLayout          = (LinearLayout) view.findViewById(R.id.syncedLayout);
+        linearLayout          = (LinearLayout) view.findViewById(R.id.linearLayout);
         syncingText           = (TextView) view.findViewById(R.id.syncingText);
         aliasNameText         = (TextView) view.findViewById(R.id.aliasName);
         aliasNameUnconfirmed  = (TextView) view.findViewById(R.id.aliasNameUnconfirmed);
@@ -307,7 +308,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
         messagePending        = (TextView) view.findViewById(R.id.messagePending);
         btcQR                 = (TextView) view.findViewById(R.id.btcQR);
         txtHeader             = (TextView) view.findViewById(R.id.txtHeader);
-        lstMessages           = (LinearLayout) view.findViewById(R.id.lstMessages);
+        myMessageList         = (ListView) view.findViewById(R.id.myMessageList);
         walletWarning         = (TextView) view.findViewById(R.id.wallet_warning);
 
 
@@ -410,6 +411,16 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
         inQueue = null;
         loadMoreData();
 
+        linearLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                final int translationY = linearLayout.getHeight() - 56;  //56 is toolbar height
+                Log.i(TAG,"translationY=" + translationY);
+                myMessageList.setTranslationY(translationY);
+
+            }
+        });
+
         return view;
     }
 
@@ -494,22 +505,27 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                     return;
                 super.onPostExecute(o);
 
-                if (messages.size()==0 && mMessages.size()==0)
-                    txtHeader.setVisibility(View.GONE);  //TODO PUT INVISIBLE UNTIL READY
-                else
+                if (messages.size()==0 && mMessages.size()==0) {
                     txtHeader.setVisibility(View.GONE);
+                    myMessageList.setVisibility(View.GONE);
+                }
+                else {
+                    txtHeader.setVisibility(View.VISIBLE);
+                    myMessageList.setVisibility(View.VISIBLE);
+                }
 
                 if(ok && getActivity()!=null) {
                     Log.i(TAG, "1 getActivity=" +getActivity());
                     MessageListAdapter messageListAdapter = new MessageListAdapter(getActivity(), R.layout.item_message, messages, inQueue, WalletFragment.this);
+                    myMessageList.setAdapter(messageListAdapter);
+
+                    Log.i(TAG,"total messages= "+ mMessages.size());
                     for (int i=0;i<mMessages.size();i++) {
                         messageListAdapter.add(mMessages.get(i));
-                        messageListAdapter.notifyDataSetChanged();
                     }
-                    for (int i = 0; i < messageListAdapter.getCount(); i++) {
-                        View view = messageListAdapter.getView(i, null, lstMessages);
-                        lstMessages.addView(view);
-                    }
+                    messageListAdapter.notifyDataSetChanged();
+
+
 
                     /*
                     if(messages != null && !messages.isEmpty() && lstMessages!=null ) {
@@ -558,7 +574,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                 }
 
 
-                String address=walletObservable.getCurrent().toString();
+                String address=walletObservable.getAlias().toString();
                 //String address="19U9MAyuyrZcMZxP24zXzTYevAAUKvgp3o";
                 Optional<String> json=null;
                 json = Http.get("http://eternitywall.it/from/"+address+"?format=json");
@@ -569,6 +585,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                 */
 
                 if(json!=null && json.isPresent()) {
+                    Log.i(TAG,"value present!");
                     try {
                         String jstring = json.get();
                         JSONObject jo = new JSONObject(jstring);
@@ -606,6 +623,8 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                     catch (Exception ex) {
                         ex.printStackTrace();
                     }
+                } else {
+                    Log.i(TAG,"value not present!");
                 }
                 return null;
             }
