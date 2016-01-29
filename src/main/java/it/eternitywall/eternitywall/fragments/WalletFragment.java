@@ -20,6 +20,8 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +29,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +40,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
@@ -52,7 +54,9 @@ import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.activity.WriteActivity;
 import it.eternitywall.eternitywall.adapters.MessageListAdapter;
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
+import it.eternitywall.eternitywall.components.Cheeses;
 import it.eternitywall.eternitywall.components.CurrencyView;
+import it.eternitywall.eternitywall.components.SimpleStringRecyclerViewAdapter;
 import it.eternitywall.eternitywall.dialogfragments.PersonalNodeDialogFragment;
 import it.eternitywall.eternitywall.dialogfragments.QRDialogFragment;
 import it.eternitywall.eternitywall.dialogfragments.RegAliasDialogFragment;
@@ -87,9 +91,10 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
     private CurrencyView btcBalance;
     private Button setAliasButton;
     private android.support.design.widget.FloatingActionButton payButton;
-    private ListView myMessageList;
+    //private ListView myMessageList;
     private List<Message> messages;
     private Integer inQueue;
+    private RecyclerView recyclerView;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -308,7 +313,8 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
         messagePending        = (TextView) view.findViewById(R.id.messagePending);
         btcQR                 = (TextView) view.findViewById(R.id.btcQR);
         txtHeader             = (TextView) view.findViewById(R.id.txtHeader);
-        myMessageList         = (ListView) view.findViewById(R.id.myMessageList);
+        //myMessageList       = (ListView) view.findViewById(R.id.myMessageList);
+        recyclerView          = (RecyclerView) view.findViewById(R.id.recyclerview);
         walletWarning         = (TextView) view.findViewById(R.id.wallet_warning);
 
 
@@ -411,12 +417,16 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
         inQueue = null;
         loadMoreData();
 
+
+
         linearLayout.post(new Runnable() {
             @Override
             public void run() {
-                final int translationY = linearLayout.getHeight() - 56;  //56 is toolbar height
-                Log.i(TAG,"translationY=" + translationY);
-                myMessageList.setTranslationY(translationY);
+                final int translationY = linearLayout.getHeight();
+                Log.i(TAG, "translationY=" + translationY);
+                //myMessageList.setTranslationY(translationY);
+                recyclerView.setTranslationY(translationY);
+
 
             }
         });
@@ -507,17 +517,21 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
 
                 if (messages.size()==0 && mMessages.size()==0) {
                     txtHeader.setVisibility(View.GONE);
-                    myMessageList.setVisibility(View.GONE);
+                    //myMessageList.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.GONE);
                 }
                 else {
                     txtHeader.setVisibility(View.VISIBLE);
-                    myMessageList.setVisibility(View.VISIBLE);
+                   // myMessageList.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.VISIBLE);
                 }
 
                 if(ok && getActivity()!=null) {
                     Log.i(TAG, "1 getActivity=" +getActivity());
                     MessageListAdapter messageListAdapter = new MessageListAdapter(getActivity(), R.layout.item_message, messages, inQueue, WalletFragment.this);
-                    myMessageList.setAdapter(messageListAdapter);
+                    //myMessageList.setAdapter(messageListAdapter);
+                    recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(Arrays.asList(Cheeses.sCheeseStrings)));
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
                     Log.i(TAG,"total messages= "+ mMessages.size());
                     for (int i=0;i<mMessages.size();i++) {
