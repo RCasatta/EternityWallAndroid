@@ -53,6 +53,7 @@ import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.activity.WriteActivity;
 import it.eternitywall.eternitywall.adapters.MessageListAdapter;
+import it.eternitywall.eternitywall.adapters.MessageRecyclerViewAdapter;
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 import it.eternitywall.eternitywall.components.Cheeses;
 import it.eternitywall.eternitywall.components.CurrencyView;
@@ -95,6 +96,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
     private List<Message> messages;
     private Integer inQueue;
     private RecyclerView recyclerView;
+    private MessageRecyclerViewAdapter messageRecyclerViewAdapter;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -412,10 +414,31 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
             });
         }
 
+
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                LinearLayoutManager manager = ((LinearLayoutManager) recyclerView.getLayoutManager());
+                if (manager.findLastVisibleItemPosition() == messages.size() - 1)
+                    loadMoreData();
+            }
+        });
+        LinearLayoutManager layoutManager = new LinearLayoutManager( getActivity().getApplicationContext() );
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+
+
         // Load my messages
         messages = new ArrayList<Message>();
         inQueue = null;
+
+        // Set Message RecyclerView Adapter
+        messageRecyclerViewAdapter = new MessageRecyclerViewAdapter(messages);
+        recyclerView.setAdapter(messageRecyclerViewAdapter);
+
+        // load messages on Swipe
         loadMoreData();
+
 
         return view;
     }
@@ -516,7 +539,16 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                 }
 
                 if(ok && getActivity()!=null) {
-                    Log.i(TAG, "1 getActivity=" +getActivity());
+
+                    if(messages == null){
+                        messages=new ArrayList<Message>();
+                    }else if(messages.size()==0) {
+                        messageRecyclerViewAdapter.clear();
+                    }
+                    messages.addAll(mMessages);
+                    messageRecyclerViewAdapter.addAll(mMessages);
+
+                    /*Log.i(TAG, "1 getActivity=" +getActivity());
                     MessageListAdapter messageListAdapter = new MessageListAdapter(getActivity(), R.layout.item_message, messages, inQueue, WalletFragment.this);
                     //myMessageList.setAdapter(messageListAdapter);
                     recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(Arrays.asList(Cheeses.sCheeseStrings)));
@@ -527,7 +559,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                         messageListAdapter.add(mMessages.get(i));
                     }
                     messageListAdapter.notifyDataSetChanged();
-
+*/
 
 
                     /*
