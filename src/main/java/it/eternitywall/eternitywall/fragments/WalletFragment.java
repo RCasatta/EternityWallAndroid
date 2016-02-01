@@ -417,20 +417,6 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
         inQueue = null;
         loadMoreData();
 
-
-
-        linearLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                final int translationY = linearLayout.getHeight();
-                Log.i(TAG, "translationY=" + translationY);
-                //myMessageList.setTranslationY(translationY);
-                recyclerView.setTranslationY(translationY);
-
-
-            }
-        });
-
         return view;
     }
 
@@ -515,12 +501,15 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                     return;
                 super.onPostExecute(o);
 
+
                 if (messages.size()==0 && mMessages.size()==0) {
+                    Log.i(TAG,"no messages");
                     txtHeader.setVisibility(View.GONE);
                     //myMessageList.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.GONE);
                 }
                 else {
+                    Log.i(TAG,"there are messages messages");
                     txtHeader.setVisibility(View.VISIBLE);
                    // myMessageList.setVisibility(View.VISIBLE);
                     recyclerView.setVisibility(View.VISIBLE);
