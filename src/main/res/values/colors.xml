@@ -40,7 +40,7 @@
     <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
     <color name="red">#FF0000</color>
-
+    <color name="alphaAccent">#b3FF9800</color>
 
     <color name="alphaText">#b3ffffff</color>
     <color name="alpha">#00ffffff</color>
