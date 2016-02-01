@@ -561,9 +561,9 @@ public class EWWalletService extends Service implements Runnable {
 
     public synchronized void refreshNextsAndAlias() {
         List<Transaction> allTx = wallet.getTransactionsByTime();
-        Log.i(TAG, "allTx.size()=" + allTx.size());
+        Log.i(TAG, "refreshNextsAndAlias allTx.size()=" + allTx.size());
         for (Transaction tx : allTx) {
-            Log.i(TAG,"tx=" + tx);
+            //Log.i(TAG,"tx=" + tx);
             final List<TransactionInput> inputs = tx.getInputs();
             for (TransactionInput input : inputs) {
                 try {

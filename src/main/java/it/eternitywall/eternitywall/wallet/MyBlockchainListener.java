@@ -62,8 +62,8 @@ public class MyBlockchainListener implements BlockChainListener {
                 walletObservable.notifyObservers();
             }
 
-            if(walletObservable.isPending())
-                ewWalletService.refreshNextsAndAlias();
+            //if(walletObservable.isPending())
+            ewWalletService.refreshNextsAndAlias();
             //Log.i(TAG, "" + walletObservable );
         }
 

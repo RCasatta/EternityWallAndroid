@@ -23,7 +23,10 @@
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:elevation="0dp"
+        >
 
         <LinearLayout
             android:id="@+id/linearLayout"
@@ -33,7 +36,6 @@
             android:paddingRight="16dp"
             android:paddingLeft="16dp"
             android:visibility="visible"
-            android:background="@color/alphaText"
             app:layout_scrollFlags="scroll|enterAlways"
         >
 
@@ -282,7 +284,6 @@
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/alphaAccent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
 
 
