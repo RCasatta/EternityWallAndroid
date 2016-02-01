@@ -122,16 +122,15 @@ public class WriteActivity extends ActionBarActivity {
         final WalletObservable walletObservable = ((EWApplication) getApplication()).getWalletObservable();
         if(walletObservable!=null) {
             aliasName = walletObservable.getAliasName();
-            if(aliasName!=null) {
-                List<String> list = new ArrayList<>();
+            List<String> list = new ArrayList<>();
+            if (aliasName != null) {
                 list.add(aliasName);
-                list.add(ANONYMOUS);
-                ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
-                        android.R.layout.simple_spinner_item, list);
-                dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                spnrSender.setAdapter(dataAdapter);
-                lytSender.setVisibility(View.VISIBLE);
             }
+            list.add(ANONYMOUS);
+            ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_spinner_item, list);
+            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spnrSender.setAdapter(dataAdapter);
         }
 
         txtMessage.addTextChangedListener(new TextWatcher() {
