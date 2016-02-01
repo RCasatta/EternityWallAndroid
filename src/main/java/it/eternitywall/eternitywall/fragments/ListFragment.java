@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,6 +34,8 @@ import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.activity.WriteActivity;
 import it.eternitywall.eternitywall.adapters.MessageListAdapter;
+import it.eternitywall.eternitywall.adapters.MessageRecyclerViewAdapter;
+import it.eternitywall.eternitywall.components.EnglishNumberToWords;
 
 
 /**
@@ -87,12 +91,14 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
     }
 
 
-    private ListView lstMessages;
+    private RecyclerView lstMessages;
     private ProgressBar progress;
     private SwipeRefreshLayout swipe;
     private SearchView searchView;
     private MenuItem searchMenuItem;
     private TextView txtHeader;
+    private MessageRecyclerViewAdapter messageRecyclerViewAdapter;
+    private TextView headerText;
 
     private String search;
     private String sortby;
@@ -127,10 +133,22 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
         View v= inflater.inflate(R.layout.fragment_list, container, false);
 
         // Set Fragment Views
-        lstMessages = (ListView) v.findViewById(R.id.lstMessages);
+        lstMessages = (RecyclerView) v.findViewById(R.id.lstMessages);
+        headerText = (TextView) v.findViewById(R.id.headerText);
         progress = (ProgressBar) v.findViewById(R.id.progress);
         swipe = (SwipeRefreshLayout) v.findViewById(R.id.activity_main_swipe_refresh_layout);
         txtHeader = (TextView)v.findViewById(R.id.txtHeader);
+        lstMessages.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                LinearLayoutManager manager = ((LinearLayoutManager) recyclerView.getLayoutManager());
+                if (manager.findLastVisibleItemPosition() == messages.size() - 1)
+                    loadMoreData();
+            }
+        });
+        LinearLayoutManager layoutManager = new LinearLayoutManager( getActivity().getApplicationContext() );
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        lstMessages.setLayoutManager(layoutManager);
 
         // Set empty variables and messages
         messages = new ArrayList<Message>();
@@ -138,6 +156,10 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
         search = null;
         sortby = null;
         inQueue = null;
+
+        // Set Message RecyclerView Adapter
+        messageRecyclerViewAdapter = new MessageRecyclerViewAdapter(messages);
+        lstMessages.setAdapter( messageRecyclerViewAdapter );
 
         // load messages on Swipe
         loadMoreData();
@@ -153,26 +175,9 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
                 inQueue = null;
                 loadMoreData();
             }
-
-
         });
 
         // Show / Hide write button
-        /*SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String passphrase=sharedPref.getString(Preferences.PASSPHRASE, null);
-        if (passphrase==null){
-            // Show write button on activity if there is one account
-            v.findViewById(R.id.payButton).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(getActivity(), WriteActivity.class);
-                    startActivity(i);
-                }
-            });
-        } else {
-            // Hide write button on activity if there is no account
-            v.findViewById(R.id.payButton).setVisibility(View.GONE);
-        }*/
         v.findViewById(R.id.payButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -212,29 +217,24 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
                 progress.setVisibility(View.INVISIBLE);
                 swipe.setRefreshing(false);
 
-                if (messages.size()==0 && mMessages.size()==0)
+                if (messages.size()==0 && mMessages.size()==0) {
+                    txtHeader.setText(getResources().getString(R.string.no_msg_found));
                     txtHeader.setVisibility(View.VISIBLE);
-                else
+                }else if (inQueue>0){
+                    txtHeader.setText(EnglishNumberToWords.convert(inQueue) + " message" + (inQueue > 1 ? "s" : "") + " in queue…");
+                    txtHeader.setVisibility(View.VISIBLE);
+                }else{
                     txtHeader.setVisibility(View.GONE);
+                }
 
                 if(ok) {
-                    if(messages != null && !messages.isEmpty() && lstMessages!=null ) {
-                        MessageListAdapter messageListAdapter = (MessageListAdapter) lstMessages.getAdapter();  //TODO Franco exception here. added lstMessages!=null HACK!
-                        for (int i=0;i<mMessages.size();i++) {
-                            messageListAdapter.add(mMessages.get(i));
-                            messageListAdapter.notifyDataSetChanged();
-                        }
+                    if(messages == null){
+                        messages=new ArrayList<Message>();
+                    }else if(messages.size()==0) {
+                        messageRecyclerViewAdapter.clear();
                     }
-                    else {
-                        Log.i(TAG, "4 getActivity=" + getActivity());
-                        MessageListAdapter messageListAdapter = new MessageListAdapter(getActivity(), R.layout.item_message, messages, inQueue, ListFragment.this);
-                        lstMessages.setAdapter(messageListAdapter);
-                        for (int i=0;i<mMessages.size();i++) {
-                            messageListAdapter.add(mMessages.get(i));
-                            messageListAdapter.notifyDataSetChanged();
-                        }
-
-                    }
+                    messages.addAll(mMessages);
+                    messageRecyclerViewAdapter.addAll(mMessages);
                 }
                 else {
                     //succhia!
