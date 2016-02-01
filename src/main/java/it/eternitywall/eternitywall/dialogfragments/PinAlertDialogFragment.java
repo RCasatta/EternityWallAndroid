@@ -74,8 +74,22 @@ public class PinAlertDialogFragment extends DialogFragment {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do something
-                        if (mRunnable!=null)
-                            mRunnable.run();
+                        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                        String pin = sharedPref.getString(Preferences.PIN,null);
+                        if (pin!=null && getPin().equals(pin)){
+                            // SHOW
+                                if (mRunnable!=null)
+                                    mRunnable.run();
+                        }else {
+                            new AlertDialog.Builder(getActivity())
+                                    .setTitle("Attention")
+                                    .setMessage("Invalid PIN. Retry...")
+                                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // do nothing
+                                        }
+                                    }).show();
+                        }
                     }
                 })
                 // Negative Button

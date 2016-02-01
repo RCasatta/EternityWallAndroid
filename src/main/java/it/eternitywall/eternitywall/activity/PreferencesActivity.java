@@ -157,7 +157,7 @@ public class PreferencesActivity extends AppCompatActivity {
 
     private boolean existAccount(){
         final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(PreferencesActivity.this);
-        String passphrase = sharedPref.getString(Preferences.PASSPHRASE,null);
+        String passphrase = sharedPref.getString(Preferences.PASSPHRASE, null);
         if(passphrase!=null) {
             return true;
         }else
@@ -179,29 +179,16 @@ public class PreferencesActivity extends AppCompatActivity {
             @Override
             public void run() {
                 final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(PreferencesActivity.this);
-                String pin = sharedPref.getString(Preferences.PIN,null);
-
-                if (pin!=null && pinAlertDialogFragment.getPin().equals(pin)){
-                    String passphrase = sharedPref.getString(Preferences.PASSPHRASE, null);
-                    if (passphrase != null) {
-                        // SHOW
-                        TextView txtPassphrase = (TextView) findViewById(R.id.txtPassphrase);
-                        txtPassphrase.setText(passphrase);
-                        txtPassphrase.setTextColor(getResources().getColor(R.color.black));
-                    }
-                }else {
-                    new AlertDialog.Builder(PreferencesActivity.this)
-                            .setTitle("Attention")
-                            .setMessage("Invalid PIN. Retry...")
-                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    // do nothing
-                                }
-                            }).show();
+                String passphrase = sharedPref.getString(Preferences.PASSPHRASE, null);
+                if (passphrase != null) {
+                    // SHOW
+                    TextView txtPassphrase = (TextView) findViewById(R.id.txtPassphrase);
+                    txtPassphrase.setText(passphrase);
+                    txtPassphrase.setTextColor(getResources().getColor(R.color.black));
                 }
             }
         });
-        pinAlertDialogFragment.show(getSupportFragmentManager(),PinAlertDialogFragment.class.toString());
+        pinAlertDialogFragment.show(getSupportFragmentManager(), PinAlertDialogFragment.class.toString());
 
     }
 
@@ -231,30 +218,17 @@ public class PreferencesActivity extends AppCompatActivity {
             @Override
             public void run() {
                 final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(PreferencesActivity.this);
-                String pin = sharedPref.getString(Preferences.PIN,null);
-
-                if (pin!=null && pinAlertDialogFragment.getPin().equals(pin)){
-                    String passphrase = sharedPref.getString(Preferences.PASSPHRASE,null);
-                    if (passphrase!=null){
-                        // stop & remove
-                        EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
-                        ewWalletService.removePasshrase();
-                        ewWalletService.stopSync();
-                        Toast.makeText(PreferencesActivity.this,"Account removed!",Toast.LENGTH_LONG).show();
-                    }
-                }else {
-                    new AlertDialog.Builder(PreferencesActivity.this)
-                            .setTitle("Attention")
-                            .setMessage("Invalid PIN. Retry...")
-                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    // do nothing
-                                }
-                            }).show();
+                String passphrase = sharedPref.getString(Preferences.PASSPHRASE, null);
+                if (passphrase != null) {
+                    // stop & remove
+                    EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
+                    ewWalletService.removePasshrase();
+                    ewWalletService.stopSync();
+                    Toast.makeText(PreferencesActivity.this, "Account removed!", Toast.LENGTH_LONG).show();
                 }
             }
         });
-        pinAlertDialogFragment.show(getSupportFragmentManager(),PinAlertDialogFragment.class.toString());
+        pinAlertDialogFragment.show(getSupportFragmentManager(), PinAlertDialogFragment.class.toString());
     }
 
     private void dialogPin_emptyWallet(){
@@ -263,23 +237,10 @@ public class PreferencesActivity extends AppCompatActivity {
             @Override
             public void run() {
                 final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(PreferencesActivity.this);
-                String pin = sharedPref.getString(Preferences.PIN,null);
-
-                if (pin!=null && pinAlertDialogFragment.getPin().equals(pin)){
-                    String passphrase = sharedPref.getString(Preferences.PASSPHRASE,null);
-                    if (passphrase!=null){
-                        // stop & remove
-                        dialogEmptyWallet();
-                    }
-                }else {
-                    new AlertDialog.Builder(PreferencesActivity.this)
-                            .setTitle("Attention")
-                            .setMessage("Invalid PIN. Retry...")
-                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    // do nothing
-                                }
-                            }).show();
+                String passphrase = sharedPref.getString(Preferences.PASSPHRASE, null);
+                if (passphrase != null) {
+                    // stop & remove
+                    dialogEmptyWallet();
                 }
             }
         });

@@ -46,6 +46,7 @@ import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Http;
 import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
+import it.eternitywall.eternitywall.dialogfragments.PinAlertDialogFragment;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
 import it.eternitywall.eternitywall.wallet.WalletObservable;
 
@@ -188,7 +189,15 @@ public class WriteActivity extends ActionBarActivity {
                     if (ANONYMOUS.equals(spnrSender.getSelectedItem().toString())) {
                         sendAnonymous();
                     } else {
-                        sendFromWallet();
+                        // ask for pin
+                        final PinAlertDialogFragment pinAlertDialogFragment= PinAlertDialogFragment.newInstance(R.string.confirm_pin);
+                        pinAlertDialogFragment.setPositive(new Runnable() {
+                            @Override
+                            public void run() {
+                                sendFromWallet();
+                            }
+                        });
+                        pinAlertDialogFragment.show(getSupportFragmentManager(),PinAlertDialogFragment.class.toString());
                     }
                 }
 
