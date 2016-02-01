@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -152,10 +151,7 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
 
         // Set empty variables and messages
         messages = new ArrayList<Message>();
-        cursor = null;
-        search = null;
-        sortby = null;
-        inQueue = null;
+        clear();
 
         // Set Message RecyclerView Adapter
         messageRecyclerViewAdapter = new MessageRecyclerViewAdapter(messages);

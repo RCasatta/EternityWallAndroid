@@ -40,7 +40,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
@@ -55,9 +54,7 @@ import it.eternitywall.eternitywall.activity.WriteActivity;
 import it.eternitywall.eternitywall.adapters.MessageListAdapter;
 import it.eternitywall.eternitywall.adapters.MessageRecyclerViewAdapter;
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
-import it.eternitywall.eternitywall.components.Cheeses;
 import it.eternitywall.eternitywall.components.CurrencyView;
-import it.eternitywall.eternitywall.components.SimpleStringRecyclerViewAdapter;
 import it.eternitywall.eternitywall.dialogfragments.PersonalNodeDialogFragment;
 import it.eternitywall.eternitywall.dialogfragments.QRDialogFragment;
 import it.eternitywall.eternitywall.dialogfragments.RegAliasDialogFragment;
@@ -108,6 +105,8 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private String cursor;
+    private boolean end=false;
 
     public WalletFragment() {
         // Required empty public constructor
@@ -200,6 +199,9 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                     final Bitmap IdenticonBitmap = walletObservable.getCurrentIdenticon();
                     if (IdenticonBitmap != null)
                         identicon.setImageBitmap(IdenticonBitmap);
+                    final String aliasName1 = walletObservable.getAliasName();
+                    if(aliasName1 != null)
+                        aliasNameText.setText(aliasName1);
 
                     if (walletObservable.isSyncedOrPending()) {
                         final Coin walletBalance = walletObservable.getWalletBalance();
@@ -419,7 +421,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 LinearLayoutManager manager = ((LinearLayoutManager) recyclerView.getLayoutManager());
-                if (manager.findLastVisibleItemPosition() == messages.size() - 1)
+                if (manager.findLastVisibleItemPosition() == messages.size() - 1 && !end)
                     loadMoreData();
             }
         });
@@ -608,18 +610,22 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                     return true;
                 }
 
+                if(end)
+                    return true;
 
                 String address=walletObservable.getAlias().toString();
-                //String address="19U9MAyuyrZcMZxP24zXzTYevAAUKvgp3o";
-                Optional<String> json=null;
-                json = Http.get("http://eternitywall.it/from/"+address+"?format=json");
+                String urlString = "http://eternitywall.it/from/" + address + "?format=json";
+                if(cursor!=null)
+                    urlString = urlString + "&cursor=" + cursor;
+                Log.i(TAG,"apifrom url:" + urlString);
+                Optional<String> json = Http.get(urlString);
                 /* API EXAMPLE:
                 In the user tab, at the bottom, add user messages.
                 Api: http://eternitywall.it/from/19U9MAyuyrZcMZxP24zXzTYevAAUKvgp3o?format=json
                Where the address is the alias in the walletobservable
                 */
 
-                if(json!=null && json.isPresent()) {
+                if(json.isPresent()) {
                     Log.i(TAG,"value present!");
                     try {
                         String jstring = json.get();
@@ -636,14 +642,20 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                         }
 
                         try {
-                            if (jo.has("messagesInQueue")) {
-                                inQueue = jo.getInt("messagesInQueue");
-                            }
+                            cursor = jo.getString("next");
+
                         } catch (Exception ex){
+                            cursor=null;
                             ex.printStackTrace();
                         }
 
+
+
                         JSONArray ja = jo.getJSONArray("messages");
+
+                        if(ja.length()==0)
+                            end=true;
+
 
                         for(int m=0; m<ja.length(); m++) {
                             Message message = Message.buildFromJson(ja.getJSONObject(m));
