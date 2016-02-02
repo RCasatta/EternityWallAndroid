@@ -26,7 +26,7 @@ android {
         applicationId "it.eternitywall.eternitywall"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 26
+        versionCode 27
         multiDexEnabled true
         versionName "1.0." + defaultConfig.getProperty("versionCode")
     }
