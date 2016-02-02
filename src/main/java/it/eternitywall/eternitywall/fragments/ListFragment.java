@@ -274,7 +274,7 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
                                 return null;
                             }
                         } catch (Exception ex){
-                            ex.printStackTrace();
+                            Log.i(TAG,"no value for status in json " + ex.getMessage() );
                         }
 
                         try {
@@ -284,7 +284,7 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
                             }
                         } catch (Exception ex){
                             cursor=null;
-                            ex.printStackTrace();
+                            Log.i(TAG, "no value for next in json " + ex.getMessage());
                         }
 
                         JSONArray ja = jo.getJSONArray("messages");
@@ -301,7 +301,7 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
                         ok = true;
                     }
                     catch (Exception ex) {
-                        ex.printStackTrace();
+                        Log.e(TAG,"Exception " + ex.getMessage());
                     }
                 }
                 return null;

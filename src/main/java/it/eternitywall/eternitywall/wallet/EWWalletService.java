@@ -396,6 +396,11 @@ public class EWWalletService extends Service implements Runnable {
             final byte[] seed = Bitcoin.getEntropyFromPassphrase(passphrase);
             ewDerivation = new EWDerivation(seed);
             final String alias = Bitcoin.keyToStringAddress( ewDerivation.getAlias() );
+            String aliasNamePref = sharedPref.getString(Preferences.ALIAS_NAME, null);
+            if(aliasNamePref!=null) {
+                Log.i(TAG,"aliasNamePref=" + aliasNamePref);
+                walletObservable.setAliasName(aliasNamePref);
+            }
             walletObservable.setAlias(alias);
             walletObservable.notifyObservers();
 
@@ -491,9 +496,7 @@ public class EWWalletService extends Service implements Runnable {
             downloadListener = new MyDownloadListener(walletObservable);
             peerGroup.startAsync();
             walletObservable.setState(WalletObservable.State.SYNCING);
-            String aliasNamePref = sharedPref.getString(Preferences.ALIAS_NAME, null);
-            if(aliasNamePref!=null)
-                walletObservable.setAliasName(aliasNamePref);
+
             walletObservable.notifyObservers();
 
             Log.i(TAG, "starting download");
@@ -561,7 +564,7 @@ public class EWWalletService extends Service implements Runnable {
 
     public synchronized void refreshNextsAndAlias() {
         List<Transaction> allTx = wallet.getTransactionsByTime();
-        Log.i(TAG, "refreshNextsAndAlias allTx.size()=" + allTx.size());
+        //Log.i(TAG, "refreshNextsAndAlias allTx.size()=" + allTx.size());
         for (Transaction tx : allTx) {
             //Log.i(TAG,"tx=" + tx);
             final List<TransactionInput> inputs = tx.getInputs();
@@ -588,7 +591,7 @@ public class EWWalletService extends Service implements Runnable {
             String aliasName = checkAlias(tx,walletObservable);
             if(aliasName!=null) {
                 SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-                sharedPref.edit().putString(Preferences.ALIAS_NAME,aliasName);
+                sharedPref.edit().putString(Preferences.ALIAS_NAME,aliasName).apply();
             }
         }
 

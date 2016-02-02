@@ -195,13 +195,15 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                 @Override
                 public void run() {
                     Log.i(TAG, android.os.Process.myTid() + " TID UI : Refreshing wallet fragment " + walletObservable);
-                    
+
                     final Bitmap IdenticonBitmap = walletObservable.getCurrentIdenticon();
                     if (IdenticonBitmap != null)
                         identicon.setImageBitmap(IdenticonBitmap);
                     final String aliasName1 = walletObservable.getAliasName();
-                    if(aliasName1 != null)
+                    if (aliasName1 != null) {
                         aliasNameText.setText(aliasName1);
+                        aliasNameText.setVisibility(View.VISIBLE);
+                    }
 
                     if (walletObservable.isSyncedOrPending()) {
                         final Coin walletBalance = walletObservable.getWalletBalance();
@@ -534,7 +536,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                     recyclerView.setVisibility(View.GONE);
                 }
                 else {
-                    Log.i(TAG,"there are messages messages");
+                    Log.i(TAG,"there are messages " + messages.size());
                     txtHeader.setVisibility(View.VISIBLE);
                    // myMessageList.setVisibility(View.VISIBLE);
                     recyclerView.setVisibility(View.VISIBLE);

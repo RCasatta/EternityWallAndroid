@@ -116,7 +116,7 @@ public class MyBlockchainListener implements BlockChainListener {
         }
         if(aliasName!=null) {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(ewApplication);
-            sharedPref.edit().putString(Preferences.ALIAS_NAME,aliasName);
+            sharedPref.edit().putString(Preferences.ALIAS_NAME,aliasName).apply();
         }
         createNotification(tx);
         //TODO add listener to confidence change
