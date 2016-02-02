@@ -749,7 +749,7 @@ public class EWWalletService extends Service implements Runnable {
 
     public void removePasshrase() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        sharedPref.edit().remove(Preferences.PASSPHRASE).remove(Preferences.PIN).remove(Preferences.TO_NOTIFY).commit();
+        sharedPref.edit().remove(Preferences.PASSPHRASE).remove(Preferences.PIN).remove(Preferences.TO_NOTIFY).remove(Preferences.ALIAS_NAME).commit();
     }
 
 }
