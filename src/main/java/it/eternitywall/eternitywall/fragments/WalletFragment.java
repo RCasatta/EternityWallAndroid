@@ -418,19 +418,38 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
             });
         }
 
+        // Set Recyclerview
+        final LinearLayoutManager mLayoutManager = new LinearLayoutManager( getActivity().getApplicationContext() );
+        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            private int previousTotal = 0;
+            private boolean loading = true;
+            private int visibleThreshold = 1;
+            int firstVisibleItem, visibleItemCount, totalItemCount;
 
-        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                LinearLayoutManager manager = ((LinearLayoutManager) recyclerView.getLayoutManager());
-                if (manager.findLastVisibleItemPosition() == messages.size() - 1 && !end)
+                super.onScrolled(recyclerView, dx, dy);
+                visibleItemCount = recyclerView.getChildCount();
+                totalItemCount = mLayoutManager.getItemCount();
+                firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
+
+                if (loading) {
+                    if (totalItemCount != previousTotal) {
+                        loading = false;
+                        previousTotal = totalItemCount;
+                    }
+                }
+                if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
+                    // End has been reached
+                    Log.i("Yaeye!", "end called");
+                    loading = true;
                     loadMoreData();
+                }
+
             }
         });
-        LinearLayoutManager layoutManager = new LinearLayoutManager( getActivity().getApplicationContext() );
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
-
 
         // Load my messages
         messages = new ArrayList<Message>();
