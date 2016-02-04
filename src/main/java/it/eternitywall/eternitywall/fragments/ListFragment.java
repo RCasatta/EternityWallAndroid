@@ -141,7 +141,7 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
         lstMessages.addOnScrollListener(new RecyclerView.OnScrollListener() {
             private int previousTotal = 0;
             private boolean loading = true;
-            private int visibleThreshold = 5;
+            private int visibleThreshold = 1;
             int firstVisibleItem, visibleItemCount, totalItemCount;
 
             @Override

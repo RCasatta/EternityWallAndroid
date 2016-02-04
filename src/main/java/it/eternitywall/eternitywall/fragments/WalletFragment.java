@@ -264,7 +264,6 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                         }
 
                         // Load my messages
-                        messages = new ArrayList<Message>();
                         inQueue = null;
                         loadMoreData();
 
@@ -445,7 +444,9 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                     // End has been reached
                     Log.i("Yaeye!", "end called");
                     loading = true;
-                    loadMoreData();
+                    //avoid refresh at the end
+                    if (cursor!=null)
+                        loadMoreData();
                 }
 
             }
@@ -551,66 +552,24 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                 if (messages.size()==0 && mMessages.size()==0) {
                     Log.i(TAG,"no messages");
                     txtHeader.setVisibility(View.GONE);
-                    //myMessageList.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.GONE);
                 }
                 else {
                     Log.i(TAG,"there are messages " + messages.size());
                     txtHeader.setVisibility(View.VISIBLE);
-                   // myMessageList.setVisibility(View.VISIBLE);
                     recyclerView.setVisibility(View.VISIBLE);
                 }
 
-                if(ok && getActivity()!=null) {
+                if(ok) {
 
                     if(messages == null){
                         messages=new ArrayList<Message>();
-                    }else if(messages.size()==0) {
+                        messageRecyclerViewAdapter.clear();
+                    } else if(messages.size()==0) {
                         messageRecyclerViewAdapter.clear();
                     }
-                    messages.addAll(mMessages);
                     messageRecyclerViewAdapter.addAll(mMessages);
 
-                    /*Log.i(TAG, "1 getActivity=" +getActivity());
-                    MessageListAdapter messageListAdapter = new MessageListAdapter(getActivity(), R.layout.item_message, messages, inQueue, WalletFragment.this);
-                    //myMessageList.setAdapter(messageListAdapter);
-                    recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(Arrays.asList(Cheeses.sCheeseStrings)));
-                    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-                    Log.i(TAG,"total messages= "+ mMessages.size());
-                    for (int i=0;i<mMessages.size();i++) {
-                        messageListAdapter.add(mMessages.get(i));
-                    }
-                    messageListAdapter.notifyDataSetChanged();
-*/
-
-
-                    /*
-                    if(messages != null && !messages.isEmpty() && lstMessages!=null ) {
-                        MessageListAdapter messageListAdapter = (MessageListAdapter) lstMessages.getAdapter();  //TODO Franco exception here. added lstMessages!=null HACK!
-                        for (int i=0;i<mMessages.size();i++) {
-                            messageListAdapter.add(mMessages.get(i));
-                            messageListAdapter.notifyDataSetChanged();
-                        }
-                    }
-                    else {
-                        MessageListAdapter messageListAdapter = new MessageListAdapter(getActivity(), R.layout.item_message, messages, inQueue, WalletFragment.this);
-                        for (int i=0;i<mMessages.size();i++) {
-                            messageListAdapter.add(mMessages.get(i));
-                            messageListAdapter.notifyDataSetChanged();
-                        }
-                    }
-                    for (int i=0; i<products.size(); i++) {
-                        View view = adapter.getView(i, null, listViewReplacement
-                                lstMessages.addView(vi);
-                    }
-
-                    //update
-                    for (int i=0; i<products.size(); i++) {
-                        Product product = products.get(i);
-                        View vi = inflater.inflate(R.layout.product_item, null);
-                        list.addView(vi);
-                    }*/
                 }
                 else {
                     //succhia!
