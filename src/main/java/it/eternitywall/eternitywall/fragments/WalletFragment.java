@@ -263,6 +263,9 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                             messagePending.setVisibility(View.GONE);
                         }
 
+                        // refresh actionbar
+                        activity.invalidateOptionsMenu();
+
                         // Load my messages
                         inQueue = null;
                         loadMoreData();
@@ -388,15 +391,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
         });
 
 
-        if(walletObservable==null){
-            // do nothig.. wait
-        }else if( walletObservable.isSyncedOrPending()) {
-            syncedLayout.setVisibility(View.VISIBLE);
-            syncingLayout.setVisibility(View.GONE);
-        }else {
-            syncedLayout.setVisibility(View.GONE);
-            syncingLayout.setVisibility(View.VISIBLE);
-        }
+
 
         // Show / Hide write button
         payButton=(android.support.design.widget.FloatingActionButton)view.findViewById(R.id.payButton);
@@ -460,9 +455,17 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
         messageRecyclerViewAdapter = new MessageRecyclerViewAdapter(messages);
         recyclerView.setAdapter(messageRecyclerViewAdapter);
 
-        // load messages on Swipe
-        loadMoreData();
-
+        // check on wallet observable
+        if(walletObservable==null){
+            // do nothig.. wait
+        }else if( walletObservable.isSyncedOrPending()) {
+            syncedLayout.setVisibility(View.VISIBLE);
+            syncingLayout.setVisibility(View.GONE);
+            loadMoreData();
+        }else {
+            syncedLayout.setVisibility(View.GONE);
+            syncingLayout.setVisibility(View.VISIBLE);
+        }
 
         return view;
     }

@@ -37,6 +37,7 @@ import it.eternitywall.eternitywall.fragments.HelloFragment;
 import it.eternitywall.eternitywall.fragments.ListFragment;
 import it.eternitywall.eternitywall.fragments.RecoverPassphraseFragment;
 import it.eternitywall.eternitywall.fragments.WalletFragment;
+import it.eternitywall.eternitywall.wallet.EWWalletService;
 import it.eternitywall.eternitywall.wallet.WalletObservable;
 
 
@@ -324,6 +325,16 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
                         }
                     }
                 });
+            }
+
+            // show sharing button only if wallet is synced or pending
+            EWApplication ewApplication = (EWApplication) this.getApplication();
+            if(ewApplication!=null && ewApplication.getWalletObservable()!=null && ewApplication.getWalletObservable().isSyncedOrPending()) {
+                menu.findItem(R.id.action_share).setVisible(true);
+                txtShare.setVisibility(View.VISIBLE);
+            }else {
+                menu.findItem(R.id.action_share).setVisible(false);
+                txtShare.setVisibility(View.INVISIBLE);
             }
 
             TextView txtPreferences = new TextView(MainActivity.this);
