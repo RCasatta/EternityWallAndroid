@@ -93,11 +93,8 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
     private RecyclerView lstMessages;
     private ProgressBar progress;
     private SwipeRefreshLayout swipe;
-    private SearchView searchView;
-    private MenuItem searchMenuItem;
     private TextView txtHeader;
     private MessageRecyclerViewAdapter messageRecyclerViewAdapter;
-    private TextView headerText;
 
     private String search;
     private String sortby;
@@ -133,21 +130,42 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
 
         // Set Fragment Views
         lstMessages = (RecyclerView) v.findViewById(R.id.lstMessages);
-        headerText = (TextView) v.findViewById(R.id.headerText);
         progress = (ProgressBar) v.findViewById(R.id.progress);
         swipe = (SwipeRefreshLayout) v.findViewById(R.id.activity_main_swipe_refresh_layout);
         txtHeader = (TextView)v.findViewById(R.id.txtHeader);
-        lstMessages.setOnScrollListener(new RecyclerView.OnScrollListener() {
+
+        // Set Recyclerview
+        final LinearLayoutManager mLayoutManager = new LinearLayoutManager( getActivity().getApplicationContext() );
+        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        lstMessages.setLayoutManager(mLayoutManager);
+        lstMessages.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            private int previousTotal = 0;
+            private boolean loading = true;
+            private int visibleThreshold = 5;
+            int firstVisibleItem, visibleItemCount, totalItemCount;
+
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                LinearLayoutManager manager = ((LinearLayoutManager) recyclerView.getLayoutManager());
-                if (manager.findLastVisibleItemPosition() == messages.size() - 1)
+                super.onScrolled(recyclerView, dx, dy);
+                visibleItemCount = recyclerView.getChildCount();
+                totalItemCount = mLayoutManager.getItemCount();
+                firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
+
+                if (loading) {
+                    if (totalItemCount != previousTotal) {
+                        loading = false;
+                        previousTotal = totalItemCount;
+                    }
+                }
+                if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
+                    // End has been reached
+                    Log.i("Yaeye!", "end called");
+                    loading = true;
                     loadMoreData();
+                }
+
             }
         });
-        LinearLayoutManager layoutManager = new LinearLayoutManager( getActivity().getApplicationContext() );
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        lstMessages.setLayoutManager(layoutManager);
 
         // Set empty variables and messages
         messages = new ArrayList<Message>();
@@ -216,6 +234,8 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
                 if (messages.size()==0 && mMessages.size()==0) {
                     txtHeader.setText(getResources().getString(R.string.no_msg_found));
                     txtHeader.setVisibility(View.VISIBLE);
+                }else if (inQueue==null){
+                    txtHeader.setVisibility(View.GONE);
                 }else if (inQueue>0){
                     txtHeader.setText(EnglishNumberToWords.convert(inQueue) + " message" + (inQueue > 1 ? "s" : "") + " in queue…");
                     txtHeader.setVisibility(View.VISIBLE);
@@ -226,10 +246,11 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
                 if(ok) {
                     if(messages == null){
                         messages=new ArrayList<Message>();
+                        messageRecyclerViewAdapter.clear();
                     }else if(messages.size()==0) {
                         messageRecyclerViewAdapter.clear();
                     }
-                    messages.addAll(mMessages);
+                    //messages.addAll(mMessages);
                     messageRecyclerViewAdapter.addAll(mMessages);
                 }
                 else {
@@ -273,7 +294,7 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
                                 statusMessage= jo.getString("statusMessage");
                                 return null;
                             }
-                        } catch (Exception ex){
+                        } catch (Exception ex) {
                             Log.i(TAG,"no value for status in json " + ex.getMessage() );
                         }
 
@@ -283,7 +304,7 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
                                 inQueue = jo.getInt("messagesInQueue");
                             }
                         } catch (Exception ex){
-                            cursor=null;
+                            cursor = null;
                             Log.i(TAG, "no value for next in json " + ex.getMessage());
                         }
 
@@ -299,8 +320,7 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
                         if (search==null && sortby == null)
                             Collections.sort(mMessages);
                         ok = true;
-                    }
-                    catch (Exception ex) {
+                    } catch (Exception ex) {
                         Log.e(TAG,"Exception " + ex.getMessage());
                     }
                 }
