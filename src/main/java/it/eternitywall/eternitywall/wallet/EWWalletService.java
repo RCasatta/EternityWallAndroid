@@ -149,7 +149,7 @@ public class EWWalletService extends Service implements Runnable {
         }
         EWMessageData ewMessageData= getNextMessageData();
         final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        final boolean donation = sharedPref.getBoolean(Preferences.DONATION, false);
+        final boolean donation = sharedPref.getBoolean(Preferences.DONATION, true);
 
         final ECKey input = ewMessageData.getInput();
         Address inputAddress = input.toAddress(PARAMS);
