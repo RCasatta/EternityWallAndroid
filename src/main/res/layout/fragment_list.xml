@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -19,7 +19,8 @@
         android:textColor="@color/primaryText"
         android:visibility="gone"
         android:text="@string/no_msg_found"
-        />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <!--<android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/activity_main_swipe_refresh_layout"
@@ -35,7 +36,9 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/activity_main_swipe_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/txtHeader">
 
 
         <android.support.v7.widget.RecyclerView
@@ -71,4 +74,4 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-</FrameLayout>
+</RelativeLayout>
