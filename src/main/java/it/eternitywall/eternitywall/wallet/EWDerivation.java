@@ -28,7 +28,8 @@ public class EWDerivation {
     // BIP EW   /m/ 4544288' / coin_type' / account' / type / address_index
     //          /m/ 4544288' / 0          / 0        / 0    / i
 
-    // coin_type http://doc.satoshilabs.com/slips/slip-0044.html#registered-coin-types
+    // coin_type https://github.com/satoshilabs/slips/blob/master/slip-0044.md
+
     // type could be 0 for changes and 1 for messages
 
     //EW donation master public
