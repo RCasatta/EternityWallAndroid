@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -64,7 +65,9 @@ public class DetailActivity extends ActionBarActivity {
     private List<Message> answers;
 
 
-    Button btnShare, btnLikes, btnProof, btnRanking, btnReplies, btnTranslate;
+    LinearLayout llShare, llLikes, llProof, llRanking, llReplies, llTranslate;
+    TextView tvLikesText,tvReplyText;
+    TextView tvShare, tvLikes,tvProof,tvRanking,tvReply,tvTranslate;
     protected ImageView identicon;
 
     @Override
@@ -74,18 +77,34 @@ public class DetailActivity extends ActionBarActivity {
 
         Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
         View viewDetailMessage = findViewById(R.id.detailmessage);
-        btnShare = (Button) viewDetailMessage.findViewById(R.id.btnShare);
-        btnLikes = (Button) viewDetailMessage.findViewById(R.id.btnLikes);
-        btnProof = (Button) viewDetailMessage.findViewById(R.id.btnProof);
-        btnRanking = (Button) viewDetailMessage.findViewById(R.id.btnRanking);
-        btnReplies = (Button) viewDetailMessage.findViewById(R.id.btnReply);
-        btnTranslate = (Button) viewDetailMessage.findViewById(R.id.btnTranslate);
-        btnShare.setTypeface(font);
-        btnLikes.setTypeface(font);
-        btnProof.setTypeface(font);
-        btnRanking.setTypeface(font);
-        btnReplies.setTypeface(font);
-        btnTranslate.setTypeface(font);
+        llShare = (LinearLayout) viewDetailMessage.findViewById(R.id.llSharing);
+        llLikes = (LinearLayout) viewDetailMessage.findViewById(R.id.llLikes);
+        llProof = (LinearLayout) viewDetailMessage.findViewById(R.id.llProof);
+        llRanking = (LinearLayout) viewDetailMessage.findViewById(R.id.llRanking);
+        llReplies = (LinearLayout) viewDetailMessage.findViewById(R.id.llReply);
+        llTranslate = (LinearLayout) viewDetailMessage.findViewById(R.id.llTranslate);
+
+
+        tvLikesText = (TextView) viewDetailMessage.findViewById(R.id.tvLikesText);
+        tvReplyText = (TextView) viewDetailMessage.findViewById(R.id.tvReplyText);
+
+        tvShare = (TextView) viewDetailMessage.findViewById(R.id.tvSharing);
+        tvLikes = (TextView) viewDetailMessage.findViewById(R.id.tvLikes);
+        tvProof = (TextView) viewDetailMessage.findViewById(R.id.tvProof);
+        tvRanking = (TextView) viewDetailMessage.findViewById(R.id.tvRanking);
+        tvReply = (TextView) viewDetailMessage.findViewById(R.id.tvReply);
+        tvTranslate = (TextView) viewDetailMessage.findViewById(R.id.tvTranslate);
+
+        tvShare.setTypeface(font);
+        tvLikes.setTypeface(font);
+        tvProof.setTypeface(font);
+        tvRanking.setTypeface(font);
+        tvReply.setTypeface(font);
+        tvTranslate.setTypeface(font);
+
+        tvLikesText.setTypeface(font);
+        tvReplyText.setTypeface(font);
+
         txtMessage = (TextView) viewDetailMessage.findViewById(R.id.txtMessage);
         txtDate = (TextView) viewDetailMessage.findViewById(R.id.txtDate);
         txtStatus = (TextView) viewDetailMessage.findViewById(R.id.txtStatus);
@@ -178,9 +197,9 @@ public class DetailActivity extends ActionBarActivity {
                     // TO DO
                     //if (mMessage.getAnswer()==true)
                     if (mMessage.getLikes() > 0)
-                        btnLikes.setText(getResources().getString(R.string.icon_likes) + " (" + String.valueOf(mMessage.getLikes()) + ")");
+                        tvLikesText.setText(" (" + String.valueOf(mMessage.getLikes()) + ")");
                     if (mMessage.getReplies() > 0)
-                        btnReplies.setText(getResources().getString(R.string.icon_commenting) + " (" + String.valueOf(mMessage.getReplies()) + ")");
+                        tvReplyText.setText(" (" + String.valueOf(mMessage.getReplies()) + ")");
 
                     if(mMessage.getAlias()!=null) {
                         Bitmap bitmap= IdenticonGenerator.generate(mMessage.getAlias());
@@ -190,7 +209,7 @@ public class DetailActivity extends ActionBarActivity {
                         identicon.setVisibility(View.GONE);
 
                     }
-                    btnShare.setOnClickListener(new View.OnClickListener() {
+                    llShare.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent();
@@ -200,7 +219,7 @@ public class DetailActivity extends ActionBarActivity {
                             startActivity(intent);
                         }
                     });
-                    btnProof.setOnClickListener(new View.OnClickListener() {
+                    llProof.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             // Proof website:
@@ -242,7 +261,7 @@ public class DetailActivity extends ActionBarActivity {
 
                         }
                     });
-                    btnRanking.setOnClickListener(new View.OnClickListener() {
+                    llRanking.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
 
@@ -252,7 +271,7 @@ public class DetailActivity extends ActionBarActivity {
 
                         }
                     });
-                    btnLikes.setOnClickListener(new View.OnClickListener() {
+                    llLikes.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
 
@@ -277,7 +296,7 @@ public class DetailActivity extends ActionBarActivity {
                             SendLike();
                         }
                     });
-                    btnReplies.setOnClickListener(new View.OnClickListener() {
+                    llReplies.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent i = new Intent(DetailActivity.this, WriteActivity.class);

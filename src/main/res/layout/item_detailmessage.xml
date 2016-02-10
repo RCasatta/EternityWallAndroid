@@ -76,81 +76,140 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="false"
-            android:layout_alignParentStart="false"
-            android:gravity="center_horizontal"
-            android:visibility="visible"
-            android:layout_marginTop="6dp"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/identicon">
+            android:layout_height="match_parent"
+            android:layout_marginTop="6dp">
 
-            <Button
-                android:id="@+id/btnShare"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical|center_horizontal"
-                android:text="@string/icon_share"
-                android:textSize="20sp"
-                android:textColor="@color/accent"
-                android:background="@color/alpha"
-                android:layout_weight="1" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/llSharing"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:gravity="center">
 
-            <Button
-                android:id="@+id/btnProof"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical|center_horizontal"
-                android:text="@string/icon_link"
-                android:textSize="20sp"
-                android:textColor="@color/accent"
-                android:background="@color/alpha"
-                android:layout_weight="1" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/icon_share"
+                    android:id="@+id/tvSharing"
+                    android:textColor="@color/accent"
+                    android:textSize="20sp" />
+            </LinearLayout>
 
-            <Button
-                android:id="@+id/btnRanking"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical|center_horizontal"
-                android:text="@string/icon_ranking"
-                android:textSize="20sp"
-                android:textColor="@color/accent"
-                android:background="@color/alpha"
-                android:layout_weight="1" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/llProof"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:gravity="center">
 
-            <Button
-                android:id="@+id/btnTranslate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical|center_horizontal"
-                android:text="@string/icon_translate"
-                android:textSize="20sp"
-                android:textColor="@color/accent"
-                android:background="@color/alpha"
-                android:visibility="gone"
-                android:layout_weight="1" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/icon_link"
+                    android:id="@+id/tvProof"
+                    android:textColor="@color/accent"
+                    android:textSize="20sp" />
+            </LinearLayout>
 
-            <Button
-                android:id="@+id/btnLikes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical|center_horizontal"
-                android:text="@string/icon_likes"
-                android:textSize="20sp"
-                android:textColor="@color/accent"
-                android:background="@color/alpha"
-                android:layout_weight="1" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/llRanking"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:gravity="center" >
 
-            <Button
-                android:id="@+id/btnReply"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical|center_horizontal"
-                android:text="@string/icon_commenting"
-                android:textSize="20sp"
-                android:textColor="@color/accent"
-                android:background="@color/alpha"
-                android:layout_weight="1" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/icon_ranking"
+                    android:id="@+id/tvRanking"
+                    android:textColor="@color/accent"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/llTranslate"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/icon_translate"
+                    android:id="@+id/tvTranslate"
+                    android:textColor="@color/accent"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/llLikes"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:gravity="center" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/icon_likes"
+                    android:id="@+id/tvLikes"
+                    android:textColor="@color/accent"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:id="@+id/tvLikesText"
+                    android:textColor="@color/accent"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/llReply"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:gravity="center" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/icon_commenting"
+                    android:id="@+id/tvReply"
+                    android:textColor="@color/accent"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:id="@+id/tvReplyText"
+                    android:textColor="@color/accent"
+                    android:textSize="14sp" />
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>

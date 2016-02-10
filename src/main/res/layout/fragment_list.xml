@@ -6,21 +6,6 @@
     tools:context="it.eternitywall.eternitywall.fragments.ListFragment">
 
 
-    <TextView
-        android:id="@+id/txtHeader"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:paddingBottom="12dp"
-        android:paddingLeft="@dimen/padding_high"
-        android:paddingRight="@dimen/padding_high"
-        android:gravity="center"
-        android:textSize="18sp"
-        android:textColor="@color/primaryText"
-        android:visibility="gone"
-        android:text="@string/no_msg_found"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
 
     <!--<android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/activity_main_swipe_refresh_layout"
@@ -38,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/txtHeader">
+        android:layout_alignParentTop="true">
 
 
         <android.support.v7.widget.RecyclerView
@@ -48,6 +33,23 @@
             android:layout_height="match_parent" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
+
+    <TextView
+        android:id="@+id/txtHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="12dp"
+        android:paddingLeft="@dimen/padding_high"
+        android:paddingRight="@dimen/padding_high"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/primaryText"
+        android:visibility="gone"
+        android:text="@string/no_msg_found"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:elevation="10dp" />
 
     <ProgressBar
         android:id="@+id/progress"
