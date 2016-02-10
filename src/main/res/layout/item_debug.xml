@@ -5,14 +5,18 @@
     android:paddingRight="@dimen/padding_high"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:focusable="false"
+    android:clickable="false">
 
     <TextView
         android:id="@+id/txtName"
         style="@style/TextAppearance.AppCompat.Large"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/primaryText" />
+        android:textColor="@color/primaryText"
+        android:focusable="false"
+        android:clickable="false"/>
 
     <TextView
         android:id="@+id/txtValue"
@@ -20,7 +24,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/primaryText"
-        android:gravity="right" />
+        android:gravity="right"
+        android:focusable="false"
+        android:clickable="false"/>
 
 
 

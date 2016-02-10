@@ -1,5 +1,6 @@
 package it.eternitywall.eternitywall.activity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.bitcoinj.core.Peer;
 import org.bitcoinj.core.PeerGroup;
@@ -128,13 +130,27 @@ public class DebugActivity extends AppCompatActivity implements DebugListAdapter
                             final EWApplication application = (EWApplication) getApplication();
                             final EWWalletService ewWalletService = application.getEwWalletService();
                             Wallet wallet = ewWalletService.getWallet();
-                            String [] strings= new String[wallet.getTransactionsByTime().size()];
+                            final String [] strings= new String[wallet.getTransactionsByTime().size()];
                             for ( int i=0;i<wallet.getTransactionsByTime().size();i++)
                                 strings[i]=wallet.getTransactionsByTime().get(0).getHashAsString();
 
                             android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(DebugActivity.this);
                             alertDialog.setTitle("Txs in wallet");
                             alertDialog.setItems(strings, null);
+                            alertDialog.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                @Override
+                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                    android.text.ClipboardManager clipboard = (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                                    clipboard.setText(strings[position]);
+                                    Toast.makeText(DebugActivity.this,"Tx hash copied",Toast.LENGTH_LONG).show();
+                                }
+
+                                @Override
+                                public void onNothingSelected(AdapterView<?> parent) {
+                                    Toast.makeText(DebugActivity.this,"Tx hash copied",Toast.LENGTH_LONG).show();
+
+                                }
+                            });
                             alertDialog.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
