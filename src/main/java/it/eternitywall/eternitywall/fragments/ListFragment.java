@@ -32,7 +32,6 @@ import it.eternitywall.eternitywall.Http;
 import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.activity.WriteActivity;
-import it.eternitywall.eternitywall.adapters.MessageListAdapter;
 import it.eternitywall.eternitywall.adapters.MessageRecyclerViewAdapter;
 import it.eternitywall.eternitywall.components.EnglishNumberToWords;
 
@@ -45,7 +44,7 @@ import it.eternitywall.eternitywall.components.EnglishNumberToWords;
  * Use the {@link ListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ListFragment extends Fragment implements MessageListAdapter.MessageListAdapterManager {
+public class ListFragment extends Fragment implements MessageRecyclerViewAdapter.MessageListAdapterManager {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -138,7 +137,7 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager( getActivity().getApplicationContext() );
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         lstMessages.setLayoutManager(mLayoutManager);
-        lstMessages.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        /*lstMessages.addOnScrollListener(new RecyclerView.OnScrollListener() {
             private int previousTotal = 0;
             private boolean loading = true;
             private int visibleThreshold = 1;
@@ -165,14 +164,14 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
                 }
 
             }
-        });
+        });*/
 
         // Set empty variables and messages
         messages = new ArrayList<Message>();
         clear();
 
         // Set Message RecyclerView Adapter
-        messageRecyclerViewAdapter = new MessageRecyclerViewAdapter(messages);
+        messageRecyclerViewAdapter = new MessageRecyclerViewAdapter(messages, ListFragment.this);
         lstMessages.setAdapter( messageRecyclerViewAdapter );
 
         // load messages on Swipe
@@ -250,7 +249,7 @@ public class ListFragment extends Fragment implements MessageListAdapter.Message
                     }else if(messages.size()==0) {
                         messageRecyclerViewAdapter.clear();
                     }
-                    //messages.addAll(mMessages);
+                    messages.addAll(mMessages);
                     messageRecyclerViewAdapter.addAll(mMessages);
                 }
                 else {

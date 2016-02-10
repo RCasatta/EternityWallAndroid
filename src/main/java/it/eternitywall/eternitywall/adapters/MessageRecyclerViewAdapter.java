@@ -15,6 +15,7 @@
  */
 package it.eternitywall.eternitywall.adapters;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
@@ -37,6 +38,11 @@ public class MessageRecyclerViewAdapter
         extends RecyclerView.Adapter<MessageRecyclerViewAdapter.ViewHolder> {
 
     private List<Message> mValues;
+    private MessageListAdapterManager manager;
+
+    public interface MessageListAdapterManager {
+        public void loadMoreData();
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
@@ -60,8 +66,9 @@ public class MessageRecyclerViewAdapter
 
     }
 
-    public MessageRecyclerViewAdapter(List<Message> items) {
+    public MessageRecyclerViewAdapter(List<Message> items,  MessageListAdapterManager manager) {
         mValues = items;
+        this.manager = manager;
     }
 
     @Override
@@ -137,6 +144,9 @@ public class MessageRecyclerViewAdapter
             }
         };
         h.mView.setOnClickListener(h.onClickListener);
+
+        if(position == mValues.size()-1 && manager!=null)
+            manager.loadMoreData();
     }
 
     @Override
