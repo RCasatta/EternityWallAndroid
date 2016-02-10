@@ -1,5 +1,6 @@
 package it.eternitywall.eternitywall.dialogfragments;
 
+import android.app.Activity;
 import android.app.Application;
 import android.app.Dialog;
 import android.content.Context;
@@ -38,7 +39,6 @@ public class NotifyDialogFragment extends DialogFragment {
     public void setAddress(String address) {
         this.address = address;
     }
-
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -113,7 +113,11 @@ public class NotifyDialogFragment extends DialogFragment {
                     if (getActivity()!=null)
                         getActivity().finish();
                 } else {
-                    Toast.makeText(getActivity(), getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
+
+                    if (getActivity()!=null) {
+                        Toast.makeText(getActivity(), getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
+                        getActivity().finish();
+                    }
                 }
             }
 
