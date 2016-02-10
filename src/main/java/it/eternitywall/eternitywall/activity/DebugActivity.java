@@ -1,5 +1,6 @@
 package it.eternitywall.eternitywall.activity;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -10,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import org.bitcoinj.core.Peer;
@@ -21,7 +24,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import it.eternitywall.eternitywall.Debug;
+import it.eternitywall.eternitywall.components.Debug;
+
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
@@ -46,8 +50,9 @@ public class DebugActivity extends AppCompatActivity implements DebugListAdapter
         lstDebug = (ListView) findViewById(R.id.listView);
         swipe = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);
 
+
         debugs = new ArrayList<Debug>();
-        debugListAdapter = new DebugListAdapter(DebugActivity.this, R.layout.item_message, debugs, DebugActivity.this);
+        debugListAdapter = new DebugListAdapter(DebugActivity.this, R.layout.item_debug, debugs, DebugActivity.this);
         lstDebug.setAdapter(debugListAdapter);
         loadMoreData();
 
@@ -89,7 +94,7 @@ public class DebugActivity extends AppCompatActivity implements DebugListAdapter
     public void loadMoreData() {
         Log.i(TAG, "loadMoreData");
 
-        DebugListAdapter debugListAdapter = (DebugListAdapter) lstDebug.getAdapter();
+        final DebugListAdapter debugListAdapter = (DebugListAdapter) lstDebug.getAdapter();
         debugListAdapter.clear();
 
         final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -117,7 +122,29 @@ public class DebugActivity extends AppCompatActivity implements DebugListAdapter
                 Wallet wallet = ewWalletService.getWallet();
                 if (wallet != null) {
                     debugListAdapter.add(new Debug("Wallet height", "" + wallet.getLastBlockSeenHeight()));
-                    debugListAdapter.add(new Debug("Txs in wallet", "" + wallet.getTransactionsByTime().size()));
+                    debugListAdapter.add(new Debug("Txs in wallet", "" + wallet.getTransactionsByTime().size(), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            final EWApplication application = (EWApplication) getApplication();
+                            final EWWalletService ewWalletService = application.getEwWalletService();
+                            Wallet wallet = ewWalletService.getWallet();
+                            String [] strings= new String[wallet.getTransactionsByTime().size()];
+                            for ( int i=0;i<wallet.getTransactionsByTime().size();i++)
+                                strings[i]=wallet.getTransactionsByTime().get(0).getHashAsString();
+
+                            android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(DebugActivity.this);
+                            alertDialog.setTitle("Txs in wallet");
+                            alertDialog.setItems(strings, null);
+                            alertDialog.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    ;
+                                }
+                            });
+                            android.support.v7.app.AlertDialog alert = alertDialog.create();
+                            alert.show();
+                        }
+                    }));
                     String bloomString = wallet.getBloomFilter(1E-5).toString();
                     debugListAdapter.add(new Debug("Bloom filter", "" + bloomString.substring(bloomString.indexOf("size"))));
                 }
@@ -151,6 +178,7 @@ public class DebugActivity extends AppCompatActivity implements DebugListAdapter
 
         debugListAdapter.notifyDataSetChanged();
         swipe.setRefreshing(false);
+
 
     }
 }

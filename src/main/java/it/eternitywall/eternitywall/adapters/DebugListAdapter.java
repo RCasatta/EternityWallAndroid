@@ -1,24 +1,17 @@
 package it.eternitywall.eternitywall.adapters;
 
 import android.app.Activity;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
-import it.eternitywall.eternitywall.Debug;
-import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.R;
-import it.eternitywall.eternitywall.activity.DetailActivity;
+import it.eternitywall.eternitywall.components.Debug;
 
 /**
  * Created by federicoserrelli on 26/08/15.
@@ -75,13 +68,9 @@ public class DebugListAdapter extends ArrayAdapter<Debug> {
             h.txtValue.setText(d.value);
 
         // add click listener
-        h.onClickListener = new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                //;
-            }
-        };
-        row.setOnClickListener(h.onClickListener);
+        if(d.onClickListener!=null) {
+            row.setOnClickListener(d.onClickListener);
+        }
 
         if(position == data.size()-1 && manager!=null)
             manager.loadMoreData();
@@ -91,7 +80,6 @@ public class DebugListAdapter extends ArrayAdapter<Debug> {
     protected class DebugHolder {
         protected TextView txtName;
         protected TextView txtValue;
-        protected View.OnClickListener onClickListener;
     }
 
 }
