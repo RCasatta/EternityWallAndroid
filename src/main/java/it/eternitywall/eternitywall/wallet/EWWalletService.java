@@ -467,7 +467,7 @@ public class EWWalletService extends Service implements Runnable {
 
             if(isRegtest) {
                 Log.i(TAG,"I am in regtest");
-                peerGroup.addAddress( InetAddress.getByName( "10.106.137.74" ) );
+                peerGroup.addAddress( InetAddress.getByName( "192.168.1.233" ) );
             } else {
                 final Set<String> stringSet = sharedPref.getStringSet(Preferences.NODES, new HashSet<String>());
                 if(stringSet.size()>0) {
