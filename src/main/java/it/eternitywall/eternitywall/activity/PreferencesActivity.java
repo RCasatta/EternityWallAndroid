@@ -1,5 +1,6 @@
 package it.eternitywall.eternitywall.activity;
 
+import android.app.ActionBar;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,6 +25,7 @@ import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.dialogfragments.EmptyWalletDialogFragment;
+import it.eternitywall.eternitywall.dialogfragments.PassphraseFragment;
 import it.eternitywall.eternitywall.dialogfragments.PersonalNodeDialogFragment;
 import it.eternitywall.eternitywall.dialogfragments.PinAlertDialogFragment;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
@@ -181,10 +183,9 @@ public class PreferencesActivity extends AppCompatActivity {
                 final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(PreferencesActivity.this);
                 String passphrase = sharedPref.getString(Preferences.PASSPHRASE, null);
                 if (passphrase != null) {
-                    // SHOW
-                    TextView txtPassphrase = (TextView) findViewById(R.id.txtPassphrase);
-                    txtPassphrase.setText(passphrase);
-                    txtPassphrase.setTextColor(getResources().getColor(R.color.black));
+                    PassphraseFragment passphraseFragment= new  PassphraseFragment();
+                    passphraseFragment.show(getSupportFragmentManager(), PassphraseFragment.class.toString());
+
                 }
             }
         });
