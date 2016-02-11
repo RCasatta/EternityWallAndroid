@@ -137,17 +137,18 @@ public class DebugActivity extends AppCompatActivity implements DebugListAdapter
                             android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(DebugActivity.this);
                             alertDialog.setTitle("Txs in wallet");
                             alertDialog.setItems(strings, null);
+
                             alertDialog.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                 @Override
                                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                     android.text.ClipboardManager clipboard = (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                                     clipboard.setText(strings[position]);
-                                    Toast.makeText(DebugActivity.this,"Tx hash copied",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(DebugActivity.this, "Tx hash copied", Toast.LENGTH_LONG).show();
                                 }
 
                                 @Override
                                 public void onNothingSelected(AdapterView<?> parent) {
-                                    Toast.makeText(DebugActivity.this,"Tx hash copied",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(DebugActivity.this, "Tx hash copied", Toast.LENGTH_LONG).show();
 
                                 }
                             });
