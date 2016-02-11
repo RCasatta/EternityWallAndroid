@@ -452,7 +452,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
         inQueue = null;
 
         // Set Message RecyclerView Adapter
-        messageRecyclerViewAdapter = new MessageRecyclerViewAdapter(messages,null);
+        messageRecyclerViewAdapter = new MessageRecyclerViewAdapter(messages,inQueue,null);
         recyclerView.setAdapter(messageRecyclerViewAdapter);
 
         // check on wallet observable

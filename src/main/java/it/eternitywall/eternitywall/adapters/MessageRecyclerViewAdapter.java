@@ -33,12 +33,18 @@ import it.eternitywall.eternitywall.IdenticonGenerator;
 import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.activity.DetailActivity;
+import it.eternitywall.eternitywall.components.EnglishNumberToWords;
 
 public class MessageRecyclerViewAdapter
         extends RecyclerView.Adapter<MessageRecyclerViewAdapter.ViewHolder> {
 
     private List<Message> mValues;
     private MessageListAdapterManager manager;
+    private Integer inQueue;
+
+    public void setInQueue(Integer inQueue) {
+        this.inQueue = inQueue;
+    }
 
     public interface MessageListAdapterManager {
         public void loadMoreData();
@@ -66,9 +72,10 @@ public class MessageRecyclerViewAdapter
 
     }
 
-    public MessageRecyclerViewAdapter(List<Message> items,  MessageListAdapterManager manager) {
+    public MessageRecyclerViewAdapter(List<Message> items,  Integer inQueue, MessageListAdapterManager manager) {
         mValues = items;
         this.manager = manager;
+        this.inQueue=inQueue;
     }
 
     @Override
@@ -132,7 +139,16 @@ public class MessageRecyclerViewAdapter
         } else {
             h.identicon.setVisibility(View.GONE);
         }
-        
+
+        if(position==0) {
+            if(inQueue!=null && inQueue>0) {
+                h.txtHeader.setVisibility(View.VISIBLE);
+                h.txtHeader.setText(EnglishNumberToWords.convert(inQueue) + " message" + (inQueue > 1 ? "s" : "") + " in queue…");
+            }
+        } else {
+            h.txtHeader.setVisibility( View.GONE );
+        }
+
         //onclick
         // add click listener
         h.onClickListener = new View.OnClickListener(){

@@ -92,7 +92,7 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
     private RecyclerView lstMessages;
     private ProgressBar progress;
     private SwipeRefreshLayout swipe;
-    private TextView txtHeader;
+    //private TextView txtHeader;
     private MessageRecyclerViewAdapter messageRecyclerViewAdapter;
 
     private String search;
@@ -131,7 +131,7 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
         lstMessages = (RecyclerView) v.findViewById(R.id.lstMessages);
         progress = (ProgressBar) v.findViewById(R.id.progress);
         swipe = (SwipeRefreshLayout) v.findViewById(R.id.activity_main_swipe_refresh_layout);
-        txtHeader = (TextView)v.findViewById(R.id.txtHeader);
+        //txtHeader = (TextView)v.findViewById(R.id.txtHeader);
 
         // Set Recyclerview
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager( getActivity().getApplicationContext() );
@@ -171,7 +171,7 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
         clear();
 
         // Set Message RecyclerView Adapter
-        messageRecyclerViewAdapter = new MessageRecyclerViewAdapter(messages, ListFragment.this);
+        messageRecyclerViewAdapter = new MessageRecyclerViewAdapter(messages, inQueue,ListFragment.this);
         lstMessages.setAdapter( messageRecyclerViewAdapter );
 
         // load messages on Swipe
@@ -213,7 +213,7 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                txtHeader.setVisibility(View.GONE);
+                //txtHeader.setVisibility(View.GONE);
                 // don't refresh if there are messages on sortby or search mode
                 if ((sortby!=null || search!=null) && (messages!=null && !messages.isEmpty()))
                     progress.setVisibility(View.INVISIBLE);//nothing
@@ -229,7 +229,7 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
                 super.onPostExecute(o);
                 progress.setVisibility(View.INVISIBLE);
                 swipe.setRefreshing(false);
-
+/*
                 if (messages.size()==0 && mMessages.size()==0) {
                     txtHeader.setText(getResources().getString(R.string.no_msg_found));
                     txtHeader.setVisibility(View.VISIBLE);
@@ -241,7 +241,8 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
                 }else{
                     txtHeader.setVisibility(View.GONE);
                 }
-
+*/
+                messageRecyclerViewAdapter.setInQueue(inQueue);
                 if(ok) {
                     if(messages == null){
                         messages=new ArrayList<Message>();

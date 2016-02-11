@@ -9,7 +9,7 @@
 
 
     <TextView
-        android:id="@+id/headerText"
+        android:id="@+id/txtHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
@@ -18,7 +18,6 @@
         android:textSize="18sp"
         android:textColor="@color/primaryText"
         android:visibility="gone"
-
         />
 
     <RelativeLayout
