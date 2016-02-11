@@ -254,7 +254,7 @@ public class EWWalletService extends Service implements Runnable {
             for (TransactionOutput to : outputs) {
                 long value = to.getValue().getValue();
 
-                if(to.isAvailableForSpending() && value>0) {
+                if(to.isAvailableForSpending() && value>0 && to.isMine(wallet)) {
                     Log.i(TAG, "adding spendable output " + to);
                     newTx.addInput(to);
                     totalAvailable += value;
