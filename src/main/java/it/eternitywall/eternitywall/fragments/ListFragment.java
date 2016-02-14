@@ -251,7 +251,7 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
                         messageRecyclerViewAdapter.clear();
                     }
                     messages.addAll(mMessages);
-                    messageRecyclerViewAdapter.addAll(mMessages);
+                    messageRecyclerViewAdapter.notifyDataSetChanged();
                 }
                 else {
                     //succhia!
