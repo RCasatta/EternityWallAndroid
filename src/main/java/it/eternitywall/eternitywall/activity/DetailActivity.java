@@ -29,6 +29,8 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import com.joanzapata.iconify.Iconify;
+import com.joanzapata.iconify.fonts.FontAwesomeModule;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,8 +76,8 @@ public class DetailActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        Iconify.with(new FontAwesomeModule());
 
-        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
         View viewDetailMessage = findViewById(R.id.detailmessage);
         llShare = (LinearLayout) viewDetailMessage.findViewById(R.id.llSharing);
         llLikes = (LinearLayout) viewDetailMessage.findViewById(R.id.llLikes);
@@ -87,23 +89,6 @@ public class DetailActivity extends ActionBarActivity {
 
         tvLikesText = (TextView) viewDetailMessage.findViewById(R.id.tvLikesText);
         tvReplyText = (TextView) viewDetailMessage.findViewById(R.id.tvReplyText);
-
-        tvShare = (TextView) viewDetailMessage.findViewById(R.id.tvSharing);
-        tvLikes = (TextView) viewDetailMessage.findViewById(R.id.tvLikes);
-        tvProof = (TextView) viewDetailMessage.findViewById(R.id.tvProof);
-        tvRanking = (TextView) viewDetailMessage.findViewById(R.id.tvRanking);
-        tvReply = (TextView) viewDetailMessage.findViewById(R.id.tvReply);
-        tvTranslate = (TextView) viewDetailMessage.findViewById(R.id.tvTranslate);
-
-        tvShare.setTypeface(font);
-        tvLikes.setTypeface(font);
-        tvProof.setTypeface(font);
-        tvRanking.setTypeface(font);
-        tvReply.setTypeface(font);
-        tvTranslate.setTypeface(font);
-
-        tvLikesText.setTypeface(font);
-        tvReplyText.setTypeface(font);
 
         txtMessage = (TextView) viewDetailMessage.findViewById(R.id.txtMessage);
         txtDate = (TextView) viewDetailMessage.findViewById(R.id.txtDate);

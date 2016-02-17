@@ -15,17 +15,17 @@
     <string name="err_generic">Oops... missing address, something wrong in post message!</string>
     <string name="save">SAVE</string>
 
-    <string name="icon_share">&#xf1e0;</string>
-    <string name="icon_link">&#xf08e;</string>
-    <string name="icon_ranking">&#xf06e;</string>
-    <string name="icon_likes">&#xf087;</string>
-    <string name="icon_commenting">&#xf27b;</string>
-    <string name="icon_translate">&#xf0ac;</string>
-    <string name="action_order">&#xf161;</string>
-    <string name="action_search">&#xf002;</string>
-    <string name="action_cloud">&#xf0c2;</string>
-    <string name="action_preferences">&#xf013;</string>
-    <string name="action_share">&#xf1e0;</string>
+    <string name="icon_share">{fa-share-alt}</string>
+    <string name="icon_link">{fa-external-link}</string>
+    <string name="icon_ranking">{fa-eye}</string>
+    <string name="icon_likes">{fa-thumbs-o-up}</string>
+    <string name="icon_commenting">{fa-commenting-o}</string>
+    <string name="icon_translate">{fa-globe}</string>
+    <string name="action_order">{fa-sort-amount-desc}</string>
+    <string name="action_search">{fa-search}</string>
+    <string name="action_cloud">{fa-cloud }</string>
+    <string name="action_preferences">{fa-gear }</string>
+    <string name="action_share">{fa-share-alt}</string>
 
     <string name="order_replies">Replies</string>
     <string name="order_likes">Likes</string>
@@ -106,6 +106,6 @@
     <string name="tor_descript">Use the Tor network with Orbot to protect your privacy and hide your IP address</string>
 
 
-    <string name="qr_icon">&#xf029;</string>
+    <string name="qr_icon">{fa-qrcode}</string>
 
 </resources>

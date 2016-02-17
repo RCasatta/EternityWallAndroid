@@ -25,6 +25,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.joanzapata.iconify.IconDrawable;
+import com.joanzapata.iconify.Iconify;
+import com.joanzapata.iconify.fonts.FontAwesomeIcons;
+import com.joanzapata.iconify.fonts.FontAwesomeModule;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +70,8 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Iconify.with(new FontAwesomeModule());
+
 
         // Specify that tabs should be displayed in the action bar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -200,62 +207,20 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
 
         if (page_num == 0) {
             getMenuInflater().inflate(R.menu.menu_main, menu);
 
-            TextView txtOrder = new TextView(MainActivity.this);
-            txtOrder.setPadding(0, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
-            txtOrder.setText(getResources().getString(R.string.action_order));
-            txtOrder.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
-            txtOrder.setTypeface(font);
-            menu.findItem(R.id.action_order).setActionView(txtOrder);
-            menu.findItem(R.id.action_order).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    PopupMenu popupMenu = new PopupMenu(MainActivity.this, item.getActionView());
-                    popupMenu.setOnMenuItemClickListener(MainActivity.this);
-                    popupMenu.inflate(R.menu.menu_order);
-                    popupMenu.show();
-                    return true;
-                }
-            });
-            txtOrder.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PopupMenu popupMenu = new PopupMenu(MainActivity.this, v);
-                    popupMenu.setOnMenuItemClickListener(MainActivity.this);
-                    popupMenu.inflate(R.menu.menu_order);
-                    popupMenu.show();
-                }
-            });
-            TextView txtPreferences = new TextView(MainActivity.this);
-            txtPreferences.setPadding(0, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
-            txtPreferences.setText(getResources().getString(R.string.action_preferences));
-            txtPreferences.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
-            txtPreferences.setTypeface(font);
-            menu.findItem(R.id.action_preferences).setActionView(txtPreferences);
-            menu.findItem(R.id.action_preferences).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
-                    return true;
-                }
-            });
-            txtPreferences.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
-                }
-            });
 
-            /*TextView txtCloud=new TextView(MainActivity.this);
-            txtCloud.setPadding(0,0,(int) getResources().getDimension(R.dimen.activity_horizontal_margin),0);
-            txtCloud.setText(getResources().getString(R.string.action_cloud));
-            txtCloud.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
-            txtCloud.setTypeface(font);
-            menu.findItem(R.id.action_cloud).setActionView(txtCloud);*/
+            menu.findItem(R.id.action_order).setIcon(
+                    new IconDrawable(this, FontAwesomeIcons.fa_sort_amount_desc)
+                            .colorRes(android.R.color.white)
+                            .actionBarSize());
+
+            menu.findItem(R.id.action_preferences).setIcon(
+                    new IconDrawable(this, FontAwesomeIcons.fa_gear)
+                            .colorRes(android.R.color.white)
+                            .actionBarSize());
 
             //SearchManager searchManager = (SearchManager)         getSystemService(Context.SEARCH_SERVICE);
             searchMenuItem = menu.findItem(R.id.action_search);
@@ -285,78 +250,34 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         } else if (page_num == 1) {
             getMenuInflater().inflate(R.menu.menu_profile, menu);
 
-            TextView txtShare = new TextView(MainActivity.this);
-            txtShare.setPadding(0, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
-            txtShare.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
-            txtShare.setTypeface(font);
+
+            menu.findItem(R.id.action_share).setIcon(
+                    new IconDrawable(this, FontAwesomeIcons.fa_share_alt)
+                            .colorRes(android.R.color.white)
+                            .actionBarSize());
+
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
             String passphrase=sharedPref.getString(Preferences.PASSPHRASE, null);
             if (passphrase==null){
-                txtShare.setText("");
                 menu.findItem(R.id.action_share).setVisible(false);
             } else {
-                txtShare.setText(getResources().getString(R.string.action_share));
                 menu.findItem(R.id.action_share).setVisible(true);
-                menu.findItem(R.id.action_share).setActionView(txtShare);
-                menu.findItem(R.id.action_share).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        final WalletObservable walletObservable = ((EWApplication) getApplication()).getWalletObservable();
-                        if (walletObservable != null && walletObservable.getState() == WalletObservable.State.SYNCED ) {
-                            Intent intent = new Intent();
-                            intent.setAction(Intent.ACTION_SEND);
-                            intent.putExtra(Intent.EXTRA_TEXT, walletObservable.getCurrent().toString());
-                            intent.setType("text/plain");
-                            startActivity(intent);
-                        }
-                        return true;
-                    }
-                });
-                txtShare.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        final WalletObservable walletObservable = ((EWApplication) getApplication()).getWalletObservable();
-                        if (walletObservable != null && walletObservable.getState() == WalletObservable.State.SYNCED ) {
-                            Intent intent = new Intent();
-                            intent.setAction(Intent.ACTION_SEND);
-                            intent.putExtra(Intent.EXTRA_TEXT, walletObservable.getCurrent().toString());
-                            intent.setType("text/plain");
-                            startActivity(intent);
-                        }
-                    }
-                });
             }
 
             // show sharing button only if wallet is synced or pending
             EWApplication ewApplication = (EWApplication) this.getApplication();
             if(ewApplication!=null && ewApplication.getWalletObservable()!=null && ewApplication.getWalletObservable().isSyncedOrPending()) {
                 menu.findItem(R.id.action_share).setVisible(true);
-                txtShare.setVisibility(View.VISIBLE);
             }else {
                 menu.findItem(R.id.action_share).setVisible(false);
-                txtShare.setVisibility(View.INVISIBLE);
             }
 
-            TextView txtPreferences = new TextView(MainActivity.this);
-            txtPreferences.setPadding(0, 0, (int) getResources().getDimension(R.dimen.activity_horizontal_margin), 0);
-            txtPreferences.setText(getResources().getString(R.string.action_preferences));
-            txtPreferences.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Large);
-            txtPreferences.setTypeface(font);
 
-            menu.findItem(R.id.action_preferences).setActionView(txtPreferences);
-            menu.findItem(R.id.action_preferences).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    startActivity(new Intent(MainActivity.this,PreferencesActivity.class));
-                    return true;
-                }
-            });
-            txtPreferences.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(MainActivity.this,PreferencesActivity.class));
-                }
-            });
+            menu.findItem(R.id.action_preferences).setIcon(
+                    new IconDrawable(this, FontAwesomeIcons.fa_gear)
+                            .colorRes(android.R.color.white)
+                            .actionBarSize());
+
 
         }
         return true;
@@ -372,7 +293,8 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_order) {
-            PopupMenu popupMenu = new PopupMenu(MainActivity.this, item.getActionView());
+            View menuItemView = findViewById(R.id.action_order);
+            PopupMenu popupMenu = new PopupMenu(MainActivity.this, menuItemView);
             //popupMenu.setOnMenuItemClickListener(MainActivity.this);
             popupMenu.inflate(R.menu.menu_order);
             popupMenu.show();
@@ -380,9 +302,17 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         }else if (id == R.id.action_search) {
             //searchable element
             return true;
-        /*}else if (id == R.id.action_cloud) {
+        }else if (id == R.id.action_share) {
+            final WalletObservable walletObservable = ((EWApplication) getApplication()).getWalletObservable();
+            if (walletObservable != null && walletObservable.getState() == WalletObservable.State.SYNCED) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_SEND);
+                intent.putExtra(Intent.EXTRA_TEXT, walletObservable.getCurrent().toString());
+                intent.setType("text/plain");
+                startActivity(intent);
+            }
             return true;
-        }*/
+
         }else if (id == R.id.action_preferences) {
             startActivity(new Intent(MainActivity.this,PreferencesActivity.class));
             return true;

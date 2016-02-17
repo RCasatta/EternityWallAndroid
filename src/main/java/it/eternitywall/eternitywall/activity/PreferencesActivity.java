@@ -21,6 +21,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.joanzapata.iconify.Iconify;
+import com.joanzapata.iconify.fonts.FontAwesomeModule;
+
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
@@ -38,6 +41,7 @@ public class PreferencesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
+        Iconify.with(new FontAwesomeModule());
 
         View llResync = findViewById(R.id.llResync);
         View llAbout = findViewById(R.id.llAbout);

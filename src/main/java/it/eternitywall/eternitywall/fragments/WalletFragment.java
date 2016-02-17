@@ -33,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.base.Optional;
+import com.joanzapata.iconify.widget.IconTextView;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
@@ -81,7 +82,6 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
     private TextView aliasNameUnconfirmed;
     private TextView btcBalanceUnconfirmed;
     private TextView messagePending;
-    private TextView btcQR;
     private TextView txtHeader;
     private TextView walletWarning;
     private ImageView currentQrCode;
@@ -107,6 +107,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
     private OnFragmentInteractionListener mListener;
     private String cursor;
     private boolean end=false;
+    private IconTextView btcQR;
 
     public WalletFragment() {
         // Required empty public constructor
@@ -319,15 +320,13 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
         setAliasButton        = (Button) view.findViewById(R.id.setAlias);
         btcBalanceUnconfirmed = (TextView) view.findViewById(R.id.btcBalanceUnconfirmed);
         messagePending        = (TextView) view.findViewById(R.id.messagePending);
-        btcQR                 = (TextView) view.findViewById(R.id.btcQR);
+        btcQR                 = (IconTextView) view.findViewById(R.id.btcQR);
         txtHeader             = (TextView) view.findViewById(R.id.txtHeader);
         //myMessageList       = (ListView) view.findViewById(R.id.myMessageList);
         recyclerView          = (RecyclerView) view.findViewById(R.id.recyclerview);
         walletWarning         = (TextView) view.findViewById(R.id.wallet_warning);
 
 
-        Typeface font = Typeface.createFromAsset(getResources().getAssets(), "fontawesome-webfont.ttf");
-        btcQR.setTypeface(font);
         btcQR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

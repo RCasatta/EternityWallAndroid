@@ -133,7 +133,8 @@
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
                         />
-                    <TextView
+
+                    <com.joanzapata.iconify.widget.IconTextView
                         android:id="@+id/btcQR"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

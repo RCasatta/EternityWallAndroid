@@ -17,6 +17,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.joanzapata.iconify.Iconify;
+import com.joanzapata.iconify.fonts.FontAwesomeModule;
+
 import org.bitcoinj.core.Peer;
 import org.bitcoinj.core.PeerGroup;
 import org.bitcoinj.core.Wallet;
@@ -48,6 +51,7 @@ public class DebugActivity extends AppCompatActivity implements DebugListAdapter
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_debug);
+        Iconify.with(new FontAwesomeModule());
 
         lstDebug = (ListView) findViewById(R.id.listView);
         swipe = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);

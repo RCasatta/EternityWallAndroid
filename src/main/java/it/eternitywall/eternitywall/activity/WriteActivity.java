@@ -28,6 +28,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.base.Optional;
+import com.joanzapata.iconify.Iconify;
+import com.joanzapata.iconify.fonts.FontAwesomeModule;
 
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.InsufficientMoneyException;
@@ -77,6 +79,7 @@ public class WriteActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write);
+        Iconify.with(new FontAwesomeModule());
 
         txtMessage = (EditText) findViewById(R.id.txtMessage);
         txtCounter = (TextView) findViewById(R.id.txtCounter);

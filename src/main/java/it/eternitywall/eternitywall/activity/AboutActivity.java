@@ -7,6 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import com.joanzapata.iconify.Iconify;
+import com.joanzapata.iconify.fonts.FontAwesomeModule;
+
 import it.eternitywall.eternitywall.R;
 
 public class AboutActivity extends AppCompatActivity {
@@ -15,6 +18,7 @@ public class AboutActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
+        Iconify.with(new FontAwesomeModule());
 
         Button contact = (Button) findViewById(R.id.btnContact);
         Button visit   = (Button) findViewById(R.id.btnVisit);

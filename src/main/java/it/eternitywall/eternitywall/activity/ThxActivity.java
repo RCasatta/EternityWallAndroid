@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.common.base.Optional;
+import com.joanzapata.iconify.Iconify;
+import com.joanzapata.iconify.fonts.FontAwesomeModule;
 
 import it.eternitywall.eternitywall.Http;
 import it.eternitywall.eternitywall.Preferences;
@@ -31,6 +33,7 @@ public class ThxActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thx);
+        Iconify.with(new FontAwesomeModule());
 
         Button btn = (Button) findViewById(R.id.btnNotify);
 
