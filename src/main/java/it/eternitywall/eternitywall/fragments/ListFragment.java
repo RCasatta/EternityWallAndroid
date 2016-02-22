@@ -244,14 +244,16 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
 */
                 messageRecyclerViewAdapter.setInQueue(inQueue);
                 if(ok) {
-                    if(messages == null){
-                        messages=new ArrayList<Message>();
-                        messageRecyclerViewAdapter.clear();
-                    }else if(messages.size()==0) {
-                        messageRecyclerViewAdapter.clear();
+
+                    if(messages != null && !messages.isEmpty()) {
+                        messages.addAll(mMessages);
+                        final MessageRecyclerViewAdapter messageListAdapter = (MessageRecyclerViewAdapter) lstMessages.getAdapter();
+                        messageListAdapter.notifyDataSetChanged();
                     }
-                    messages.addAll(mMessages);
-                    messageRecyclerViewAdapter.notifyDataSetChanged();
+                    else {
+                        messages.addAll(mMessages);
+                        lstMessages.setAdapter(new MessageRecyclerViewAdapter(messages, inQueue, ListFragment.this));
+                    }
                 }
                 else {
                     //succhia!
