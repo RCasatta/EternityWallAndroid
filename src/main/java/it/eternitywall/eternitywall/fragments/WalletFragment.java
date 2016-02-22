@@ -70,7 +70,7 @@ import it.eternitywall.eternitywall.wallet.WalletObservable;
  * Use the {@link WalletFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class WalletFragment extends Fragment implements MessageListAdapter.MessageListAdapterManager{
+public class WalletFragment extends Fragment implements MessageRecyclerViewAdapter.MessageListAdapterManager{
     private static final String TAG = WalletFragment.class.toString();
 
     private LinearLayout syncingLayout;
@@ -415,43 +415,13 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager( getActivity().getApplicationContext() );
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            private int previousTotal = 0;
-            private boolean loading = true;
-            private int visibleThreshold = 1;
-            int firstVisibleItem, visibleItemCount, totalItemCount;
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                visibleItemCount = recyclerView.getChildCount();
-                totalItemCount = mLayoutManager.getItemCount();
-                firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
-
-                if (loading) {
-                    if (totalItemCount != previousTotal) {
-                        loading = false;
-                        previousTotal = totalItemCount;
-                    }
-                }
-                if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-                    // End has been reached
-                    Log.i("Yaeye!", "end called");
-                    loading = true;
-                    //avoid refresh at the end
-                    if (cursor!=null)
-                        loadMoreData();
-                }
-
-            }
-        });
 
         // Load my messages
         messages = new ArrayList<Message>();
         inQueue = null;
 
         // Set Message RecyclerView Adapter
-        messageRecyclerViewAdapter = new MessageRecyclerViewAdapter(messages,inQueue,null);
+        messageRecyclerViewAdapter = new MessageRecyclerViewAdapter(messages,inQueue,WalletFragment.this);
         recyclerView.setAdapter(messageRecyclerViewAdapter);
 
         // check on wallet observable
@@ -564,13 +534,15 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
 
                 if(ok) {
 
-                    if(messages == null){
-                        messages=new ArrayList<Message>();
-                        messageRecyclerViewAdapter.clear();
-                    } else if(messages.size()==0) {
-                        messageRecyclerViewAdapter.clear();
+                    if(messages != null && !messages.isEmpty()) {
+                        messages.addAll(mMessages);
+                        final MessageRecyclerViewAdapter messageListAdapter = (MessageRecyclerViewAdapter) recyclerView.getAdapter();
+                        messageListAdapter.notifyDataSetChanged();
                     }
-                    messageRecyclerViewAdapter.addAll(mMessages);
+                    else {
+                        messages.addAll(mMessages);
+                        recyclerView.setAdapter(new MessageRecyclerViewAdapter(messages, inQueue, WalletFragment.this));
+                    }
 
                 }
                 else {
@@ -596,6 +568,7 @@ public class WalletFragment extends Fragment implements MessageListAdapter.Messa
                     return true;
 
                 String address=walletObservable.getAlias().toString();
+                address="1Fk2QiTmL7k6fmE8x9MgZiYA2nj1m38GJv";
                 String urlString = "http://eternitywall.it/from/" + address + "?format=json";
                 if(cursor!=null)
                     urlString = urlString + "&cursor=" + cursor;
