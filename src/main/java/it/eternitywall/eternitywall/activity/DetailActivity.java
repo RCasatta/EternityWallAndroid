@@ -7,16 +7,16 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -45,7 +45,7 @@ import it.eternitywall.eternitywall.Http;
 import it.eternitywall.eternitywall.IdenticonGenerator;
 import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.R;
-import it.eternitywall.eternitywall.adapters.MessageListAdapter;
+import it.eternitywall.eternitywall.adapters.MessageRecyclerViewAdapter;
 import it.eternitywall.eternitywall.dialogfragments.RankingDialogFragment;
 
 public class DetailActivity extends ActionBarActivity {
@@ -55,13 +55,11 @@ public class DetailActivity extends ActionBarActivity {
     private static final String TAG = "WriteActivity";
     private static final int REQ_CODE = 100;
 
-    private TextView txtMessage;
-    private TextView txtDate;
-    private TextView txtStatus;
+    private TextView txtMessage,txtStatus, txtDate;
     private ProgressBar progress;
     private String hash = null;
-    private ListView repliesMessages;
-    private ListView answersMessages;
+    private RecyclerView repliesMessages;
+    private RecyclerView answersMessages;
 
     private List<Message> replies;
     private List<Message> answers;
@@ -69,7 +67,6 @@ public class DetailActivity extends ActionBarActivity {
 
     LinearLayout llShare, llLikes, llProof, llRanking, llReplies, llTranslate;
     TextView tvLikesText,tvReplyText;
-    TextView tvShare, tvLikes,tvProof,tvRanking,tvReply,tvTranslate;
     protected ImageView identicon;
 
     @Override
@@ -96,11 +93,23 @@ public class DetailActivity extends ActionBarActivity {
         identicon = (ImageView) viewDetailMessage.findViewById(R.id.identicon);
 
         progress = (ProgressBar) findViewById(R.id.progress);
-        repliesMessages = (ListView) findViewById(R.id.repliesMessages);
-        answersMessages = (ListView) findViewById(R.id.answersMessages);
 
+        //clear variables
         replies = new ArrayList<Message>();
         answers = new ArrayList<Message>();
+
+        // recyclerview on replies Messages
+        repliesMessages = (RecyclerView) findViewById(R.id.repliesMessages);
+        final it.eternitywall.eternitywall.components.LinearLayoutManager layoutManager = new it.eternitywall.eternitywall.components.LinearLayoutManager(this, it.eternitywall.eternitywall.components.LinearLayoutManager.VERTICAL, false);
+        repliesMessages.setLayoutManager(layoutManager);
+        repliesMessages.setAdapter(new MessageRecyclerViewAdapter(replies, 0, null));
+
+        // recyclerview on answers Messages
+        answersMessages = (RecyclerView) findViewById(R.id.answersMessages);
+        final it.eternitywall.eternitywall.components.LinearLayoutManager layoutManager_ = new it.eternitywall.eternitywall.components.LinearLayoutManager(this, it.eternitywall.eternitywall.components.LinearLayoutManager.VERTICAL, false);
+        answersMessages.setLayoutManager(layoutManager_);
+        answersMessages.setAdapter(new MessageRecyclerViewAdapter(answers, 0, null));
+
 
         try {
             hash = getIntent().getStringExtra("hash");
@@ -130,7 +139,7 @@ public class DetailActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
+/*
     private Bitmap generateQRCode(String data) {
         Bitmap mBitmap = null;
         com.google.zxing.Writer writer = new QRCodeWriter();
@@ -147,7 +156,7 @@ public class DetailActivity extends ActionBarActivity {
             e.printStackTrace();
         }
         return mBitmap;
-    }
+    }*/
 
     public void loadMessage() {
         AsyncTask t = new AsyncTask() {
@@ -290,23 +299,27 @@ public class DetailActivity extends ActionBarActivity {
                         }
                     });
 
-                    if (replies != null && !replies.isEmpty()) {
+
+                    // replies messages
+                    if(replies != null && !replies.isEmpty()) {
                         replies.addAll(mReplies);
-                        final MessageListAdapter messageListAdapter = (MessageListAdapter) repliesMessages.getAdapter();
+                        final MessageRecyclerViewAdapter messageListAdapter = (MessageRecyclerViewAdapter) repliesMessages.getAdapter();
                         messageListAdapter.notifyDataSetChanged();
-                    } else {
-                        replies.addAll(mReplies);
-                        Log.i(TAG, "2 DetailActivity=" + DetailActivity.this);
-                        repliesMessages.setAdapter(new MessageListAdapter(DetailActivity.this, R.layout.item_message, mReplies, 0, null));
                     }
+                    else {
+                        replies.addAll(mReplies);
+                        repliesMessages.setAdapter(new MessageRecyclerViewAdapter(mReplies, 0, null));
+                    }
+
+
+                    // answer messages
                     if (answers != null && !answers.isEmpty()) {
                         answers.addAll(mAnswers);
-                        final MessageListAdapter messageListAdapter = (MessageListAdapter) answersMessages.getAdapter();
+                        final MessageRecyclerViewAdapter messageListAdapter = (MessageRecyclerViewAdapter) answersMessages.getAdapter();
                         messageListAdapter.notifyDataSetChanged();
                     } else {
                         answers.addAll(mAnswers);
-                        Log.i(TAG, "3 DetailActivity=" + DetailActivity.this);
-                        answersMessages.setAdapter(new MessageListAdapter(DetailActivity.this, R.layout.item_message, mAnswers, 0, null));
+                        answersMessages.setAdapter(new MessageRecyclerViewAdapter(mAnswers, 0, null));
                     }
                 } else {
                     //succhia!
