@@ -295,7 +295,7 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         if (id == R.id.action_order) {
             View menuItemView = findViewById(R.id.action_order);
             PopupMenu popupMenu = new PopupMenu(MainActivity.this, menuItemView);
-            //popupMenu.setOnMenuItemClickListener(MainActivity.this);
+            popupMenu.setOnMenuItemClickListener(MainActivity.this);
             popupMenu.inflate(R.menu.menu_order);
             popupMenu.show();
             return true;
