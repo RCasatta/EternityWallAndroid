@@ -191,16 +191,18 @@ public class WalletObservable extends Observable {
     }
 
     public void reset() {
-        aliasName=null;
-        alias=null;
         walletUnconfirmedBalance=Coin.ZERO;
         walletBalance=Coin.ZERO;
-        currentQrCodeSource=null;
         current=null;
-        currentQrCode=null;
         percSync=null;
+        alias=null;
+        aliasName=null;
+        unconfirmedAliasName=null;
+        currentQrCode=null;
         currentIdenticon=null;
         currentIdenticonSource=null;
+        currentQrCodeSource=null;
+        messagePending=0;
         state=WalletObservable.State.NOT_STARTED;
         setChanged();
     }

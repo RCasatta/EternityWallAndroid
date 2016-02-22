@@ -719,11 +719,20 @@ public class EWWalletService extends Service implements Runnable {
             walletObservable.reset();
             walletObservable.notifyObservers();
         }
+
+        // Clear global variables
+        if(all!=null)
+            all.clear();
         if (messagesId!=null)
             messagesId.clear();
         if(changes!=null)
             changes.clear();
+        ewDerivation=null;
+        used     = new HashSet<>();
+        nextMessageId = 0 ;
+        nextChange    = 0 ;
 
+        // Clear files
         final Context context = getApplicationContext();
         File path;
         if(context!=null)
