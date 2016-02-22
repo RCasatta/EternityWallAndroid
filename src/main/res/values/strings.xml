@@ -107,5 +107,6 @@
 
 
     <string name="qr_icon">{fa-qrcode}</string>
+    <string name="title_activity_hidden">HiddenActivity</string>
 
 </resources>
