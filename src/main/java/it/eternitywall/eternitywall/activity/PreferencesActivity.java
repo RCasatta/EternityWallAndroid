@@ -50,6 +50,7 @@ public class PreferencesActivity extends AppCompatActivity {
         View llPassphrase = findViewById(R.id.llPassphrase);
         View llEmpty = findViewById(R.id.llEmpty);
         View llPersonalNode = findViewById(R.id.llPersonalNode);
+        View llWriteHidden = findViewById(R.id.llWriteHidden);
 
         Switch switchDonation = (Switch) findViewById(R.id.switchDonation);
         LinearLayout llDebug = (LinearLayout) findViewById(R.id.llDebug);
@@ -98,6 +99,15 @@ public class PreferencesActivity extends AppCompatActivity {
             }
         });
 
+        llWriteHidden.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (existAccount()) {
+                    dialogPin_writeHidden();
+                } else
+                    dialogCreateAccount();
+            }
+        });
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(PreferencesActivity.this);
 
@@ -195,6 +205,21 @@ public class PreferencesActivity extends AppCompatActivity {
         });
         pinAlertDialogFragment.show(getSupportFragmentManager(), PinAlertDialogFragment.class.toString());
 
+    }
+
+    private void dialogPin_writeHidden(){
+        final PinAlertDialogFragment pinAlertDialogFragment= PinAlertDialogFragment.newInstance(R.string.confirm_pin);
+        pinAlertDialogFragment.setPositive(new Runnable() {
+            @Override
+            public void run() {
+                final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(PreferencesActivity.this);
+                String passphrase = sharedPref.getString(Preferences.PASSPHRASE, null);
+                if (passphrase != null) {
+                    startActivity(new Intent(PreferencesActivity.this,HiddenActivity.class));
+                }
+            }
+        });
+        pinAlertDialogFragment.show(getSupportFragmentManager(), PinAlertDialogFragment.class.toString());
     }
 
     private void dialogPin_resyncAccount(){

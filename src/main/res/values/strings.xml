@@ -109,5 +109,8 @@
 
     <string name="qr_icon">{fa-qrcode}</string>
     <string name="title_activity_hidden">HiddenActivity</string>
+    <string name="btn_sendhash">Send Hash</string>
+    <string name="write_hash_message">Send Hash Message</string>
+    <string name="write_hash_message_subtitle">Send the hash of the message</string>
 
 </resources>
