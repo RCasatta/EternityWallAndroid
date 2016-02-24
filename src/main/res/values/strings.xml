@@ -21,11 +21,12 @@
     <string name="icon_likes">{fa-thumbs-o-up}</string>
     <string name="icon_commenting">{fa-commenting-o}</string>
     <string name="icon_translate">{fa-globe}</string>
-    <string name="action_order">{fa-sort-amount-desc}</string>
-    <string name="action_search">{fa-search}</string>
-    <string name="action_cloud">{fa-cloud }</string>
-    <string name="action_preferences">{fa-gear }</string>
-    <string name="action_share">{fa-share-alt}</string>
+
+    <string name="action_order">Order by</string>
+    <string name="action_search">Search</string>
+    <string name="action_cloud">Cloud</string>
+    <string name="action_preferences">Preferences</string>
+    <string name="action_share">Sharing</string>
 
     <string name="order_replies">Replies</string>
     <string name="order_likes">Likes</string>
