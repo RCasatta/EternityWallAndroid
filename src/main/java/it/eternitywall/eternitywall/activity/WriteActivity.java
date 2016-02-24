@@ -63,7 +63,7 @@ public class WriteActivity extends ActionBarActivity {
 
 
     private EditText txtMessage;
-    private TextView txtCounter;
+    private TextView txtCounter,txtHeader;
     private ProgressBar progress;
     private Spinner spnrSender;
     private LinearLayout lytSender;
@@ -83,6 +83,7 @@ public class WriteActivity extends ActionBarActivity {
 
         txtMessage = (EditText) findViewById(R.id.txtMessage);
         txtCounter = (TextView) findViewById(R.id.txtCounter);
+        txtHeader = (TextView) findViewById(R.id.txtHeader);
         if(getIntent().getExtras() != null && getIntent().getStringExtra("sharedText") != null) {
             txtMessage.setText(getIntent().getStringExtra("sharedText"));
             curmsg = txtMessage.getText().toString();
@@ -107,7 +108,8 @@ public class WriteActivity extends ActionBarActivity {
         }
 
         if(getIntent().getExtras() != null && getIntent().getStringExtra("replyFrom") != null) {
-            txtMessage.setHint("reply from message id " + getIntent().getStringExtra("replyFrom"));
+            txtHeader.setText("reply to message id " + getIntent().getStringExtra("replyFrom"));
+            txtHeader.setVisibility(View.VISIBLE);
             replyFrom=getIntent().getStringExtra("replyFrom");
             curmsg = txtMessage.getText().toString();
             if(calcRemainingBytes() < 0) {
