@@ -3,16 +3,11 @@ package it.eternitywall.eternitywall.activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Handler;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -38,12 +33,7 @@ import com.joanzapata.iconify.fonts.FontAwesomeModule;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.InsufficientMoneyException;
 import org.bitcoinj.core.Transaction;
-import org.bitcoinj.core.TransactionBroadcast;
-import org.bitcoinj.crypto.ChildNumber;
 import org.bitcoinj.crypto.DeterministicKey;
-import org.bitcoinj.crypto.HDKeyDerivation;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.spongycastle.util.encoders.Hex;
 
 import java.security.MessageDigest;
@@ -51,22 +41,16 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TimeZone;
-import java.util.concurrent.ExecutionException;
 
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Http;
-import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
-import it.eternitywall.eternitywall.adapters.MessageRecyclerViewAdapter;
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 import it.eternitywall.eternitywall.dialogfragments.PinAlertDialogFragment;
 import it.eternitywall.eternitywall.wallet.EWDerivation;
@@ -311,6 +295,7 @@ public class HiddenActivity extends AppCompatActivity {
 
 
     public void sendMessage(final String message, final int satoshi, final long timestamp) {
+        Log.i(TAG,"sending message " + message + " satoshi:" + satoshi + " timestamp:" + timestamp);
 
         AsyncTask t = new AsyncTask() {
 
@@ -361,8 +346,8 @@ public class HiddenActivity extends AppCompatActivity {
 
 
     public boolean registerMessage(String message, int satoshi, long timestamp){
-
-
+        Log.i(TAG,"registerMessage " + message + " satoshi:" + satoshi + " timestamp:" + timestamp);
+        
         final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(HiddenActivity.this);
         String passphrase = sharedPref.getString(Preferences.PASSPHRASE, null);
         if (passphrase == null)
@@ -416,6 +401,7 @@ public class HiddenActivity extends AppCompatActivity {
     private Transaction curTx;
 
     private void createTx(String message){
+        Log.i(TAG,"createTx " + message);
 
         MessageDigest digest = null;
         String messageHash=null;
@@ -423,17 +409,19 @@ public class HiddenActivity extends AppCompatActivity {
             digest = MessageDigest.getInstance("SHA-256");
             digest.update(message.getBytes());
             messageHash = Hex.toHexString(digest.digest());
-            Log.d(TAG, "hash : " + messageHash);
+            Log.i(TAG, "hash : " + messageHash);
 
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
-            Log.d(TAG, "NoSuchAlgorithmException");
+            Log.w(TAG, "NoSuchAlgorithmException");
         }
 
         if(messageHash!=null && !messageHash.isEmpty()) {
             final EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
             try {
                 curTx = ewWalletService.createMessageTx(curmsg, null);
+                Log.i(TAG , "created transaction " + curTx.getHashAsString() );
+                Log.i(TAG, Bitcoin.transactionToHex(curTx));
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
                 Toast.makeText(this, "Wait the pending message", Toast.LENGTH_LONG).show();
@@ -455,8 +443,9 @@ public class HiddenActivity extends AppCompatActivity {
 
 
     private void sendBroadcast() {
+        Log.i(TAG,"broadcasting...");
         final EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
-        final TransactionBroadcast transactionBroadcast = ewWalletService.broadcastTransaction(curTx);
+        /*final TransactionBroadcast transactionBroadcast = ewWalletService.broadcastTransaction(curTx);
 
         try {
             Transaction transaction = transactionBroadcast.future().get();
@@ -488,11 +477,12 @@ public class HiddenActivity extends AppCompatActivity {
             Toast.makeText(this, "Error broadcasting message! Please retry", Toast.LENGTH_LONG).show();
             Log.e(TAG, e.getMessage());
             e.printStackTrace();
-        }
+        }*/
     }
 
 
     private void dialogSuccess() {
+        Log.i(TAG,"showing dialog");
         android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(this);
         alertDialog.setTitle("Success");
         alertDialog.setMessage("Message successfully broadcasted. You will be notified when written in the blockchain.");
