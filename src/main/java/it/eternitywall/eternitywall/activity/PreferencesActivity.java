@@ -103,7 +103,7 @@ public class PreferencesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (existAccount()) {
-                    dialogPin_writeHidden();
+                    startActivity(new Intent(PreferencesActivity.this,HiddenActivity.class));
                 } else {
                     SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(PreferencesActivity.this);
                     String alias=sharedPref.getString(Preferences.ALIAS_NAME,null);
