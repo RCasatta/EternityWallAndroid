@@ -59,12 +59,12 @@
     <string name="use_pin_see_passphrase">Access to passphrase with Pin</string>
     <string name="resync_wallet">Resync Wallet</string>
     <string name="resync_to_blockchain">Resync the wallet to the blockchain</string>
-    <string name="empty_wallet">Empty wallet</string>
+    <string name="empty_wallet">Empty Wallet</string>
     <string name="all_btc_to_address">Send all of your bitcoin to a single address</string>
     <string name="remove_account">Remove Account</string>
     <string name="delete_local_passphrase">Delete current stored passphrase</string>
     <string name="other_settings">Other settings</string>
-    <string name="personal_node">Personal node</string>
+    <string name="personal_node">Personal Node</string>
     <string name="personal_node_info">Set the address of your personal node, if set and reachable the wallet will sync against this node</string>
     <string name="account">Account</string>
     <string name="donation">Donation</string>
@@ -72,7 +72,7 @@
     <string name="show_info_blockchain">Show information about blockchain</string>
     <string name="debug_info">Debug Info</string>
     <string name="ew_website">www.eternitywall.it</string>
-    <string name="about_us">About us</string>
+    <string name="about_us">About Us</string>
     <string name="from">From:</string>
     <string name="like_info">Like this message sending any amount to the following address</string>
     <string name="insert_destination">Insert destination address...</string>
