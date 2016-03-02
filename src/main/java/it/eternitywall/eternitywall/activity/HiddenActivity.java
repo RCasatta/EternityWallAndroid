@@ -17,6 +17,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -139,24 +140,30 @@ public class HiddenActivity extends AppCompatActivity {
         llBtc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(HiddenActivity.this);
-                builder.setTitle("Price to reveal");
-                final EditText input = new EditText(HiddenActivity.this);
-                input.setInputType(InputType.TYPE_CLASS_NUMBER);
-                builder.setView(input);
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(HiddenActivity.this);
+                LayoutInflater inflater = HiddenActivity.this.getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.dlg_pricereveal, null);
+                dialogBuilder.setView(dialogView);
+
+                final EditText editText = (EditText) dialogView.findViewById(R.id.txtPrice);
+                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+                dialogBuilder.setTitle("Price to Reveal");
+                dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        txtBtc.setText(input.getText().toString());
+                        txtBtc.setText(editText.getText().toString());
                     }
                 });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                     }
                 });
-                builder.show();
+                dialogBuilder.show();
+
             }
         });
 
@@ -315,6 +322,12 @@ public class HiddenActivity extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(Object o) {
+                createTx(message);
+                if (curTx!=null) {
+                    registerMessage(message, satoshi, timestamp);
+                    sendBroadcast();
+                }
+
                 if (HiddenActivity.this.isFinishing())  //exception will null pointer happened here, checking getActivity is null or use isAdded()????
                     return;
                 super.onPostExecute(o);
@@ -325,11 +338,7 @@ public class HiddenActivity extends AppCompatActivity {
             @Override
             protected Object doInBackground(Object[] params) {
 
-                createTx(message);
-                if (curTx!=null) {
-                    registerMessage(message, satoshi, timestamp);
-                    sendBroadcast();
-                }
+
 
                 return null;
             }
