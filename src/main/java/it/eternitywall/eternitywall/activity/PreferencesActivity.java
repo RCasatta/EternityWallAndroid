@@ -104,8 +104,17 @@ public class PreferencesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (existAccount()) {
                     dialogPin_writeHidden();
-                } else
-                    dialogCreateAccount();
+                } else {
+                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(PreferencesActivity.this);
+                    String alias=sharedPref.getString(Preferences.ALIAS_NAME,null);
+                    if (alias==null || alias.length()==0 ){
+                        dialogNoAlias();
+                    }else{
+                        dialogCreateAccount();
+                    }
+
+                }
+
             }
         });
 
@@ -185,9 +194,29 @@ public class PreferencesActivity extends AppCompatActivity {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Warning");
         alertDialog.setMessage("Account not defined, please create a wallet.");
+        alertDialog.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
         AlertDialog alert = alertDialog.create();
         alert.show();
     }
+    private void dialogNoAlias() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Warning");
+        alertDialog.setMessage("Alias not defined, please defined your alias.");
+        alertDialog.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        AlertDialog alert = alertDialog.create();
+        alert.show();
+    }
+
 
     private void dialogPin_showPassphrase(){
         final PinAlertDialogFragment pinAlertDialogFragment= PinAlertDialogFragment.newInstance(R.string.confirm_pin);
