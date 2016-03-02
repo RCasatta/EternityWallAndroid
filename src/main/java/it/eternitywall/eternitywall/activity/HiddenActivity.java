@@ -337,6 +337,9 @@ public class HiddenActivity extends AppCompatActivity {
                     return;
                 super.onPostExecute(o);
                 progress.setVisibility(View.INVISIBLE);
+                if (curTx!=null && success==true) {
+                    dialogSuccess();
+                }
 
             }
 
@@ -489,6 +492,20 @@ public class HiddenActivity extends AppCompatActivity {
     }
 
 
+    private void dialogSuccess() {
+        android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(this);
+        alertDialog.setTitle("Success");
+        alertDialog.setMessage("Message successfully broadcasted. You will be notified when written in the blockchain.");
+        alertDialog.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                HiddenActivity.this.finish();
+            }
+        });
+        alertDialog.setCancelable(false);
+        android.support.v7.app.AlertDialog alert = alertDialog.create();
+        alert.show();
+    }
 
 
 }
