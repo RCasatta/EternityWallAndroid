@@ -121,8 +121,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="100mBTC"
+            android:text="100"
             android:id="@+id/txtBtc"
+            android:gravity="center_vertical" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text=" mBTC"
+            android:id="@+id/textView24"
             android:gravity="center_vertical" />
     </LinearLayout>
 
