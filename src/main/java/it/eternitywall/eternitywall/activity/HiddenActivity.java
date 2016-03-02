@@ -358,7 +358,12 @@ public class HiddenActivity extends AppCompatActivity {
 
 
     public boolean registerMessage(String message, int satoshi, long timestamp){
-        String passphrase = "kiss clap snap wear alter desk rally dance donate lava adult notice";
+
+
+        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(HiddenActivity.this);
+        String passphrase = sharedPref.getString(Preferences.PASSPHRASE, null);
+        if (passphrase == null)
+            return false;
         byte[] mySeed = Bitcoin.getEntropyFromPassphrase(passphrase);
         EWDerivation ewDerivation = new EWDerivation(mySeed);
 
