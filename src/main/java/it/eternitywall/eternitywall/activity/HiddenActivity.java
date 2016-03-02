@@ -313,18 +313,23 @@ public class HiddenActivity extends AppCompatActivity {
     public void sendMessage(final String message, final int satoshi, final long timestamp) {
 
         AsyncTask t = new AsyncTask() {
+
+            boolean success=false;
+
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
                 progress.setVisibility(View.VISIBLE);
 
+                // 1. Create Transaction
+                createTx(message);
+
             }
 
             @Override
             protected void onPostExecute(Object o) {
-                createTx(message);
-                if (curTx!=null) {
-                    registerMessage(message, satoshi, timestamp);
+
+                if (curTx!=null && success==true) {
                     sendBroadcast();
                 }
 
@@ -337,7 +342,9 @@ public class HiddenActivity extends AppCompatActivity {
 
             @Override
             protected Object doInBackground(Object[] params) {
-
+                if (curTx!=null) {
+                    success=registerMessage(message, satoshi, timestamp);
+                }
 
 
                 return null;
@@ -350,7 +357,7 @@ public class HiddenActivity extends AppCompatActivity {
 
 
 
-    public void registerMessage(String message, int satoshi, long timestamp){
+    public boolean registerMessage(String message, int satoshi, long timestamp){
         String passphrase = "kiss clap snap wear alter desk rally dance donate lava adult notice";
         byte[] mySeed = Bitcoin.getEntropyFromPassphrase(passphrase);
         EWDerivation ewDerivation = new EWDerivation(mySeed);
@@ -390,19 +397,9 @@ public class HiddenActivity extends AppCompatActivity {
         map.put("index", index);
 
         final Optional<String> stringOptional = Http.postForm(url, map);
-
-        //assertTrue(stringOptional.isPresent());
-/*
-        Log.d(TAG, stringOptional.get());
-
-        final DeterministicKey deterministicKey = HDKeyDerivation.deriveChildKey(external, new ChildNumber(0, true));
-
-        Log.d(TAG, Bitcoin.keyToStringAddress(deterministicKey));
-
-        final DeterministicKey deterministicKey2 = HDKeyDerivation.deriveChildKey(external, new ChildNumber(0, false));
-
-        Log.d(TAG, Bitcoin.keyToStringAddress(deterministicKey2));
-        */
+        if (stringOptional!=null)
+            return true;
+        return false;
 
     }
 
