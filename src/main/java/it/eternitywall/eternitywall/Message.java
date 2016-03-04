@@ -18,6 +18,7 @@ public class Message implements Serializable, Comparable<Message> {
     private String message;
     private Long timestamp;
     private String messageId;
+    private String link;
     private Integer replies;
     private Integer likes;
     private Boolean answer;
@@ -149,6 +150,7 @@ public class Message implements Serializable, Comparable<Message> {
         try { m.view = jo.getInt("view");} catch (JSONException e) { m.view = 0; } //optional
         try { m.weekView = jo.getInt("weekView");} catch (JSONException e) { m.weekView = 0; } //optional
         try { m.retweets = jo.getInt("retweets");} catch (JSONException e) { m.retweets = 0; } //optional
+        try { m.link = jo.getString("link");} catch (JSONException e) { m.link = null; } //optional
 
         try { m.alias = jo.getString("alias");} catch (JSONException e) {  } //optional
         try { m.aliasName = jo.getString("aliasName");} catch (JSONException e) {  } //optional
@@ -213,5 +215,14 @@ public class Message implements Serializable, Comparable<Message> {
 
     public void setRetweets(Integer retweets) {
         this.retweets = retweets;
+    }
+
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 }

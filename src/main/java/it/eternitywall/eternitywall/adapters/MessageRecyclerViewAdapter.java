@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,7 +92,18 @@ public class MessageRecyclerViewAdapter
         final Message m = mValues.get(position);
 
         // message
-        h.txtMessage.setText(m.getMessage());
+        String text=m.getMessage();
+        if(m.getLink()!=null) {
+            String link = m.getLink();
+            String linkreplace = "";
+
+            if (link.contains("http"))
+                linkreplace = "<a href='" + link + "'>" + link + "</a>";
+            else
+                linkreplace = "<a href='http://" + link + "'>http://" + link + "</a>";
+            text=text.replace(link,linkreplace);
+        }
+        h.txtMessage.setText(Html.fromHtml(text));
         if (m.getRank() == 1) {
             h.txtMessage.setTextAppearance(h.mView.getContext(), android.R.style.TextAppearance_Large);
         } else if (m.getRank() == 2) {
