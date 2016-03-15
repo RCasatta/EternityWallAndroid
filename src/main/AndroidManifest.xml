@@ -94,6 +94,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.eternitywall.eternitywall.activity.MainActivity" />
         </activity>
+        <activity
+            android:name=".activity.ProfileActivity"
+            android:label="@string/title_activity_profile" >
+        </activity>
     </application>
 
 </manifest>
