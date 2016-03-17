@@ -347,7 +347,7 @@ public class HiddenActivity extends AppCompatActivity {
 
     public boolean registerMessage(String message, int satoshi, long timestamp){
         Log.i(TAG,"registerMessage " + message + " satoshi:" + satoshi + " timestamp:" + timestamp);
-        
+
         final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(HiddenActivity.this);
         String passphrase = sharedPref.getString(Preferences.PASSPHRASE, null);
         if (passphrase == null)
@@ -376,7 +376,7 @@ public class HiddenActivity extends AppCompatActivity {
     final String indexString = req.getParameter("index");
      */
 
-        final int index=0;
+        final int index=0;  //TODO this need to grow!
         final DeterministicKey external = ewDerivation.getAccount(index);//.getExternal(index);
         final String pubKey    = Hex.toHexString(external.getPubKey());
         final String chainCode = Hex.toHexString(external.getChainCode());
@@ -384,16 +384,16 @@ public class HiddenActivity extends AppCompatActivity {
         map.put("message",message);
         map.put("txHash",curTx.getHashAsString());
         map.put("satoshiToReveal",1000 * satoshi);  //1mBTC
-        map.put("timestampWhenReveal",timestamp);
+        map.put("timestampWhenReveal",timestamp/1000);
         map.put("pubKey",pubKey);
         map.put("chainCode",chainCode);
         map.put("index", index);
+        Log.i(TAG, "calling " + url);
+        Log.i(TAG,"with param " + map);
 
         final Optional<String> stringOptional = Http.postForm(url, map);
-        if (stringOptional!=null)
-            return true;
-        return false;
-
+        Log.i(TAG,"returning " + stringOptional);
+        return stringOptional.isPresent();
     }
 
 
@@ -409,7 +409,7 @@ public class HiddenActivity extends AppCompatActivity {
             digest = MessageDigest.getInstance("SHA-256");
             digest.update(message.getBytes());
             messageHash = Hex.toHexString(digest.digest());
-            Log.i(TAG, "hash : " + messageHash);
+            Log.i(TAG, "message hash : " + messageHash);
 
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
