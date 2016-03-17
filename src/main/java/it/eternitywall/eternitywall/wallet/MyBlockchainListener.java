@@ -108,16 +108,13 @@ public class MyBlockchainListener implements BlockChainListener {
     @Override
     public void receiveFromBlock(Transaction tx, StoredBlock block, AbstractBlockChain.NewBlockType blockType, int relativityOffset) throws VerificationException {
         Log.i(TAG, "receiveFromBlock " + tx.getHashAsString() + " in block " + block);
-        WalletObservable walletObservable = ewApplication.getWalletObservable();
-        String aliasName = EWWalletService.checkAlias(tx, walletObservable);
+
         EWWalletService ewWalletService = ewApplication.getEwWalletService();
+
         if(ewWalletService!=null) {
             ewWalletService.refreshNextsAndAlias();
         }
-        if(aliasName!=null) {
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(ewApplication);
-            sharedPref.edit().putString(Preferences.ALIAS_NAME,aliasName).apply();
-        }
+
         createNotification(tx);
         //TODO add listener to confidence change
     }

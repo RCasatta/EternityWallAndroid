@@ -89,7 +89,7 @@ public class RecoverPassphraseFragment extends Fragment {
                 final Editable confirmPinText = confirmPin.getText();
                 final CharSequence passphraseCharSequence = passphraseText.getText();
                 if( pinText.toString().isEmpty() || confirmPinText.toString().isEmpty() || passphraseCharSequence.toString().isEmpty() ) {
-                    Toast.makeText(getActivity(), "All inputs are required", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Please, type PIN and confirmation PIN", Toast.LENGTH_LONG).show();
                     return;
                 }
 

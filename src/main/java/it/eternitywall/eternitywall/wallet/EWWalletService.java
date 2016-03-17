@@ -562,9 +562,14 @@ public class EWWalletService extends Service implements Runnable {
 
     }
 
+    private Set<Integer> processed = new HashSet<>();
     public synchronized void refreshNextsAndAlias() {
         List<Transaction> allTx = wallet.getTransactionsByTime();
-        //Log.i(TAG, "refreshNextsAndAlias allTx.size()=" + allTx.size());
+        final int size = allTx.size();
+        if(processed.contains(size))
+            return;
+        Log.i(TAG, "refreshNextsAndAlias allTx.size()=" + size);
+
         for (Transaction tx : allTx) {
             //Log.i(TAG,"tx=" + tx);
             final List<TransactionInput> inputs = tx.getInputs();
@@ -611,6 +616,7 @@ public class EWWalletService extends Service implements Runnable {
             else
                 break;
         }
+        processed.add(size);
     }
 
 
@@ -632,8 +638,7 @@ public class EWWalletService extends Service implements Runnable {
     }
 
     private static String EWA_PREFIX = "455741";
-    public static String checkAlias(Transaction tx, WalletObservable walletObservable) {
-
+    public String checkAlias(Transaction tx, WalletObservable walletObservable) {
         final List<TransactionOutput> outputs = tx.getOutputs();
         for (TransactionOutput to : outputs) {
             byte[] script = to.getScriptBytes();
@@ -670,13 +675,14 @@ public class EWWalletService extends Service implements Runnable {
                                 Log.i(TAG, "alias tx is confirmed!");
                             }
                             walletObservable.notifyObservers();
+
                             return aliasName;
                         }
                     }
-
                 }
             }
         }
+
         return null;
     }
 

@@ -117,7 +117,7 @@ public class CreateFragment extends Fragment {
                 final Editable confirmPinText = confirmPin.getText();
                 final String pinString = pinText.toString();
                 if( pinString.isEmpty() || confirmPinText.toString().isEmpty()  ) {
-                    Toast.makeText(getActivity(), "All inputs are required", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Please, type PIN and confirmation PIN", Toast.LENGTH_LONG).show();
                     return;
                 }
 
