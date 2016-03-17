@@ -112,5 +112,6 @@
     <string name="btn_sendhash">Send Hash</string>
     <string name="write_hash_message">Send Hash Message</string>
     <string name="write_hash_message_subtitle">Send the hash of the message</string>
+    <string name="title_activity_profile">Profile</string>
 
 </resources>
