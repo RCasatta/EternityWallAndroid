@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -187,7 +189,27 @@ public class DetailActivity extends ActionBarActivity {
                     } else {
                         txtDate.setText(dateFormatted);
                     }
-                    txtMessage.setText(mMessage.getMessage());
+
+                    // link on message
+                    if(mMessage.getLink()!=null) {
+                        String link = mMessage.getLink();
+                        String linkreplace = "";
+                        if (link.startsWith("@"))
+                            linkreplace = "<a href='" + link + "'>" + link + "</a>";
+                        else if (link.contains("http"))
+                            linkreplace = "<a href='" + link + "'>" + link + "</a>";
+                        else if (link.contains("https"))
+                            linkreplace = "<a href='" + link + "'>" + link + "</a>";
+                        else
+                            linkreplace = "<a href='http://" + link + "'>" + link + "</a>";
+                        String text=mMessage.getMessage();
+                        text=text.replace(link,linkreplace);
+                        txtMessage.setText(Html.fromHtml(text));
+                        txtMessage.setMovementMethod(LinkMovementMethod.getInstance());
+                    }else {
+                        txtMessage.setText(mMessage.getMessage());
+                    }
+
                     // TO DO
                     //if (mMessage.getAnswer()==true)
                     if (mMessage.getLikes() > 0)

@@ -16,7 +16,6 @@
         android:textSize="18sp"
         android:textColor="@color/primaryText"
         android:visibility="gone"
-
         />
 
 

@@ -98,10 +98,14 @@ public class MessageRecyclerViewAdapter
             String link = m.getLink();
             String linkreplace = "";
 
-            if (link.contains("http"))
+            if (link.startsWith("@"))
+                linkreplace = "<a href='" + link + "'>" + link + "</a>";
+            else if (link.contains("http"))
+                linkreplace = "<a href='" + link + "'>" + link + "</a>";
+            else if (link.contains("https"))
                 linkreplace = "<a href='" + link + "'>" + link + "</a>";
             else
-                linkreplace = "<a href='http://" + link + "'>http://" + link + "</a>";
+                linkreplace = "<a href='http://" + link + "'>" + link + "</a>";
             text=text.replace(link,linkreplace);
         }
         h.txtMessage.setText(Html.fromHtml(text));
