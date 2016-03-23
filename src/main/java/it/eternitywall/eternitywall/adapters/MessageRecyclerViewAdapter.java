@@ -15,7 +15,6 @@
  */
 package it.eternitywall.eternitywall.adapters;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
@@ -99,7 +98,7 @@ public class MessageRecyclerViewAdapter
             String linkreplace = "";
 
             if (link.startsWith("@"))
-                linkreplace = "<a href='" + link + "'>" + link + "</a>";
+                linkreplace = "<a href='http://twitter.com/" + link + "'>" + link + "</a>";
             else if (link.contains("http"))
                 linkreplace = "<a href='" + link + "'>" + link + "</a>";
             else if (link.contains("https"))
