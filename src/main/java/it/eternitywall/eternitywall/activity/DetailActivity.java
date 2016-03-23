@@ -6,12 +6,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -21,16 +19,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.base.Optional;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
 import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
 
@@ -195,7 +188,7 @@ public class DetailActivity extends ActionBarActivity {
                         String link = mMessage.getLink();
                         String linkreplace = "";
                         if (link.startsWith("@"))
-                            linkreplace = "<a href='" + link + "'>" + link + "</a>";
+                            linkreplace = "<a href='http://twitter.com/" + link + "'>" + link + "</a>";
                         else if (link.contains("http"))
                             linkreplace = "<a href='" + link + "'>" + link + "</a>";
                         else if (link.contains("https"))
