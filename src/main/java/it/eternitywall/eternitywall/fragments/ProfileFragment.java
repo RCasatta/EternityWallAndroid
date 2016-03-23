@@ -171,14 +171,6 @@ public class ProfileFragment extends Fragment implements MessageRecyclerViewAdap
             }
         });
 
-        // Show / Hide write button
-        v.findViewById(R.id.payButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getActivity(), WriteActivity.class);
-                startActivity(i);
-            }
-        });
 
         return v;
     }
@@ -248,8 +240,10 @@ public class ProfileFragment extends Fragment implements MessageRecyclerViewAdap
                 Optional<String> json=null;
                 json = cursor == null ? Http.get("http://eternitywall.it/from/"+accountId+"?format=json") : Http.get("http://eternitywall.it/from/"+accountId+"?format=json&cursor=" + cursor);
 
-                if(end)
+                if(end) {
+                    ok=true;
                     return true;
+                }
 
                 if(json!=null && json.isPresent()) {
                     try {
