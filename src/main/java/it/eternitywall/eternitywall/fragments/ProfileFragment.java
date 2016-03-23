@@ -90,6 +90,7 @@ public class ProfileFragment extends Fragment implements MessageRecyclerViewAdap
     private String cursor;
     private List<Message> messages;
     private Integer inQueue;
+    private boolean end=false;
 
     public void clear() {
         messages.clear();
@@ -101,7 +102,7 @@ public class ProfileFragment extends Fragment implements MessageRecyclerViewAdap
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v= inflater.inflate(R.layout.fragment_list, container, false);
+        View v= inflater.inflate(R.layout.fragment_profile, container, false);
 
         if (getArguments() != null) {
             accountId = getArguments().getString(ARG_PARAM1);
@@ -247,6 +248,8 @@ public class ProfileFragment extends Fragment implements MessageRecyclerViewAdap
                 Optional<String> json=null;
                 json = cursor == null ? Http.get("http://eternitywall.it/from/"+accountId+"?format=json") : Http.get("http://eternitywall.it/from/"+accountId+"?format=json&cursor=" + cursor);
 
+                if(end)
+                    return true;
 
                 if(json!=null && json.isPresent()) {
                     try {
@@ -271,6 +274,8 @@ public class ProfileFragment extends Fragment implements MessageRecyclerViewAdap
                         }
 
                         JSONArray ja = jo.getJSONArray("messages");
+                        if(ja.length()==0)
+                            end=true;
 
                         for(int m=0; m<ja.length(); m++) {
                             Message message = Message.buildFromJson(ja.getJSONObject(m));
