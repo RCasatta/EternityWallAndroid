@@ -2,6 +2,7 @@ package it.eternitywall.eternitywall.activity;
 
 import android.net.Uri;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,8 +24,10 @@ public class ProfileActivity extends AppCompatActivity implements ProfileFragmen
         String accountId=getIntent().getStringExtra("accountId");
         ProfileFragment profileFragment = ProfileFragment.newInstance(accountId);
 
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.add(profileFragment,"fragment").commit();
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.container, profileFragment);
+        ft.commit();
     }
 
 

@@ -34,6 +34,7 @@ import it.eternitywall.eternitywall.IdenticonGenerator;
 import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.activity.DetailActivity;
+import it.eternitywall.eternitywall.activity.ProfileActivity;
 import it.eternitywall.eternitywall.components.EnglishNumberToWords;
 
 public class MessageRecyclerViewAdapter
@@ -148,6 +149,14 @@ public class MessageRecyclerViewAdapter
             Bitmap bitmap = IdenticonGenerator.generate(m.getAlias());
             h.identicon.setImageBitmap(bitmap);
             h.identicon.setVisibility(View.VISIBLE);
+            h.identicon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(v.getContext(), ProfileActivity.class);
+                    intent.putExtra("accountId",String.valueOf(m.getAlias()));
+                    v.getContext().startActivity(intent);
+                }
+            });
         } else {
             h.identicon.setVisibility(View.GONE);
         }

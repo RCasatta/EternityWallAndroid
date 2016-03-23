@@ -28,6 +28,7 @@ import java.util.List;
 import it.eternitywall.eternitywall.Http;
 import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.R;
+import it.eternitywall.eternitywall.activity.ProfileActivity;
 import it.eternitywall.eternitywall.activity.WriteActivity;
 import it.eternitywall.eternitywall.adapters.MessageRecyclerViewAdapter;
 
@@ -101,6 +102,10 @@ public class ProfileFragment extends Fragment implements MessageRecyclerViewAdap
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v= inflater.inflate(R.layout.fragment_list, container, false);
+
+        if (getArguments() != null) {
+            accountId = getArguments().getString(ARG_PARAM1);
+        }
 
         // Set Fragment Views
         lstMessages = (RecyclerView) v.findViewById(R.id.lstMessages);
@@ -182,6 +187,7 @@ public class ProfileFragment extends Fragment implements MessageRecyclerViewAdap
         AsyncTask t = new AsyncTask() {
 
             private boolean ok = false;
+            private String aliasName;
             private String statusMessage=null;
             private List<Message> mMessages = new ArrayList<>();
 
@@ -204,19 +210,13 @@ public class ProfileFragment extends Fragment implements MessageRecyclerViewAdap
                 super.onPostExecute(o);
                 progress.setVisibility(View.INVISIBLE);
                 swipe.setRefreshing(false);
-/*
-                if (messages.size()==0 && mMessages.size()==0) {
-                    txtHeader.setText(getResources().getString(R.string.no_msg_found));
-                    txtHeader.setVisibility(View.VISIBLE);
-                }else if (inQueue==null){
-                    txtHeader.setVisibility(View.GONE);
-                }else if (inQueue>0){
-                    txtHeader.setText(EnglishNumberToWords.convert(inQueue) + " message" + (inQueue > 1 ? "s" : "") + " in queue…");
-                    txtHeader.setVisibility(View.VISIBLE);
-                }else{
-                    txtHeader.setVisibility(View.GONE);
+
+                // Set alias on titlebar
+                if (aliasName!=null) {
+                    ((ProfileActivity) getActivity()).getSupportActionBar().setTitle(aliasName);
                 }
-*/
+
+                // Set messages
                 messageRecyclerViewAdapter.setInQueue(inQueue);
                 if(ok) {
 
@@ -245,7 +245,7 @@ public class ProfileFragment extends Fragment implements MessageRecyclerViewAdap
             protected Object doInBackground(Object[] params) {
 
                 Optional<String> json=null;
-                json = cursor == null ? Http.get("http://eternitywall.it/"+accountId+"?format=json") : Http.get("http://eternitywall.it/"+accountId+"?format=json&cursor=" + cursor);
+                json = cursor == null ? Http.get("http://eternitywall.it/from/"+accountId+"?format=json") : Http.get("http://eternitywall.it/from/"+accountId+"?format=json&cursor=" + cursor);
 
 
                 if(json!=null && json.isPresent()) {
@@ -254,13 +254,9 @@ public class ProfileFragment extends Fragment implements MessageRecyclerViewAdap
                         JSONObject jo = new JSONObject(jstring);
 
                         try {
-                            String status = jo.getString("status");
-                            if (status.equals("ko")) {
-                                statusMessage= jo.getString("statusMessage");
-                                return null;
-                            }
+                            aliasName = jo.getString("alias");
                         } catch (Exception ex) {
-                            Log.i(TAG,"no value for status in json " + ex.getMessage() );
+                            Log.i(TAG,"no value for alias in json " + ex.getMessage() );
                         }
 
                         try {
@@ -270,6 +266,7 @@ public class ProfileFragment extends Fragment implements MessageRecyclerViewAdap
                             }
                         } catch (Exception ex){
                             cursor = null;
+                            inQueue=0;
                             Log.i(TAG, "no value for next in json " + ex.getMessage());
                         }
 

@@ -199,6 +199,14 @@ public class DetailActivity extends ActionBarActivity {
                         Bitmap bitmap= IdenticonGenerator.generate(mMessage.getAlias());
                         identicon.setImageBitmap(bitmap);
                         identicon.setVisibility(View.VISIBLE);
+                        identicon.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(DetailActivity.this, ProfileActivity.class);
+                                intent.putExtra("accountId", String.valueOf(mMessage.getAlias()));
+                                DetailActivity.this.startActivity(intent);
+                            }
+                        });
                     } else {
                         identicon.setVisibility(View.GONE);
 
