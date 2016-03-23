@@ -175,7 +175,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/message_border"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -183,7 +184,8 @@
                 android:layout_height="match_parent"
                 android:padding="@dimen/padding_high"
                 android:id="@+id/llWriteHidden"
-                android:layout_weight="1" >
+                android:layout_weight="1"
+                android:visibility="gone">
 
                 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     android:orientation="vertical"
