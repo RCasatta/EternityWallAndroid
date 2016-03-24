@@ -94,6 +94,7 @@ public class ProfileFragment extends Fragment implements MessageRecyclerViewAdap
 
     public void clear() {
         messages.clear();
+        end=false;
         cursor = null;
         inQueue = null;
     }
@@ -164,6 +165,7 @@ public class ProfileFragment extends Fragment implements MessageRecyclerViewAdap
             public void onRefresh() {
                 messages = new ArrayList<Message>();
                 cursor = null;
+                end=false;
                 //search = null;
                 //sortby = null;
                 inQueue = null;
@@ -239,9 +241,6 @@ public class ProfileFragment extends Fragment implements MessageRecyclerViewAdap
 
                 Optional<String> json=null;
                 json = cursor == null ? Http.get("http://eternitywall.it/from/"+accountId+"?format=json") : Http.get("http://eternitywall.it/from/"+accountId+"?format=json&cursor=" + cursor);
-
-                if(cursor==null)
-                    end=false;
 
                 if(end) {
                     ok=true;
