@@ -10,4 +10,4 @@ android:
         - extra-google-m2repository
 
 script:
-   - gradle clean assembleDebug
+   - gradle clean assembleDevDebug
