@@ -156,8 +156,12 @@ public class WalletFragment extends Fragment implements MessageRecyclerViewAdapt
         super.onDestroy();
         Log.i(TAG, "onDestroy");
         final FragmentActivity activity = getActivity();
-        if(activity!=null) {
-            activity.unbindService(mConnection);
+        if(activity!=null && mConnection!=null && connect) {
+            try {
+                activity.unbindService(mConnection);
+            } catch (Exception e) {
+
+            }
         }
     }
 
