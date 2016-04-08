@@ -15,19 +15,20 @@
             android:id="@+id/answersMessages"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:divider="@android:color/transparent"/>
 
         <include layout="@layout/item_detailmessage"
             android:id="@+id/detailmessage"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_height="wrap_content"/>
 
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/repliesMessages"
+            android:layout_weight="1"
             android:divider="@android:color/transparent" />
 
     </LinearLayout>
