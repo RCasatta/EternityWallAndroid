@@ -224,7 +224,7 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
 
             @Override
             protected void onPostExecute(Object o) {
-                if (getActivity()!=null && getActivity().isFinishing())  //exception will null pointer happened here, checking getActivity is null or use isAdded()????
+                if (getActivity()==null || getActivity().isFinishing())  //exception will null pointer happened here, checking getActivity is null or use isAdded()????
                     return;
                 super.onPostExecute(o);
                 progress.setVisibility(View.INVISIBLE);
