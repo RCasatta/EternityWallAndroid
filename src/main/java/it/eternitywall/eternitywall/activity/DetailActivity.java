@@ -54,9 +54,10 @@ public class DetailActivity extends ActionBarActivity {
     private ProgressBar progress;
     private String hash = null;
     private RecyclerView recyclerView;
+    private RecyclerView  singleRecyclerView;
 
     private List<Message> replies;
-    private Message answers=null;
+    private List<Message> answers=null;
 
 
     LinearLayout llShare, llLikes, llProof, llRanking, llReplies, llTranslate;
@@ -92,12 +93,20 @@ public class DetailActivity extends ActionBarActivity {
 
         //clear variables
         replies = new ArrayList<Message>();
+        answers = new ArrayList<Message>();
 
         // recyclerview on replies Messages
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         final it.eternitywall.eternitywall.components.LinearLayoutManager layoutManager = new it.eternitywall.eternitywall.components.LinearLayoutManager(this, it.eternitywall.eternitywall.components.LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(new MessageRecyclerViewAdapter(replies, 0, null));
+
+        // recyclerview on single answer Messages
+        singleRecyclerView = (RecyclerView) findViewById(R.id.singleRecyclerView);
+        final it.eternitywall.eternitywall.components.LinearLayoutManager layoutManager1 = new it.eternitywall.eternitywall.components.LinearLayoutManager(this, it.eternitywall.eternitywall.components.LinearLayoutManager.VERTICAL, false);
+        singleRecyclerView.setLayoutManager(layoutManager1);
+        singleRecyclerView.setAdapter(new MessageRecyclerViewAdapter(answers, 0, null));
+
 
         try {
             hash = getIntent().getStringExtra("hash");
@@ -291,14 +300,14 @@ public class DetailActivity extends ActionBarActivity {
 
 
                 // answer messages
-                    /*if (answers != null && !answers.isEmpty()) {
+                    if (answers != null && !answers.isEmpty()) {
                         answers.addAll(mAnswers);
-                        final MessageRecyclerViewAdapter messageListAdapter = (MessageRecyclerViewAdapter) answersMessages.getAdapter();
+                        final MessageRecyclerViewAdapter messageListAdapter = (MessageRecyclerViewAdapter) singleRecyclerView.getAdapter();
                         messageListAdapter.notifyDataSetChanged();
                     } else {
                         answers.addAll(mAnswers);
-                        answersMessages.setAdapter(new MessageRecyclerViewAdapter(mAnswers, 0, null));
-                    }*/
+                        singleRecyclerView.setAdapter(new MessageRecyclerViewAdapter(mAnswers, 0, null));
+                    }
             }
 
 
