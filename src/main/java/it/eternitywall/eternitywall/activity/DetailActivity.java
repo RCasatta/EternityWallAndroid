@@ -1,6 +1,7 @@
 package it.eternitywall.eternitywall.activity;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -50,44 +51,19 @@ public class DetailActivity extends ActionBarActivity {
     private static final String TAG = "WriteActivity";
     private static final int REQ_CODE = 100;
 
-    private TextView txtMessage, txtDate;
     private ProgressBar progress;
     private String hash = null;
     private RecyclerView recyclerView;
-    private RecyclerView  singleRecyclerView;
+    //private RecyclerView  singleRecyclerView;
 
-    private List<Message> replies;
-    private List<Message> answers=null;
-
-
-    LinearLayout llShare, llLikes, llProof, llRanking, llReplies, llTranslate;
-    TextView tvLikesText,tvReplyText;
-    protected ImageView identicon;
+    private List<Message> replies= new ArrayList<Message>();
+    private List<Message> answers=new ArrayList<Message>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         Iconify.with(new FontAwesomeModule());
-
-        progress = (ProgressBar) findViewById(R.id.progress);
-
-
-        View viewDetailMessage = findViewById(R.id.detailmessage);
-        llShare = (LinearLayout) viewDetailMessage.findViewById(R.id.llSharing);
-        llLikes = (LinearLayout) viewDetailMessage.findViewById(R.id.llLikes);
-        llProof = (LinearLayout) viewDetailMessage.findViewById(R.id.llProof);
-        llRanking = (LinearLayout) viewDetailMessage.findViewById(R.id.llRanking);
-        llReplies = (LinearLayout) viewDetailMessage.findViewById(R.id.llReply);
-        llTranslate = (LinearLayout) viewDetailMessage.findViewById(R.id.llTranslate);
-
-
-        tvLikesText = (TextView) viewDetailMessage.findViewById(R.id.tvLikesText);
-        tvReplyText = (TextView) viewDetailMessage.findViewById(R.id.tvReplyText);
-
-        txtMessage = (TextView) viewDetailMessage.findViewById(R.id.txtMessage);
-        txtDate = (TextView) viewDetailMessage.findViewById(R.id.txtDate);
-        identicon = (ImageView) viewDetailMessage.findViewById(R.id.identicon);
 
         progress = (ProgressBar) findViewById(R.id.progress);
 
@@ -102,12 +78,12 @@ public class DetailActivity extends ActionBarActivity {
         recyclerView.setAdapter(new MessageRecyclerViewAdapter(replies, 0, null));
 
         // recyclerview on single answer Messages
-        singleRecyclerView = (RecyclerView) findViewById(R.id.singleRecyclerView);
+        /*singleRecyclerView = (RecyclerView) findViewById(R.id.singleRecyclerView);
         final it.eternitywall.eternitywall.components.LinearLayoutManager layoutManager1 = new it.eternitywall.eternitywall.components.LinearLayoutManager(this, it.eternitywall.eternitywall.components.LinearLayoutManager.VERTICAL, false);
         singleRecyclerView.setLayoutManager(layoutManager1);
         singleRecyclerView.setAdapter(new MessageRecyclerViewAdapter(answers, 0, null));
-
-
+        singleRecyclerView.setNestedScrollingEnabled(false);
+*/
         try {
             hash = getIntent().getStringExtra("hash");
         } catch (Exception e) {
@@ -158,135 +134,7 @@ public class DetailActivity extends ActionBarActivity {
                     return;
                 progress.setVisibility(View.INVISIBLE);
 
-
-                // date               if (ok) {
-                String dateFormatted = new SimpleDateFormat("dd MMM yyyy HH.mm").format(new Date(mMessage.getTimestamp()));
-                if (mMessage.getAliasName() != null) {
-                    txtDate.setText(mMessage.getAliasName() + " - " + dateFormatted);
-                } else {
-                    txtDate.setText(dateFormatted);
-                }
-
-                // link on message
-                if (mMessage.getLink() != null) {
-                    String link = mMessage.getLink();
-                    String linkreplace = "";
-                    if (link.startsWith("@"))
-                        linkreplace = "<a href='http://twitter.com/" + link + "'>" + link + "</a>";
-                    else if (link.contains("http"))
-                        linkreplace = "<a href='" + link + "'>" + link + "</a>";
-                    else if (link.contains("https"))
-                        linkreplace = "<a href='" + link + "'>" + link + "</a>";
-                    else
-                        linkreplace = "<a href='http://" + link + "'>" + link + "</a>";
-                    String text = mMessage.getMessage();
-                    text = text.replace(link, linkreplace);
-                    txtMessage.setText(Html.fromHtml(text));
-                    txtMessage.setMovementMethod(LinkMovementMethod.getInstance());
-                } else {
-                    txtMessage.setText(mMessage.getMessage());
-                }
-
-                // TO DO
-                //if (mMessage.getAnswer()==true)
-                if (mMessage.getLikes() > 0)
-                    tvLikesText.setText(" (" + String.valueOf(mMessage.getLikes()) + ")");
-                if (mMessage.getReplies() > 0)
-                    tvReplyText.setText(" (" + String.valueOf(mMessage.getReplies()) + ")");
-
-                if (mMessage.getAlias() != null) {
-                    Bitmap bitmap = IdenticonGenerator.generate(mMessage.getAlias());
-                    identicon.setImageBitmap(bitmap);
-                    identicon.setVisibility(View.VISIBLE);
-                    identicon.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(DetailActivity.this, ProfileActivity.class);
-                            intent.putExtra("accountId", String.valueOf(mMessage.getAlias()));
-                            DetailActivity.this.startActivity(intent);
-                        }
-                    });
-                } else {
-                    identicon.setVisibility(View.GONE);
-
-                }
-                llShare.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent();
-                        intent.setAction(Intent.ACTION_SEND);
-                        intent.putExtra(Intent.EXTRA_TEXT, "http://eternitywall.it/m/" + mMessage.getTxHash());
-                        intent.setType("text/plain");
-                        startActivity(intent);
-                    }
-                });
-                llProof.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Proof website:
-                        // examples:
-                        //https://blockchain.info/tx/2db207f008822f90c6e67a21179a2da44b043ebef3d3854f26efb9ffde6aeef8
-                        //https://www.blocktrail.com/BTC/tx/2db207f008822f90c6e67a21179a2da44b043ebef3d3854f26efb9ffde6aeef8
-                        //http://chainflyer.bitflyer.jp/Transaction/2db207f008822f90c6e67a21179a2da44b043ebef3d3854f26efb9ffde6aeef8
-                        //https://www.smartbit.com.au/tx/2db207f008822f90c6e67a21179a2da44b043ebef3d3854f26efb9ffde6aeef8
-
-                        String[] sites = new String[]{"Blockchain.info", "Blocktrail", "chainFlyer", "Smartbit", "SoChain"};
-                        AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this);
-                        builder.setItems(sites, new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch (which) {
-                                    case 0:
-                                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://blockchain.info/tx/" + mMessage.getTxHash())));
-                                        break;
-                                    case 1:
-                                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.blocktrail.com/BTC/tx/" + mMessage.getTxHash())));
-                                        break;
-                                    case 2:
-                                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://chainflyer.bitflyer.jp/Transaction/" + mMessage.getTxHash())));
-                                        break;
-                                    case 3:
-                                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.smartbit.com.au/tx/" + mMessage.getTxHash())));
-                                        break;
-                                    case 4:
-                                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://chain.so/tx/BTC/" + mMessage.getTxHash())));
-                                        break;
-                                }
-
-                            }
-                        });
-                        builder.setTitle("Proof");
-                        //builder.setIcon(android.R.drawable.ic_dialog_alert);
-                        builder.show();
-
-                    }
-                });
-                llRanking.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        RankingDialogFragment rankingDialogFragment = new RankingDialogFragment();
-                        rankingDialogFragment.setMessage(mMessage);
-                        rankingDialogFragment.show(getSupportFragmentManager(), RankingDialogFragment.class.toString());
-
-                    }
-                });
-                llLikes.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        SendLike(mMessage.getMessageId());
-                    }
-                });
-                llReplies.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent i = new Intent(DetailActivity.this, WriteActivity.class);
-                        i.putExtra("replyFrom", mMessage.getMessageId());
-                        startActivity(i);
-                    }
-                });
-
+                parseCurrentMessage(findViewById(R.id.detailmessage),DetailActivity.this,mMessage);
 
                 // replies messages
                 if (replies != null && !replies.isEmpty()) {
@@ -300,14 +148,23 @@ public class DetailActivity extends ActionBarActivity {
 
 
                 // answer messages
-                    if (answers != null && !answers.isEmpty()) {
+                /*    if (answers != null && !answers.isEmpty()) {
                         answers.addAll(mAnswers);
                         final MessageRecyclerViewAdapter messageListAdapter = (MessageRecyclerViewAdapter) singleRecyclerView.getAdapter();
                         messageListAdapter.notifyDataSetChanged();
                     } else {
                         answers.addAll(mAnswers);
                         singleRecyclerView.setAdapter(new MessageRecyclerViewAdapter(mAnswers, 0, null));
-                    }
+                    }*/
+
+                View viewAnswerlMessage = findViewById(R.id.answermessage);
+                if (mAnswers != null && !mAnswers.isEmpty()) {
+                    viewAnswerlMessage.setVisibility(View.VISIBLE);
+                    parseAnswerMessage(viewAnswerlMessage, DetailActivity.this, mAnswers.get(0));
+                } else {
+                    viewAnswerlMessage.setVisibility(View.GONE);
+
+                }
             }
 
 
@@ -419,4 +276,257 @@ public class DetailActivity extends ActionBarActivity {
             finish();
         }
     }
+
+
+    private void parseCurrentMessage(View v, Context context, final Message message) {
+
+        LinearLayout llShare, llLikes, llProof, llRanking, llReplies, llTranslate;
+        TextView tvLikesText, tvReplyText;
+        ImageView identicon;
+        TextView txtMessage, txtDate;
+
+        View viewDetailMessage = findViewById(R.id.detailmessage);
+        llShare = (LinearLayout) viewDetailMessage.findViewById(R.id.llSharing);
+        llLikes = (LinearLayout) viewDetailMessage.findViewById(R.id.llLikes);
+        llProof = (LinearLayout) viewDetailMessage.findViewById(R.id.llProof);
+        llRanking = (LinearLayout) viewDetailMessage.findViewById(R.id.llRanking);
+        llReplies = (LinearLayout) viewDetailMessage.findViewById(R.id.llReply);
+        llTranslate = (LinearLayout) viewDetailMessage.findViewById(R.id.llTranslate);
+
+
+        tvLikesText = (TextView) viewDetailMessage.findViewById(R.id.tvLikesText);
+        tvReplyText = (TextView) viewDetailMessage.findViewById(R.id.tvReplyText);
+
+        txtMessage = (TextView) viewDetailMessage.findViewById(R.id.txtMessage);
+        txtDate = (TextView) viewDetailMessage.findViewById(R.id.txtDate);
+        identicon = (ImageView) viewDetailMessage.findViewById(R.id.identicon);
+
+// date               if (ok) {
+        String dateFormatted = new SimpleDateFormat("dd MMM yyyy HH.mm").format(new Date(message.getTimestamp()));
+        if (message.getAliasName() != null) {
+            txtDate.setText(message.getAliasName() + " - " + dateFormatted);
+        } else {
+            txtDate.setText(dateFormatted);
+        }
+
+        // link on message
+        if (message.getLink() != null) {
+            String link = message.getLink();
+            String linkreplace = "";
+            if (link.startsWith("@"))
+                linkreplace = "<a href='http://twitter.com/" + link + "'>" + link + "</a>";
+            else if (link.contains("http"))
+                linkreplace = "<a href='" + link + "'>" + link + "</a>";
+            else if (link.contains("https"))
+                linkreplace = "<a href='" + link + "'>" + link + "</a>";
+            else
+                linkreplace = "<a href='http://" + link + "'>" + link + "</a>";
+            String text = message.getMessage();
+            text = text.replace(link, linkreplace);
+            txtMessage.setText(Html.fromHtml(text));
+            txtMessage.setMovementMethod(LinkMovementMethod.getInstance());
+        } else {
+            txtMessage.setText(message.getMessage());
+        }
+
+        // TO DO
+        //if (mMessage.getAnswer()==true)
+        if (message.getLikes() > 0)
+            tvLikesText.setText(" (" + String.valueOf(message.getLikes()) + ")");
+        if (message.getReplies() > 0)
+            tvReplyText.setText(" (" + String.valueOf(message.getReplies()) + ")");
+
+        if (message.getAlias() != null) {
+            Bitmap bitmap = IdenticonGenerator.generate(message.getAlias());
+            identicon.setImageBitmap(bitmap);
+            identicon.setVisibility(View.VISIBLE);
+            identicon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(DetailActivity.this, ProfileActivity.class);
+                    intent.putExtra("accountId", String.valueOf(message.getAlias()));
+                    DetailActivity.this.startActivity(intent);
+                }
+            });
+        } else {
+            identicon.setVisibility(View.GONE);
+
+        }
+        llShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_SEND);
+                intent.putExtra(Intent.EXTRA_TEXT, "http://eternitywall.it/m/" + message.getTxHash());
+                intent.setType("text/plain");
+                startActivity(intent);
+            }
+        });
+        llProof.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Proof website:
+                // examples:
+                //https://blockchain.info/tx/2db207f008822f90c6e67a21179a2da44b043ebef3d3854f26efb9ffde6aeef8
+                //https://www.blocktrail.com/BTC/tx/2db207f008822f90c6e67a21179a2da44b043ebef3d3854f26efb9ffde6aeef8
+                //http://chainflyer.bitflyer.jp/Transaction/2db207f008822f90c6e67a21179a2da44b043ebef3d3854f26efb9ffde6aeef8
+                //https://www.smartbit.com.au/tx/2db207f008822f90c6e67a21179a2da44b043ebef3d3854f26efb9ffde6aeef8
+
+                String[] sites = new String[]{"Blockchain.info", "Blocktrail", "chainFlyer", "Smartbit", "SoChain"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this);
+                builder.setItems(sites, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://blockchain.info/tx/" + message.getTxHash())));
+                                break;
+                            case 1:
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.blocktrail.com/BTC/tx/" + message.getTxHash())));
+                                break;
+                            case 2:
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://chainflyer.bitflyer.jp/Transaction/" + message.getTxHash())));
+                                break;
+                            case 3:
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.smartbit.com.au/tx/" + message.getTxHash())));
+                                break;
+                            case 4:
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://chain.so/tx/BTC/" + message.getTxHash())));
+                                break;
+                        }
+
+                    }
+                });
+                builder.setTitle("Proof");
+                //builder.setIcon(android.R.drawable.ic_dialog_alert);
+                builder.show();
+
+            }
+        });
+        llRanking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                RankingDialogFragment rankingDialogFragment = new RankingDialogFragment();
+                rankingDialogFragment.setMessage(message);
+                rankingDialogFragment.show(getSupportFragmentManager(), RankingDialogFragment.class.toString());
+
+            }
+        });
+        llLikes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SendLike(message.getMessageId());
+            }
+        });
+        llReplies.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(DetailActivity.this, WriteActivity.class);
+                i.putExtra("replyFrom", message.getMessageId());
+                startActivity(i);
+            }
+        });
+    }
+
+
+    private void parseAnswerMessage(View v, Context context, final Message m) {
+
+        TextView txtMessage = (TextView) v.findViewById(R.id.txtMessage);
+        TextView txtStatus = (TextView) v.findViewById(R.id.txtStatus);
+        TextView txtDate = (TextView) v.findViewById(R.id.txtDate);
+        TextView txtHeader = (TextView) v.findViewById(R.id.txtHeader);
+        ImageView identicon = (ImageView) v.findViewById(R.id.identicon);
+
+        // message
+        String text = m.getMessage();
+        if (m.getLink() != null) {
+            String link = m.getLink();
+            String linkreplace = "";
+
+            if (link.startsWith("@"))
+                linkreplace = "<a href='http://twitter.com/" + link + "'>" + link + "</a>";
+            else if (link.contains("http"))
+                linkreplace = "<a href='" + link + "'>" + link + "</a>";
+            else if (link.contains("https"))
+                linkreplace = "<a href='" + link + "'>" + link + "</a>";
+            else
+                linkreplace = "<a href='http://" + link + "'>" + link + "</a>";
+            text = text.replace(link, linkreplace);
+        }
+        txtMessage.setText(Html.fromHtml(text));
+        if (m.getRank() == 1) {
+            txtMessage.setTextAppearance(context, android.R.style.TextAppearance_Large);
+        } else if (m.getRank() == 2) {
+            txtMessage.setTextAppearance(context, android.R.style.TextAppearance_Medium);
+        } else if (m.getRank() == 3) {
+            txtMessage.setTextAppearance(context, android.R.style.TextAppearance_Small);
+        }
+        txtMessage.setTextColor(context.getResources().getColor(android.R.color.black));
+
+        // status
+        txtStatus.setVisibility(View.GONE);
+        txtStatus.setText("");
+        String strStatus = "";
+        if (m.getReplies() > 0) {
+            strStatus += String.valueOf(m.getReplies()) + (m.getReplies() == 1 ? " reply " : " replies ");
+        }
+        if (m.getAnswer() == true) {
+            if (strStatus.length() > 0)
+                strStatus += "- ";
+            strStatus += "answer";
+        }
+        if (m.getLikes() > 0) {
+            if (strStatus.length() > 0)
+                strStatus += "- ";
+            strStatus += String.valueOf(m.getLikes()) + (m.getLikes() == 1 ? " like " : " likes ");
+        }
+        if (strStatus.length() > 0) {
+            txtStatus.setText(strStatus);
+            txtStatus.setVisibility(View.VISIBLE);
+        }
+
+        // date
+        String dateFormatted = new SimpleDateFormat("dd MMM yyyy HH.mm").format(new Date(m.getTimestamp()));
+        if (m.getAliasName() != null) {
+            txtDate.setText(m.getAliasName() + " - " + dateFormatted);
+        } else {
+            txtDate.setText(dateFormatted);
+        }
+
+        //identicon
+        if (m.getAlias() != null) {
+            Bitmap bitmap = IdenticonGenerator.generate(m.getAlias());
+            identicon.setImageBitmap(bitmap);
+            identicon.setVisibility(View.VISIBLE);
+            identicon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(v.getContext(), ProfileActivity.class);
+                    intent.putExtra("accountId", String.valueOf(m.getAlias()));
+                    v.getContext().startActivity(intent);
+                }
+            });
+        } else {
+            identicon.setVisibility(View.GONE);
+        }
+
+        txtHeader.setVisibility(View.GONE);
+
+
+        //onclick
+        // add click listener
+
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), DetailActivity.class);
+                intent.putExtra("hash", String.valueOf(m.getTxHash()));
+                v.getContext().startActivity(intent);
+            }
+        });
+
+    }
+
 }
