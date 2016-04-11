@@ -288,7 +288,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
 
 
-        />
+        android:visibility="gone" />
     <!--app:layout_behavior="it.eternitywall.eternitywall.components.ProportionalReturnHeaderBehavior"-->
     <!-- <ListView
          android:id="@+id/myMessageList"
