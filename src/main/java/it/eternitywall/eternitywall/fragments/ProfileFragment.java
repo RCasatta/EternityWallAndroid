@@ -186,6 +186,11 @@ public class ProfileFragment extends Fragment implements MessageRecyclerViewAdap
 
     @Override
     public void loadMoreData() {
+
+        if(end) {
+            return;
+        }
+
         AsyncTask t = new AsyncTask() {
 
             private boolean ok = false;
@@ -254,12 +259,7 @@ public class ProfileFragment extends Fragment implements MessageRecyclerViewAdap
                 Optional<String> json=null;
                 json = cursor == null ? Http.get("http://eternitywall.it/from/"+accountId+"?format=json") : Http.get("http://eternitywall.it/from/"+accountId+"?format=json&cursor=" + cursor);
 
-                if(end) {
-                    ok=true;
-                    return true;
-                }
-
-                if(json!=null && json.isPresent()) {
+                if(json.isPresent()) {
                     try {
                         String jstring = json.get();
                         JSONObject jo = new JSONObject(jstring);
