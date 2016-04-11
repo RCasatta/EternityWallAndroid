@@ -1,8 +1,5 @@
 /build
 .idea/
-gradle
-gradlew
-gradlew.bat
 local.properties
 .gradle/
 EternityWallAndroid.iml
