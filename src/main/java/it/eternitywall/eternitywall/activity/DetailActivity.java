@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Http;
 import it.eternitywall.eternitywall.IdenticonGenerator;
 import it.eternitywall.eternitywall.Message;
@@ -75,7 +77,8 @@ public class DetailActivity extends ActionBarActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         final it.eternitywall.eternitywall.components.LinearLayoutManager layoutManager = new it.eternitywall.eternitywall.components.LinearLayoutManager(this, it.eternitywall.eternitywall.components.LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new MessageRecyclerViewAdapter(replies, 0, null));
+        final LruCache<String, Bitmap> bitmapCache = ((EWApplication) getApplication()).getBitmapCache();
+        recyclerView.setAdapter(new MessageRecyclerViewAdapter(replies, 0, null,bitmapCache));
 
         // recyclerview on single answer Messages
         /*singleRecyclerView = (RecyclerView) findViewById(R.id.singleRecyclerView);
@@ -143,7 +146,8 @@ public class DetailActivity extends ActionBarActivity {
                     messageListAdapter.notifyDataSetChanged();
                 } else {
                     replies.addAll(mReplies);
-                    recyclerView.setAdapter(new MessageRecyclerViewAdapter(mReplies, 0, null));
+                    final LruCache<String, Bitmap> bitmapCache = ((EWApplication) getApplication()).getBitmapCache();
+                    recyclerView.setAdapter(new MessageRecyclerViewAdapter(mReplies, 0, null,bitmapCache));
                 }
 
 

@@ -19,6 +19,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
+import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,10 +40,12 @@ import it.eternitywall.eternitywall.components.EnglishNumberToWords;
 
 public class MessageRecyclerViewAdapter
         extends RecyclerView.Adapter<MessageRecyclerViewAdapter.ViewHolder> {
+    private static final String TAG = MessageRecyclerViewAdapter.class.toString();
 
     private List<Message> mValues;
     private MessageListAdapterManager manager;
     private Integer inQueue;
+    private LruCache<String, Bitmap> bitmapCache;
 
     public void setInQueue(Integer inQueue) {
         this.inQueue = inQueue;
@@ -73,10 +77,11 @@ public class MessageRecyclerViewAdapter
 
     }
 
-    public MessageRecyclerViewAdapter(List<Message> items,  Integer inQueue, MessageListAdapterManager manager) {
+    public MessageRecyclerViewAdapter(List<Message> items,  Integer inQueue, MessageListAdapterManager manager, LruCache<String, Bitmap> bitmapCache) {
         mValues = items;
         this.manager = manager;
         this.inQueue=inQueue;
+        this.bitmapCache=bitmapCache;
     }
 
     @Override
@@ -149,7 +154,19 @@ public class MessageRecyclerViewAdapter
 
         //identicon
         if (m.getAlias() != null) {
-            Bitmap bitmap = IdenticonGenerator.generate(m.getAlias());
+            Bitmap bitmap;
+            if(bitmapCache!=null) {
+                bitmap = bitmapCache.get(m.getAlias());
+                Log.i(TAG,"bitmapFromCache " + bitmap + " bitmapCache size " + bitmapCache.size() + " of " + bitmapCache.maxSize() );
+                if (bitmap == null) {
+                    bitmap = IdenticonGenerator.generate(m.getAlias());
+                    bitmapCache.put(m.getAlias(), bitmap);
+                }
+            } else {
+                Log.i(TAG,"bitmapCache is null" );
+
+                bitmap = IdenticonGenerator.generate(m.getAlias());
+            }
             h.identicon.setImageBitmap(bitmap);
             h.identicon.setVisibility(View.VISIBLE);
             h.identicon.setOnClickListener(new View.OnClickListener() {

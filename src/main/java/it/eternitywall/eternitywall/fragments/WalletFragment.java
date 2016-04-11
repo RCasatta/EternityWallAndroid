@@ -22,6 +22,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -427,7 +428,12 @@ public class WalletFragment extends Fragment implements MessageRecyclerViewAdapt
         inQueue = null;
 
         // Set Message RecyclerView Adapter
-        messageRecyclerViewAdapter = new MessageRecyclerViewAdapter(messages,inQueue,WalletFragment.this);
+        LruCache<String, Bitmap> bitmapCache=null;
+        final FragmentActivity activity = getActivity();
+        if(activity!=null) {
+            bitmapCache=((EWApplication) activity.getApplication()).getBitmapCache();
+        }
+        messageRecyclerViewAdapter = new MessageRecyclerViewAdapter(messages,inQueue,WalletFragment.this,bitmapCache);
         recyclerView.setAdapter(messageRecyclerViewAdapter);
 
         // check on wallet observable
@@ -547,7 +553,12 @@ public class WalletFragment extends Fragment implements MessageRecyclerViewAdapt
                     }
                     else {
                         messages.addAll(mMessages);
-                        recyclerView.setAdapter(new MessageRecyclerViewAdapter(messages, inQueue, WalletFragment.this));
+                        LruCache<String, Bitmap> bitmapCache=null;
+                        final FragmentActivity activity = getActivity();
+                        if(activity!=null) {
+                            bitmapCache=((EWApplication) activity.getApplication()).getBitmapCache();
+                        }
+                        recyclerView.setAdapter(new MessageRecyclerViewAdapter(messages, inQueue, WalletFragment.this,bitmapCache));
                     }
 
                 }

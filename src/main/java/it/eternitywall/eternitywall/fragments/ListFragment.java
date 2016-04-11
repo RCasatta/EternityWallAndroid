@@ -2,21 +2,21 @@ package it.eternitywall.eternitywall.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.base.Optional;
@@ -28,12 +28,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Http;
 import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.activity.WriteActivity;
 import it.eternitywall.eternitywall.adapters.MessageRecyclerViewAdapter;
-import it.eternitywall.eternitywall.components.EnglishNumberToWords;
 
 
 /**
@@ -173,7 +173,12 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
         clear();
 
         // Set Message RecyclerView Adapter
-        messageRecyclerViewAdapter = new MessageRecyclerViewAdapter(messages, inQueue,ListFragment.this);
+        LruCache<String, Bitmap> bitmapCache=null;
+        final FragmentActivity activity = getActivity();
+        if(activity!=null) {
+            bitmapCache=((EWApplication) activity.getApplication()).getBitmapCache();
+        }
+        messageRecyclerViewAdapter = new MessageRecyclerViewAdapter(messages, inQueue,ListFragment.this,bitmapCache);
         lstMessages.setAdapter( messageRecyclerViewAdapter );
 
         // load messages on Swipe
@@ -254,7 +259,12 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
                     }
                     else {
                         messages.addAll(mMessages);
-                        lstMessages.setAdapter(new MessageRecyclerViewAdapter(messages, inQueue, ListFragment.this));
+                        LruCache<String, Bitmap> bitmapCache=null;
+                        final FragmentActivity activity = getActivity();
+                        if(activity!=null) {
+                            bitmapCache=((EWApplication) activity.getApplication()).getBitmapCache();
+                        }
+                        lstMessages.setAdapter(new MessageRecyclerViewAdapter(messages, inQueue, ListFragment.this,bitmapCache));
                     }
                 }
                 else {

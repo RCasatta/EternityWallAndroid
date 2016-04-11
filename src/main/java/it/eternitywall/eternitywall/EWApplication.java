@@ -5,9 +5,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
 import android.os.IBinder;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
+import android.util.LruCache;
 
 import com.subgraph.orchid.crypto.PRNGFixes;
 
@@ -37,6 +39,8 @@ public class EWApplication extends MultiDexApplication {
 
     private Timer timer;
     private TimedLogStat timedLogStat;
+
+    private LruCache<String, Bitmap> bitmapCache;
 
     private final ServiceConnection mConnection = new ServiceConnection() {
 
@@ -74,6 +78,25 @@ public class EWApplication extends MultiDexApplication {
         timer = new Timer();
         timedLogStat = new TimedLogStat(this);
         timer.schedule(timedLogStat, 30000L, 30000L);
+
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+
+        // Use 1/8th of the available memory for this memory cache.
+        final int cacheSize = maxMemory / 8;
+        Log.i(TAG, "cache size=" + cacheSize);
+
+        bitmapCache = new LruCache<String, Bitmap>(cacheSize) {
+            @Override
+            protected int sizeOf(String key, Bitmap bitmap) {
+                // The cache size will be measured in kilobytes rather than
+                // number of items.
+                return bitmap.getByteCount() / 1024;
+            }
+        };
+    }
+
+    public LruCache<String, Bitmap> getBitmapCache() {
+        return bitmapCache;
     }
 
     public EWWalletService getEwWalletService() {
