@@ -114,6 +114,8 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
         return this.sortby;
     }
     public void clear() {
+        if(messages==null)
+            messages=new ArrayList<Message>();
         messages.clear();
         cursor = null;
         search = null;
