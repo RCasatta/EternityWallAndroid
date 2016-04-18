@@ -460,13 +460,8 @@ public class DetailActivity extends ActionBarActivity {
             text = text.replace(link, linkreplace);
         }
         txtMessage.setText(Html.fromHtml(text));
-        if (m.getRank() == 1) {
-            txtMessage.setTextAppearance(context, android.R.style.TextAppearance_Large);
-        } else if (m.getRank() == 2) {
-            txtMessage.setTextAppearance(context, android.R.style.TextAppearance_Medium);
-        } else if (m.getRank() == 3) {
-            txtMessage.setTextAppearance(context, android.R.style.TextAppearance_Small);
-        }
+        // Always small
+        txtMessage.setTextAppearance(context, android.R.style.TextAppearance_Small);
         txtMessage.setTextColor(context.getResources().getColor(android.R.color.black));
 
         // status
