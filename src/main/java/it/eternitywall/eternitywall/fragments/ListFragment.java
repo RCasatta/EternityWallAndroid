@@ -1,6 +1,7 @@
 package it.eternitywall.eternitywall.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -32,6 +33,7 @@ import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Http;
 import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.R;
+import it.eternitywall.eternitywall.activity.MainActivity;
 import it.eternitywall.eternitywall.activity.WriteActivity;
 import it.eternitywall.eternitywall.adapters.MessageRecyclerViewAdapter;
 
@@ -100,6 +102,7 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
     private String cursor;
     private List<Message> messages;
     private Integer inQueue;
+    private boolean end=false;
 
     public void setSearch(String search) {
         this.search = search;
@@ -121,7 +124,11 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
         search = null;
         sortby = null;
         inQueue = null;
+        end=false;
     }
+
+    private MainActivity mActivity;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -193,6 +200,7 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
                 //search = null;
                 //sortby = null;
                 inQueue = null;
+                end=false;
                 loadMoreData();
             }
         });
@@ -211,6 +219,9 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
 
     @Override
     public void loadMoreData() {
+        if(end) {
+            return;
+        }
         AsyncTask t = new AsyncTask() {
 
             private boolean ok = false;
@@ -224,7 +235,7 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
                 // don't refresh if there are messages on sortby or search mode
                 if ((sortby!=null || search!=null) && (messages!=null && !messages.isEmpty()))
                     progress.setVisibility(View.INVISIBLE);//nothing
-                else if(!swipe.isRefreshing())
+                else if(swipe!=null && !swipe.isRefreshing())
                     progress.setVisibility(View.VISIBLE);
 
             }
@@ -235,11 +246,13 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
                     return;
                 super.onPostExecute(o);
                 progress.setVisibility(View.INVISIBLE);
-                swipe.setRefreshing(false);
+                if(swipe!=null)
+                    swipe.setRefreshing(false);
 /*
                 if (messages.size()==0 && mMessages.size()==0) {
                     txtHeader.setText(getResources().getString(R.string.no_msg_found));
                     txtHeader.setVisibility(View.VISIBLE);
+                }else if (inQueue==null){
                 }else if (inQueue==null){
                     txtHeader.setVisibility(View.GONE);
                 }else if (inQueue>0){
@@ -285,14 +298,18 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
                     // search api return all the values without cursor
                     if(messages==null || messages.isEmpty())
                         json = cursor == null ? Http.get("http://eternitywall.it/search?format=json&q=" + search) : Http.get("http://eternitywall.it/?format=json&cursor=" + cursor + "&q=" + search);
-                    else
+                    else{
                         ok = true;
+                        end=true;
+                    }
                 }else if (sortby!=null){
                     // sortby api return all the values without cursor
                     if(messages==null || messages.isEmpty())
                         json = Http.get("http://eternitywall.it/sortby/"+sortby+"?format=json");
-                    else
+                    else {
                         ok = true;
+                        end=true;
+                    }
                 } else
                     json = cursor == null ? Http.get("http://eternitywall.it/?format=json") : Http.get("http://eternitywall.it/?format=json&cursor=" + cursor);
 
@@ -323,6 +340,8 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
                         }
 
                         JSONArray ja = jo.getJSONArray("messages");
+                        if(ja.length()==0)
+                            end=true;
 
                         for(int m=0; m<ja.length(); m++) {
                             Message message = Message.buildFromJson(ja.getJSONObject(m));
@@ -354,6 +373,7 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        mActivity=(MainActivity) activity;
         try {
             mListener = (OnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
@@ -366,6 +386,7 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        mActivity=null;
     }
 
     /**

@@ -6,7 +6,8 @@
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
     android:layout_height="wrap_content"
-    android:clickable="true">
+    android:clickable="true"
+    android:focusable="true">
 
 
     <TextView
@@ -19,10 +20,6 @@
         android:textSize="18sp"
         android:textColor="@color/primaryText"
         android:visibility="gone"
-        android:clickable="false"
-        android:focusable="false"
-        android:autoLink="web"
-        android:linksClickable="true"
         />
 
     <RelativeLayout
@@ -36,7 +33,8 @@
             android:layout_height="63dp"
             android:src="@drawable/identicon_placeholder"
             android:paddingRight="15dp"
-            android:layout_centerVertical="true" />
+            android:layout_centerVertical="true"
+            android:clickable="true" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -51,6 +49,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/date"
+                android:clickable="false"
+                android:focusable="false"
                 android:textColor="@color/secondaryText" />
 
             <TextView
@@ -58,8 +58,12 @@
                 style="@style/TextAppearance.AppCompat.Large"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:textColor="@color/primaryText"
-                android:layout_marginTop="2dp"/>
+                android:layout_marginTop="2dp"
+                android:clickable="false"
+                android:focusable="false"
+                android:linksClickable="false"/>
 
             <TextView
                 style="@style/TextAppearance.AppCompat.Small"
@@ -68,6 +72,8 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 android:layout_marginTop="4dp"
+                android:clickable="false"
+                android:focusable="false"
                 android:textColor="@color/primaryText" />
         </LinearLayout>
     </RelativeLayout>
