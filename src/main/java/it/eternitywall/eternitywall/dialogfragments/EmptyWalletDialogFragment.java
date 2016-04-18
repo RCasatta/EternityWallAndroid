@@ -1,17 +1,13 @@
 package it.eternitywall.eternitywall.dialogfragments;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -20,15 +16,17 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import org.bitcoinj.core.AddressFormatException;
+import org.bitcoinj.core.InsufficientMoneyException;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionBroadcast;
-
-import java.util.zip.Inflater;
 
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
+import it.eternitywall.eternitywall.wallet.NotEnoughAddressException;
+import it.eternitywall.eternitywall.wallet.NotSyncedException;
 
 /**
  * Created by Riccardo Casatta @RCasatta on 18/12/15.
@@ -83,13 +81,24 @@ public class EmptyWalletDialogFragment extends DialogFragment {
 
         final EWApplication ewApplication = (EWApplication) getActivity().getApplicationContext();
         final EWWalletService ewWalletService = ewApplication.getEwWalletService();
-        final Transaction tx = ewWalletService.createExitTransaction(bitcoinAddress);
-        if(tx==null) {
-            Log.i(TAG,"exit transaction is null ");
 
-            Toast.makeText(getActivity(), "Wait unconfirmed tx and try again",Toast.LENGTH_LONG).show();
+        Transaction tx;
+        try {
+            tx = ewWalletService.createExitTransaction(bitcoinAddress);
+        } catch (NotSyncedException e) {
+            Toast.makeText(getActivity(), "Not synced",Toast.LENGTH_LONG).show();
+            return;
+        } catch (NotEnoughAddressException e) {
+            Toast.makeText(getActivity(), "100 Address limit reached",Toast.LENGTH_LONG).show();
+            return;
+        } catch (InsufficientMoneyException e) {
+            Toast.makeText(getActivity(), "You haven't enough bitcoin",Toast.LENGTH_LONG).show();
+            return;
+        } catch (AddressFormatException e) {
+            Toast.makeText(getActivity(), "AddressFormatException",Toast.LENGTH_LONG).show();
             return;
         }
+
 
         Log.i(TAG,"Created exit transaction " + tx);
         Log.i(TAG, "ExitTransactionHex " + Bitcoin.transactionToHex(tx));

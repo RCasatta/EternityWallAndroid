@@ -17,6 +17,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import org.bitcoinj.core.InsufficientMoneyException;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionBroadcast;
 
@@ -25,6 +26,7 @@ import java.util.concurrent.ExecutionException;
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
+import it.eternitywall.eternitywall.wallet.NotSyncedException;
 import it.eternitywall.eternitywall.wallet.WalletObservable;
 
 /**
@@ -88,7 +90,16 @@ public class RegAliasDialogFragment extends DialogFragment {
         EWWalletService ewWalletService = ((EWApplication) getActivity().getApplication()).getEwWalletService();
 
         //TODO check messages
-        final Transaction transaction = ewWalletService.registerAlias(aliasString);
+        Transaction transaction;
+        try {
+            transaction = ewWalletService.registerAlias(aliasString);
+        } catch (NotSyncedException e) {
+            Toast.makeText(getActivity(), "Not synced",Toast.LENGTH_LONG).show();
+            return;
+        } catch (InsufficientMoneyException e) {
+            Toast.makeText(getActivity(), "You haven't enough bitcoin",Toast.LENGTH_LONG).show();
+            return;
+        }
         final TransactionBroadcast transactionBroadcast = ewWalletService.broadcastTransaction(transaction);
 
         if(transactionBroadcast==null) {

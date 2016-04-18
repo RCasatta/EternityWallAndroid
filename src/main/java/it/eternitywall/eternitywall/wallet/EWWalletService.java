@@ -109,22 +109,31 @@ public class EWWalletService extends Service implements Runnable {
         return changes.get( 0 ).toAddress(PARAMS);
     }
 
-    private Address getCurrent() {  //watch observable
-        if(!walletObservable.isSynced() || nextChange==0 || nextChange>99) //TODO manage nextChange>99
-            return null;
+    private Address getCurrent() throws NotSyncedException, NotEnoughAddressException {  //watch observable
+        if(!walletObservable.isSynced() || nextChange==0 || nextChange>99) { //TODO manage nextChange>99
+            if(nextChange>99)
+                throw new NotEnoughAddressException();
+            throw new NotSyncedException("notSynced " + walletObservable.isSynced() + " " + nextChange);
+        }
         return changes.get( nextChange-1 ).toAddress(PARAMS);
     }
 
-    private Address getNext() {  //watch observable
-        if(!walletObservable.isSynced() || nextChange>99)  //TODO manage nextChange>99
-            return null;
+    private Address getNext() throws NotSyncedException, NotEnoughAddressException  {  //watch observable
+        if(!walletObservable.isSynced() || nextChange>99) { //TODO manage nextChange>99
+            if(nextChange>99)
+                throw new NotEnoughAddressException();
+            throw new NotSyncedException("notSynced " + walletObservable.isSynced() + " " + nextChange);
+        }
         return changes.get( nextChange ).toAddress(PARAMS);
     }
 
-    private EWMessageData getNextMessageData() {
+    private EWMessageData getNextMessageData() throws NotSyncedException, NotEnoughAddressException  {
         if(!walletObservable.isSynced() || nextChange ==0 || nextChange>99) { //TODO manage nextChange>99
-            Log.i(TAG, "getNextMessageData returning null " + walletObservable.isSynced() + " " + nextChange);
-            return null;
+            final String msg = "getNextMessageData returning null " + walletObservable.isSynced() + " " + nextChange;
+            Log.i(TAG, msg);
+            if(nextChange>99)
+                throw new NotEnoughAddressException();
+            throw new NotSyncedException(msg);
         }
         EWMessageData ewMessageData = new EWMessageData();
         ewMessageData.setMessageId(messagesId.get(nextMessageId).toAddress(PARAMS));
@@ -135,17 +144,17 @@ public class EWWalletService extends Service implements Runnable {
         return ewMessageData;
     }
 
-    public Transaction createMessageTx(String message, String answerTo) throws Exception {
+    public Transaction createMessageTx(String message, String answerTo) throws NotSyncedException, NotEnoughAddressException, InsufficientMoneyException, AddressFormatException {
         Log.i(TAG,"createMessageTx " +message + " " + answerTo );
 
         if(!walletObservable.isSynced() || nextChange==0){
             String msg = "sendMessage returning null " + walletObservable.isSynced() + " " + nextChange + " " + nextMessageId;
             Log.i(TAG, msg);   //TODO manage nextChange>99 or nextMessageId>0
-            throw new IllegalArgumentException(msg);
+            throw new NotSyncedException(msg);
         } else if (nextChange>99 || nextMessageId>99) {
             String msg = "sendMessage returning null " + walletObservable.isSynced() + " " + nextChange + " " + nextMessageId;
             Log.i(TAG, msg);   //TODO manage nextChange>99 or nextMessageId>0
-            throw new IllegalArgumentException(msg);
+            throw new NotEnoughAddressException();
         }
         EWMessageData ewMessageData= getNextMessageData();
         final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -178,10 +187,11 @@ public class EWWalletService extends Service implements Runnable {
 
         if(answerTo!=null) {
                 try {
-                    newTx.addOutput(Coin.valueOf(DUST), new Address(PARAMS,answerTo));
+                    final Address addressTo = new Address(PARAMS, answerTo);
+                    newTx.addOutput(Coin.valueOf(DUST), addressTo);
                     toSend-=DUST;
                 } catch (AddressFormatException e) {
-                    String msg = "should not happen! " + e.getMessage();
+                    String msg = "answerTo is not a valid bitcoin address" + e.getMessage();
                     Log.e(TAG, msg);
                     throw new AddressFormatException(msg);
                 }
@@ -223,25 +233,18 @@ public class EWWalletService extends Service implements Runnable {
         return transactionBroadcast;
     }
 
-    public Transaction createExitTransaction(String bitcoinAddress) {
+    public Transaction createExitTransaction(String bitcoinAddress) throws NotSyncedException, NotEnoughAddressException, InsufficientMoneyException, AddressFormatException {
         Log.i(TAG,"createExitTransaction to " +bitcoinAddress );
 
         if(!walletObservable.isSynced() || nextChange==0 || nextChange>99 ) {
-            Log.w(TAG, "createExitTransaction returning null " + walletObservable.isSynced() + " " + nextChange);   //TODO manage nextChange>99 or nextMessageId>0
-            return null;
+            final String msg = "createExitTransaction returning null " + walletObservable.isSynced() + " " + nextChange;
+            Log.w(TAG, msg);   //TODO manage nextChange>99 or nextMessageId>0
+            if(nextChange>99)
+                throw new NotEnoughAddressException();
+            throw new NotSyncedException(msg);
         }
 
-        Address destination=null;
-        if(!Bitcoin.isValidAddress(bitcoinAddress)) {
-            Log.w(TAG, "!Bitcoin.isValidAddress " + bitcoinAddress);   //TODO manage nextChange>99 or nextMessageId>0
-            return null;
-        } else {
-            try {
-                destination= new Address(PARAMS, bitcoinAddress);
-            } catch (AddressFormatException e) {
-                Log.wtf(TAG,"should not happen, just verified");
-            }
-        }
+        Address destination = new Address(PARAMS, bitcoinAddress);
 
         final Transaction newTx = new Transaction(PARAMS);
 
@@ -266,8 +269,9 @@ public class EWWalletService extends Service implements Runnable {
         Log.i(TAG,"total available " + totalAvailable);
         Long toSend = totalAvailable-FEE;
         if(toSend < DUST) {
-            Log.i(TAG, "toSend is less than dust, exiting");
-            return null;
+            final String msg = "toSend is less than dust, exiting " + toSend;
+            Log.i(TAG, msg);
+            throw new InsufficientMoneyException( Coin.valueOf(DUST-toSend) );
         }
 
         newTx.addOutput(Coin.valueOf(toSend), destination );
@@ -281,10 +285,11 @@ public class EWWalletService extends Service implements Runnable {
         return newTx;
     }
 
-    public Transaction registerAlias(String aliasName) {
+    public Transaction registerAlias(String aliasName) throws NotSyncedException, InsufficientMoneyException {
         if(!walletObservable.isSynced() || nextChange != 1) {
-            Log.i(TAG,"not synced or next change different from zero " + walletObservable.isSynced() + " " + nextChange);
-            return null;
+            final String msg = "not synced or next change different from zero " + walletObservable.isSynced() + " " + nextChange;
+            Log.i(TAG, msg);
+            throw new NotSyncedException(msg);
         }
 
         ECKey aliasKey = changes.get(0);
@@ -302,12 +307,14 @@ public class EWWalletService extends Service implements Runnable {
             newTx.addInput(to);
         }
         Long toSend = totalAvailable-FEE-DUST;
-        if(toSend < DUST)
-            return null;
+        if(toSend < DUST) {
+            final String msg = "toSend is less than dust " + toSend;
+            Log.i(TAG, msg);
+            throw new InsufficientMoneyException( Coin.valueOf(DUST-toSend) );
+        }
 
         final Address change = firstChange.toAddress(PARAMS);
         Log.i(TAG, "Sending to change " + change.toString() + " " + toSend + " satoshis");
-
 
         aliasName = REGISTER_ALIAS_TAG + aliasName;
 
@@ -549,7 +556,12 @@ public class EWWalletService extends Service implements Runnable {
         walletObservable.setWalletBalance(wallet.getBalance());
         walletObservable.setWalletUnconfirmedBalance(wallet.getBalance(Wallet.BalanceType.ESTIMATED));
         Log.i(TAG, "Changed wallet balance");
-        final Address current = nextChange==0 ? getAlias() : getCurrent();
+        Address current;
+        try {
+            current = nextChange == 0 ? getAlias() : getCurrent();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         walletObservable.setCurrent(current);
 
         //walletObservable.setAliasName("Test");  //TODO DEBUG
