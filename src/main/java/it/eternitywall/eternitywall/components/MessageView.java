@@ -57,7 +57,7 @@ public class MessageView  extends LinearLayout {
 
     public void setTextMessage( int resource){
         txtMessage.setTextAppearance(getContext(), resource);
-
+        txtMessage.setTextColor(getResources().getColor(R.color.black));
     }
 
     public void set(final Message m){
