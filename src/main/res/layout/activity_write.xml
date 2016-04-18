@@ -19,9 +19,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
                 android:visibility="visible"
-                android:padding="@dimen/padding_high">
+                android:padding="@dimen/padding_high"
+                >
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
             <EditText
                 android:id="@+id/etMessage"
                 android:layout_width="match_parent"
-                android:lines="5"
+                android:lines="3"
                 android:background="@drawable/style_message_background"
                 android:hint="write your message..."
                 android:gravity="top"
