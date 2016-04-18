@@ -44,6 +44,7 @@ import it.eternitywall.eternitywall.IdenticonGenerator;
 import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.adapters.MessageRecyclerViewAdapter;
+import it.eternitywall.eternitywall.components.MessageView;
 import it.eternitywall.eternitywall.dialogfragments.RankingDialogFragment;
 
 public class DetailActivity extends ActionBarActivity {
@@ -61,6 +62,8 @@ public class DetailActivity extends ActionBarActivity {
     private List<Message> replies= new ArrayList<Message>();
     private List<Message> answers=new ArrayList<Message>();
 
+    private MessageView answerMessageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +76,9 @@ public class DetailActivity extends ActionBarActivity {
         replies = new ArrayList<Message>();
         answers = new ArrayList<Message>();
 
+        // message view component for answer message
+        answerMessageView = (MessageView)findViewById(R.id.answerMessageView);
+
         // recyclerview on replies Messages
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         final it.eternitywall.eternitywall.components.LinearLayoutManager layoutManager = new it.eternitywall.eternitywall.components.LinearLayoutManager(this, it.eternitywall.eternitywall.components.LinearLayoutManager.VERTICAL, false);
@@ -80,19 +86,14 @@ public class DetailActivity extends ActionBarActivity {
         final LruCache<String, Bitmap> bitmapCache = ((EWApplication) getApplication()).getBitmapCache();
         recyclerView.setAdapter(new MessageRecyclerViewAdapter(replies, 0, null,bitmapCache));
 
-        // recyclerview on single answer Messages
-        /*singleRecyclerView = (RecyclerView) findViewById(R.id.singleRecyclerView);
-        final it.eternitywall.eternitywall.components.LinearLayoutManager layoutManager1 = new it.eternitywall.eternitywall.components.LinearLayoutManager(this, it.eternitywall.eternitywall.components.LinearLayoutManager.VERTICAL, false);
-        singleRecyclerView.setLayoutManager(layoutManager1);
-        singleRecyclerView.setAdapter(new MessageRecyclerViewAdapter(answers, 0, null));
-        singleRecyclerView.setNestedScrollingEnabled(false);
-*/
         try {
             hash = getIntent().getStringExtra("hash");
         } catch (Exception e) {
             //succhia!
             Toast.makeText(DetailActivity.this, getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
         }
+
+        //load messages at startup
         loadMessage();
     }
 
@@ -137,9 +138,19 @@ public class DetailActivity extends ActionBarActivity {
                     return;
                 progress.setVisibility(View.INVISIBLE);
 
+                // current message
                 parseCurrentMessage(findViewById(R.id.detailmessage),DetailActivity.this,mMessage);
 
-                // replies messages
+                // answer component single message
+                if (mAnswers != null && !mAnswers.isEmpty()) {
+                    answerMessageView.setVisibility(View.VISIBLE);
+                    answerMessageView.set(mAnswers.get(0));
+                    answerMessageView.setTextMessage(android.R.style.TextAppearance_Small);
+                } else {
+                    answerMessageView.setVisibility(View.GONE);
+                }
+
+                // list of replies messages
                 if (replies != null && !replies.isEmpty()) {
                     replies.addAll(mReplies);
                     final MessageRecyclerViewAdapter messageListAdapter = (MessageRecyclerViewAdapter) recyclerView.getAdapter();
@@ -149,28 +160,7 @@ public class DetailActivity extends ActionBarActivity {
                     final LruCache<String, Bitmap> bitmapCache = ((EWApplication) getApplication()).getBitmapCache();
                     recyclerView.setAdapter(new MessageRecyclerViewAdapter(mReplies, 0, null,bitmapCache));
                 }
-
-
-                // answer messages
-                /*    if (answers != null && !answers.isEmpty()) {
-                        answers.addAll(mAnswers);
-                        final MessageRecyclerViewAdapter messageListAdapter = (MessageRecyclerViewAdapter) singleRecyclerView.getAdapter();
-                        messageListAdapter.notifyDataSetChanged();
-                    } else {
-                        answers.addAll(mAnswers);
-                        singleRecyclerView.setAdapter(new MessageRecyclerViewAdapter(mAnswers, 0, null));
-                    }*/
-
-                View viewAnswerlMessage = findViewById(R.id.answermessage);
-                if (mAnswers != null && !mAnswers.isEmpty()) {
-                    viewAnswerlMessage.setVisibility(View.VISIBLE);
-                    parseAnswerMessage(viewAnswerlMessage, DetailActivity.this, mAnswers.get(0));
-                } else {
-                    viewAnswerlMessage.setVisibility(View.GONE);
-
-                }
             }
-
 
             @Override
             protected Object doInBackground(Object[] params) {
@@ -434,98 +424,5 @@ public class DetailActivity extends ActionBarActivity {
         });
     }
 
-
-    private void parseAnswerMessage(View v, Context context, final Message m) {
-
-        TextView txtMessage = (TextView) v.findViewById(R.id.txtMessage);
-        TextView txtStatus = (TextView) v.findViewById(R.id.txtStatus);
-        TextView txtDate = (TextView) v.findViewById(R.id.txtDate);
-        TextView txtHeader = (TextView) v.findViewById(R.id.txtHeader);
-        ImageView identicon = (ImageView) v.findViewById(R.id.identicon);
-
-        // message
-        String text = m.getMessage();
-        if (m.getLink() != null) {
-            String link = m.getLink();
-            String linkreplace = "";
-
-            if (link.startsWith("@"))
-                linkreplace = "<a href='http://twitter.com/" + link + "'>" + link + "</a>";
-            else if (link.contains("http"))
-                linkreplace = "<a href='" + link + "'>" + link + "</a>";
-            else if (link.contains("https"))
-                linkreplace = "<a href='" + link + "'>" + link + "</a>";
-            else
-                linkreplace = "<a href='http://" + link + "'>" + link + "</a>";
-            text = text.replace(link, linkreplace);
-        }
-        txtMessage.setText(Html.fromHtml(text));
-        // Always small
-        txtMessage.setTextAppearance(context, android.R.style.TextAppearance_Small);
-        txtMessage.setTextColor(context.getResources().getColor(android.R.color.black));
-
-        // status
-        txtStatus.setVisibility(View.GONE);
-        txtStatus.setText("");
-        String strStatus = "";
-        if (m.getReplies() > 0) {
-            strStatus += String.valueOf(m.getReplies()) + (m.getReplies() == 1 ? " reply " : " replies ");
-        }
-        if (m.getAnswer() == true) {
-            if (strStatus.length() > 0)
-                strStatus += "- ";
-            strStatus += "answer";
-        }
-        if (m.getLikes() > 0) {
-            if (strStatus.length() > 0)
-                strStatus += "- ";
-            strStatus += String.valueOf(m.getLikes()) + (m.getLikes() == 1 ? " like " : " likes ");
-        }
-        if (strStatus.length() > 0) {
-            txtStatus.setText(strStatus);
-            txtStatus.setVisibility(View.VISIBLE);
-        }
-
-        // date
-        String dateFormatted = new SimpleDateFormat("dd MMM yyyy HH.mm").format(new Date(m.getTimestamp()));
-        if (m.getAliasName() != null) {
-            txtDate.setText(m.getAliasName() + " - " + dateFormatted);
-        } else {
-            txtDate.setText(dateFormatted);
-        }
-
-        //identicon
-        if (m.getAlias() != null) {
-            Bitmap bitmap = IdenticonGenerator.generate(m.getAlias());
-            identicon.setImageBitmap(bitmap);
-            identicon.setVisibility(View.VISIBLE);
-            identicon.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), ProfileActivity.class);
-                    intent.putExtra("accountId", String.valueOf(m.getAlias()));
-                    v.getContext().startActivity(intent);
-                }
-            });
-        } else {
-            identicon.setVisibility(View.GONE);
-        }
-
-        txtHeader.setVisibility(View.GONE);
-
-
-        //onclick
-        // add click listener
-
-        v.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), DetailActivity.class);
-                intent.putExtra("hash", String.valueOf(m.getTxHash()));
-                v.getContext().startActivity(intent);
-            }
-        });
-
-    }
 
 }

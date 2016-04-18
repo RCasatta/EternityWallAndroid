@@ -14,8 +14,8 @@
         android:elevation="0dp"
         android:theme="@style/AppTheme.AppBarOverlay" >
 
-        <include layout="@layout/item_message"
-            android:id="@+id/answermessage"
+        <it.eternitywall.eternitywall.components.MessageView
+            android:id="@+id/answerMessageView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_collapseMode="parallax"
