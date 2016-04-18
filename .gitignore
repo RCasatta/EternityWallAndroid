@@ -7,3 +7,4 @@ EternityWallAndroid.iml
 /data/wallet
 EternityWallAndroid-release.apk
 *.apk
+/captures
