@@ -75,9 +75,11 @@ public class EWApplication extends MultiDexApplication {
 
         initLogging();
 
-        timer = new Timer();
-        timedLogStat = new TimedLogStat(this);
-        timer.schedule(timedLogStat, 30000L, 30000L);
+        if (BuildConfig.DEBUG) {
+            timer = new Timer();
+            timedLogStat = new TimedLogStat(this);
+            timer.schedule(timedLogStat, 30000L, 30000L);
+        }
 
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
 
