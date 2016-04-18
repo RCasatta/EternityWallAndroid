@@ -419,6 +419,8 @@ public class DetailActivity extends ActionBarActivity {
             public void onClick(View v) {
                 Intent i = new Intent(DetailActivity.this, WriteActivity.class);
                 i.putExtra("replyFrom", message.getMessageId());
+                i.putExtra("hashTransaction", message.getTxHash());
+
                 startActivity(i);
             }
         });

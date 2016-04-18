@@ -1,11 +1,13 @@
 package it.eternitywall.eternitywall.activity;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,14 +15,17 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -35,10 +40,14 @@ import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.InsufficientMoneyException;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionBroadcast;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,8 +55,12 @@ import java.util.concurrent.ExecutionException;
 
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Http;
+import it.eternitywall.eternitywall.IdenticonGenerator;
+import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
+import it.eternitywall.eternitywall.adapters.MessageRecyclerViewAdapter;
+import it.eternitywall.eternitywall.components.MessageView;
 import it.eternitywall.eternitywall.dialogfragments.PinAlertDialogFragment;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
 import it.eternitywall.eternitywall.wallet.WalletObservable;
@@ -63,7 +76,7 @@ public class WriteActivity extends ActionBarActivity {
 
 
     private EditText txtMessage;
-    private TextView txtCounter,txtHeader;
+    private TextView txtCounter;
     private ProgressBar progress;
     private Spinner spnrSender;
     private LinearLayout lytSender;
@@ -75,15 +88,17 @@ public class WriteActivity extends ActionBarActivity {
     private String replyFrom=null;
     private String aliasName;
 
+
+    private MessageView answerMessageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write);
         Iconify.with(new FontAwesomeModule());
 
-        txtMessage = (EditText) findViewById(R.id.txtMessage);
+        txtMessage = (EditText) findViewById(R.id.etMessage);
         txtCounter = (TextView) findViewById(R.id.txtCounter);
-        txtHeader = (TextView) findViewById(R.id.txtHeader);
         if(getIntent().getExtras() != null && getIntent().getStringExtra("sharedText") != null) {
             txtMessage.setText(getIntent().getStringExtra("sharedText"));
             curmsg = txtMessage.getText().toString();
@@ -107,10 +122,14 @@ public class WriteActivity extends ActionBarActivity {
             }
         }
 
+
+        // message view component for answer message
+        answerMessageView = (MessageView)findViewById(R.id.answerMessageView);
         if(getIntent().getExtras() != null && getIntent().getStringExtra("replyFrom") != null) {
-            txtHeader.setText("reply to message id " + getIntent().getStringExtra("replyFrom"));
-            txtHeader.setVisibility(View.VISIBLE);
             replyFrom=getIntent().getStringExtra("replyFrom");
+            String hashTransaction=getIntent().getStringExtra("hashTransaction");
+            loadMessage(hashTransaction);
+            // answer message
             curmsg = txtMessage.getText().toString();
             if(calcRemainingBytes() < 0) {
                 txtMessage.setText(curmsg);
@@ -454,5 +473,83 @@ public class WriteActivity extends ActionBarActivity {
                 mgr.queryIntentActivities(intent,
                         PackageManager.MATCH_DEFAULT_ONLY);
         return list.size() > 0;
+    }
+
+
+
+
+    public void loadMessage( final String hash_transaction) {
+        AsyncTask t = new AsyncTask() {
+
+            private boolean ok = false;
+            private Message mMessage = null;
+            private List<Message> mReplies = null;
+            private List<Message> mAnswers = null;
+
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                super.onPostExecute(o);
+                if (WriteActivity.this.isFinishing())
+                    return;
+
+                if (mMessage != null ) {
+                    answerMessageView.setVisibility(View.VISIBLE);
+                    answerMessageView.set(mMessage);
+                    answerMessageView.setTextMessage(android.R.style.TextAppearance_Small);
+                } else {
+                    answerMessageView.setVisibility(View.GONE);
+
+                }
+            }
+
+
+            @Override
+            protected Object doInBackground(Object[] params) {
+                Optional<String> json = Http.get("http://eternitywall.it/m/" + hash_transaction + "?format=json");
+                if (json.isPresent()) {
+                    try {
+                        String jstring = json.get();
+                        JSONObject jo = new JSONObject(jstring);
+                        mMessage = Message.buildFromJson(jo.getJSONObject("current"));
+                        Log.i(TAG, mMessage.toString());
+
+                        // build list of replies messages
+                        try {
+                            JSONArray jReplies = jo.getJSONArray("replies");
+                            mReplies = new ArrayList<Message>();
+                            for (int i = 0; i < jReplies.length(); i++) {
+                                Message reply = Message.buildFromJson(jReplies.getJSONObject(i));
+                                mReplies.add(reply);
+                            }
+                        } catch (JSONException e) {
+                            mReplies = new ArrayList<Message>();
+                        } //optional
+
+                        // build list of answers messages
+                        try {
+                            JSONObject jAnswer = jo.getJSONObject("replyFrom");
+                            mAnswers = new ArrayList<Message>();
+                            Message answer = Message.buildFromJson(jAnswer);
+                            mAnswers.add(answer);
+                        } catch (JSONException e) {
+                            mAnswers = new ArrayList<Message>();
+                        } //optional
+
+
+                        ok = true;
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+                return null;
+            }
+        };
+        t.execute();
     }
 }

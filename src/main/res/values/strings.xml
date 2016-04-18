@@ -113,5 +113,7 @@
     <string name="write_hash_message">Send Hash Message</string>
     <string name="write_hash_message_subtitle">Send the hash of the message</string>
     <string name="title_activity_profile">Profile</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="replyto">Reply to</string>
 
 </resources>
