@@ -718,6 +718,7 @@ public class EWWalletService extends Service implements Runnable {
         return wallet;
     }
 
+
     public void stopSync() {
         if (blockChain!=null) {
             blockChain.removeListener(chainListener);

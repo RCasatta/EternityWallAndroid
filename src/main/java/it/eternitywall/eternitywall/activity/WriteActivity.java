@@ -1,13 +1,11 @@
 package it.eternitywall.eternitywall.activity;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,17 +13,14 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
-import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.LruCache;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -45,9 +40,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -55,11 +48,9 @@ import java.util.concurrent.ExecutionException;
 
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Http;
-import it.eternitywall.eternitywall.IdenticonGenerator;
 import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
-import it.eternitywall.eternitywall.adapters.MessageRecyclerViewAdapter;
 import it.eternitywall.eternitywall.components.MessageView;
 import it.eternitywall.eternitywall.dialogfragments.PinAlertDialogFragment;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
@@ -551,5 +542,17 @@ public class WriteActivity extends ActionBarActivity {
             }
         };
         t.execute();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ((EWApplication)getApplication()).onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ((EWApplication)getApplication()).onResume();
     }
 }

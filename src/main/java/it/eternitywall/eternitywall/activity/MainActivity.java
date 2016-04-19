@@ -36,13 +36,13 @@ import java.util.List;
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
+import it.eternitywall.eternitywall.TimedStopper;
 import it.eternitywall.eternitywall.fragments.AccountFragment;
 import it.eternitywall.eternitywall.fragments.CreateFragment;
 import it.eternitywall.eternitywall.fragments.HelloFragment;
 import it.eternitywall.eternitywall.fragments.ListFragment;
 import it.eternitywall.eternitywall.fragments.RecoverPassphraseFragment;
 import it.eternitywall.eternitywall.fragments.WalletFragment;
-import it.eternitywall.eternitywall.wallet.EWWalletService;
 import it.eternitywall.eternitywall.wallet.WalletObservable;
 
 
@@ -69,6 +69,8 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG,"onCreate");
+
         setContentView(R.layout.activity_main);
         Iconify.with(new FontAwesomeModule());
 
@@ -130,6 +132,8 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
             }
         }
     }
+
+
 
     private void setupViewPager(ViewPager viewPager) {
         // put the fragments into container ViewPager
@@ -345,9 +349,24 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
 
     @Override
     public boolean onClose() {
+        Log.i(TAG,"onClose");
         listFragment.clear();
         listFragment.loadMoreData();
         return false;
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ((EWApplication)getApplication()).onPause();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ((EWApplication)getApplication()).onResume();
     }
 
     @Override

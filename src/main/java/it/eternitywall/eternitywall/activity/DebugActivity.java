@@ -202,4 +202,16 @@ public class DebugActivity extends AppCompatActivity implements DebugListAdapter
 
 
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ((EWApplication)getApplication()).onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ((EWApplication)getApplication()).onResume();
+    }
 }

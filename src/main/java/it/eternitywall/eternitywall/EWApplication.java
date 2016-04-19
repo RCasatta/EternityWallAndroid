@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Timer;
+import java.util.TimerTask;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -37,8 +38,8 @@ public class EWApplication extends MultiDexApplication {
     private WalletObservable walletObservable;
     private WalletObserver walletObserver;
 
-    private Timer timer;
-    private TimedLogStat timedLogStat;
+    //private Timer timer;
+    //private TimedLogStat timedLogStat;
 
     private LruCache<String, Bitmap> bitmapCache;
 
@@ -64,6 +65,8 @@ public class EWApplication extends MultiDexApplication {
         }
     };
 
+
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -75,11 +78,11 @@ public class EWApplication extends MultiDexApplication {
 
         initLogging();
 
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             timer = new Timer();
             timedLogStat = new TimedLogStat(this);
             timer.schedule(timedLogStat, 30000L, 30000L);
-        }
+        }*/
 
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
 
@@ -158,4 +161,27 @@ public class EWApplication extends MultiDexApplication {
         log.addAppender(logcatAppender);
         log.setLevel(Level.INFO);
     }
+
+
+    private Timer timer=new Timer();
+    private TimerTask timerTask = new TimedStopper(this);
+    public void onResume() {
+        Log.i(TAG,"onResume");
+        timerTask.cancel();
+    }
+
+    public void onPause() {
+        Log.i(TAG,"onPause");
+        timerTask.cancel();
+        timerTask=new TimedStopper(this);
+        timer.schedule(timerTask,60000);
+    }
+
+    public void unbindService() {
+        if(ewWalletService.getPeerGroup().isRunning())
+            ewWalletService.getPeerGroup().stop();
+
+        unbindService(mConnection);
+    }
+
 }

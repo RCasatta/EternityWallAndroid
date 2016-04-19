@@ -497,5 +497,16 @@ public class HiddenActivity extends AppCompatActivity {
         alert.show();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ((EWApplication)getApplication()).onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ((EWApplication)getApplication()).onResume();
+    }
 
 }

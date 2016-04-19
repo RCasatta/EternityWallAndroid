@@ -10,6 +10,7 @@ import android.widget.Button;
 import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
 
+import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.R;
 
 public class AboutActivity extends AppCompatActivity {
@@ -53,5 +54,17 @@ public class AboutActivity extends AppCompatActivity {
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ((EWApplication)getApplication()).onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ((EWApplication)getApplication()).onResume();
     }
 }
