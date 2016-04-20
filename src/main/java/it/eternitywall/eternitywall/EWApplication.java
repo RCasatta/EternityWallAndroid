@@ -168,6 +168,11 @@ public class EWApplication extends MultiDexApplication {
     public void onResume() {
         Log.i(TAG,"onResume");
         timerTask.cancel();
+        if(!ewWalletService.getPeerGroup().isRunning()) {
+            Log.i(TAG,"peerGroupIsNotRunning");
+            final Intent intent = new Intent(this, EWWalletService.class);
+            bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        }
     }
 
     public void onPause() {
@@ -178,10 +183,14 @@ public class EWApplication extends MultiDexApplication {
     }
 
     public void unbindService() {
-        if(ewWalletService.getPeerGroup().isRunning())
-            ewWalletService.getPeerGroup().stop();
+        Log.i(TAG,"unbindService");
 
-        unbindService(mConnection);
+        if(ewWalletService.getPeerGroup().isRunning()) {
+            Log.i(TAG,"peerGroupIsRunning");
+            ewWalletService.getPeerGroup().stop();
+            unbindService(mConnection);
+        }
+
     }
 
 }
