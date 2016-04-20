@@ -168,7 +168,7 @@ public class EWApplication extends MultiDexApplication {
     public void onResume() {
         Log.i(TAG,"onResume");
         timerTask.cancel();
-        if(!ewWalletService.getPeerGroup().isRunning()) {
+        if(ewWalletService!=null && !ewWalletService.getPeerGroup().isRunning()) {
             Log.i(TAG,"peerGroupIsNotRunning");
             final Intent intent = new Intent(this, EWWalletService.class);
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -185,7 +185,7 @@ public class EWApplication extends MultiDexApplication {
     public void unbindService() {
         Log.i(TAG,"unbindService");
 
-        if(ewWalletService.getPeerGroup().isRunning()) {
+        if(ewWalletService!=null && ewWalletService.getPeerGroup().isRunning()) {
             Log.i(TAG,"peerGroupIsRunning");
             ewWalletService.getPeerGroup().stop();
             unbindService(mConnection);
