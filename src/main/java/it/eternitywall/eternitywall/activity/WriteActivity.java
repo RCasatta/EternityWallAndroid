@@ -67,6 +67,7 @@ public class WriteActivity extends ActionBarActivity {
 
 
     private EditText txtMessage;
+    private TextView txtReplyto;
     private TextView txtCounter;
     private ProgressBar progress;
     private Spinner spnrSender;
@@ -90,6 +91,7 @@ public class WriteActivity extends ActionBarActivity {
 
         txtMessage = (EditText) findViewById(R.id.etMessage);
         txtCounter = (TextView) findViewById(R.id.txtCounter);
+        txtReplyto = (TextView) findViewById(R.id.txtReplyto);
         if(getIntent().getExtras() != null && getIntent().getStringExtra("sharedText") != null) {
             txtMessage.setText(getIntent().getStringExtra("sharedText"));
             curmsg = txtMessage.getText().toString();
@@ -118,6 +120,7 @@ public class WriteActivity extends ActionBarActivity {
         answerMessageView = (MessageView)findViewById(R.id.answerMessageView);
         if(getIntent().getExtras() != null && getIntent().getStringExtra("replyFrom") != null) {
             replyFrom=getIntent().getStringExtra("replyFrom");
+            txtReplyto.setVisibility(View.GONE);
             String hashTransaction=getIntent().getStringExtra("hashTransaction");
             loadMessage(hashTransaction);
             // answer message

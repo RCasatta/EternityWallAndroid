@@ -39,9 +39,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/replyto"
-                android:id="@+id/textView26"
+                android:id="@+id/txtReplyto"
                 android:paddingLeft="@dimen/padding_high"
-                android:paddingRight="@dimen/padding_high" />
+                android:paddingRight="@dimen/padding_high"
+                android:visibility="gone" />
 
             <it.eternitywall.eternitywall.components.MessageView
                 android:id="@+id/answerMessageView"
