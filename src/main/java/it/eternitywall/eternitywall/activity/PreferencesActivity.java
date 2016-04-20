@@ -255,9 +255,9 @@ public class PreferencesActivity extends AppCompatActivity {
                 .setMessage("Resyncing is necessary only if wallet can't see some transactions and it could take some minutes.")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        // continue with delete
+                        // continue with stopAndDelete
                         EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
-                        ewWalletService.stopSync();
+                        ewWalletService.stopAndDelete();
                         ewWalletService.startSync();
                     }
                 })
@@ -280,7 +280,7 @@ public class PreferencesActivity extends AppCompatActivity {
                     // stop & remove
                     EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
                     ewWalletService.removePasshrase();
-                    ewWalletService.stopSync();
+                    ewWalletService.stopAndDelete();
                     sharedPref.edit().putString(Preferences.ALIAS_NAME, null).commit();
                     Toast.makeText(PreferencesActivity.this, "Account removed!", Toast.LENGTH_LONG).show();
                 }

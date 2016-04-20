@@ -92,9 +92,14 @@ public class EWWalletService extends Service implements Runnable {
     private BlockChain blockChain;
     private PeerGroup peerGroup;
     private Wallet wallet;
+    private boolean running=false;
 
     private WalletObservable walletObservable = new WalletObservable();
     private EWBinder mBinder= new EWBinder(this, walletObservable);
+
+    public boolean isRunning() {
+        return running;
+    }
 
 
     public Integer getNextMessageId() {
@@ -388,6 +393,7 @@ public class EWWalletService extends Service implements Runnable {
     @Override
     public void run() {
         try {
+            running=true;
             Log.i(TAG,"my network is " + BitcoinNetwork.getInstance().get().getParams().getId() );
             final boolean isRegtest = BitcoinNetwork.getInstance().get().getParams().getId().equals(RegTestParams.get().getId());
 
@@ -723,8 +729,17 @@ public class EWWalletService extends Service implements Runnable {
         return wallet;
     }
 
-
     public void stopSync() {
+        if (peerGroup!=null)
+            if (peerGroup.isRunning())
+                peerGroup.stop();
+        if (wallet!=null)
+            wallet.shutdownAutosaveAndWait();
+        running=false;
+    }
+
+
+    public void stopAndDelete() {
         if (blockChain!=null) {
             blockChain.removeListener(chainListener);
             blockChain.removeWallet(wallet);
@@ -778,6 +793,7 @@ public class EWWalletService extends Service implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        running=false;
     }
 
     public void removePasshrase() {
