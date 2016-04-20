@@ -371,7 +371,12 @@ public class EWWalletService extends Service implements Runnable {
     public void onCreate() {
         Log.i(TAG, ".onCreate()");
         startSync();
+    }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.i(TAG, ".onDestroy()");
     }
 
     public void startSync() {
