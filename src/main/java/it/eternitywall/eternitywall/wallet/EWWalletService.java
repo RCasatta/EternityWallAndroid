@@ -730,6 +730,8 @@ public class EWWalletService extends Service implements Runnable {
     }
 
     public void stopSync() {
+        Log.i(TAG, "stopSync");
+
         if (peerGroup!=null)
             if (peerGroup.isRunning())
                 peerGroup.stop();

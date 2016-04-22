@@ -37,6 +37,7 @@ public class EWApplication extends MultiDexApplication {
     private EWWalletService ewWalletService;
     private WalletObservable walletObservable;
     private WalletObserver walletObserver;
+    private final int SHUTDOWN_AFTER = 30 * 60 * 1000;
 
     //private Timer timer;
     //private TimedLogStat timedLogStat;
@@ -182,7 +183,8 @@ public class EWApplication extends MultiDexApplication {
         Log.i(TAG,"onPause");
         timerTask.cancel();
         timerTask=new TimedStopper(this);
-        timer.schedule(timerTask,60000);
+
+        timer.schedule(timerTask, SHUTDOWN_AFTER);
     }
 
     public void unbindService() {
