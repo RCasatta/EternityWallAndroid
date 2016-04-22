@@ -36,7 +36,6 @@ import java.util.List;
 import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
-import it.eternitywall.eternitywall.TimedStopper;
 import it.eternitywall.eternitywall.fragments.AccountFragment;
 import it.eternitywall.eternitywall.fragments.CreateFragment;
 import it.eternitywall.eternitywall.fragments.HelloFragment;
@@ -355,20 +354,6 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         return false;
     }
 
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        ((EWApplication)getApplication()).onPause();
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ((EWApplication)getApplication()).onResume();
-    }
-
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         listFragment.clear();
@@ -413,5 +398,17 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ((EWApplication)getApplication()).onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ((EWApplication)getApplication()).onResume();
     }
 }

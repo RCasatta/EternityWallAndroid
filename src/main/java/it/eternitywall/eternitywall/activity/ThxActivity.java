@@ -18,6 +18,7 @@ import com.google.common.base.Optional;
 import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
 
+import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Http;
 import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
@@ -126,5 +127,17 @@ public class ThxActivity extends ActionBarActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Toast.makeText(this, "requestCode=" + requestCode + " resultCode=" + resultCode + " data=" + data , Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ((EWApplication)getApplication()).onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ((EWApplication)getApplication()).onResume();
     }
 }

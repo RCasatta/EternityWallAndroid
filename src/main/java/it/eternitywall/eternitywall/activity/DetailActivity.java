@@ -271,17 +271,7 @@ public class DetailActivity extends ActionBarActivity {
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        ((EWApplication)getApplication()).onPause();
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ((EWApplication)getApplication()).onResume();
-    }
 
     private void parseCurrentMessage(View v, Context context, final Message message) {
 
@@ -435,6 +425,18 @@ public class DetailActivity extends ActionBarActivity {
                 startActivity(i);
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ((EWApplication)getApplication()).onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ((EWApplication)getApplication()).onResume();
     }
 
 
