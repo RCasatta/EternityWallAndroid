@@ -17,9 +17,10 @@
             android:padding="@dimen/activity_horizontal_margin">
 
             <TextView
-                android:text="Your passhphrase"
+                android:text="@string/your_passphrase"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="18sp"
                 android:textColor="@color/primary"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
@@ -31,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/etPassword"
                 android:textStyle="bold|italic"
-                android:textSize="20sp"
+                android:textSize="22sp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:hint="Passphrase"
@@ -62,23 +63,37 @@
                     android:layout_gravity="center_vertical"
                     />
             </LinearLayout>
-
-
             <TextView
-                android:text="@string/pin_info_where"
+                android:text="@string/passphrase_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/txtDisclaimer2"
-                android:layout_below="@+id/txtDisclaimer"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/activity_vertical_margin" />
+                android:id="@+id/txtDisclaimer"
+
+                android:textColor="@color/red"
+                android:layout_below="@+id/etPassword" />
+
+            <TextView
+                android:text="@string/your_pin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary"
+                android:textSize="18sp"
+
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="10dp"
+                android:id="@+id/textView184"
+                android:layout_gravity="center_vertical" />
+
+
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="10dp"
+
                 >
 
                 <android.support.design.widget.TextInputLayout
@@ -117,6 +132,14 @@
 
             </LinearLayout>
 
+            <TextView
+                android:text="@string/pin_info_where"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtDisclaimer2"
+                android:layout_below="@+id/txtDisclaimer"
+                android:layout_centerHorizontal="true"
+                 />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -137,14 +160,7 @@
                     />
             </LinearLayout>
 
-            <TextView
-                android:text="@string/passphrase_info"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/txtDisclaimer"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:textColor="@color/red"
-                android:layout_below="@+id/etPassword" />
+
         </LinearLayout>
     </ScrollView>
 
