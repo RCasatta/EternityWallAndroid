@@ -169,7 +169,7 @@ public class EWApplication extends MultiDexApplication {
     public void onResume() {
         Log.i(TAG,"onResume");
         timerTask.cancel();
-        if(ewWalletService!=null && !ewWalletService.getPeerGroup().isRunning()) {
+        if(ewWalletService!=null && ewWalletService.getPeerGroup()!=null && !ewWalletService.getPeerGroup().isRunning()) {
             Log.i(TAG,"peerGroupIsNotRunning");
             final Intent intent = new Intent(this, EWWalletService.class);
 
