@@ -73,7 +73,7 @@ public class HelloFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 FragmentTransaction trans = getFragmentManager().beginTransaction();
-                trans.replace(R.id.root_frame, new CreateFragment());
+                trans.replace(R.id.root_frame, new CreateFragment(),"CreateFragment");
                 trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 trans.addToBackStack(null);
                 trans.commit();
@@ -83,13 +83,28 @@ public class HelloFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 FragmentTransaction trans = getFragmentManager().beginTransaction();
-                trans.replace(R.id.root_frame, new RecoverPassphraseFragment());
+                trans.replace(R.id.root_frame, new RecoverPassphraseFragment(),"RecoverPassphraseFragment");
                 trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 trans.addToBackStack(null);
                 trans.commit();
             }
         });
+        if(savedInstanceState!=null){
+            FragmentTransaction trans = getFragmentManager().beginTransaction();
+            Fragment currentFragment=getFragmentManager().getFragment(savedInstanceState,"currentFragment");
+            trans.replace(R.id.root_frame,currentFragment);
+            trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            trans.addToBackStack(null);
+            trans.commit();
+        }
         return v;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Fragment currentFragment=getFragmentManager().findFragmentById(R.id.root_frame);
+        getFragmentManager().putFragment(outState,"currentFragment",currentFragment);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

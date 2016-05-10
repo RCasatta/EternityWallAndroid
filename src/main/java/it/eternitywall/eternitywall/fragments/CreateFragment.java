@@ -144,12 +144,28 @@ public class CreateFragment extends Fragment {
         });
 
 
-        newPassphrase();
-        etPassword.setText(passphrase);
-        ivIdenticon.setImageBitmap(identicon);
+        if (savedInstanceState==null) {
+            newPassphrase();
+            etPassword.setText(passphrase);
+            ivIdenticon.setImageBitmap(identicon);
+        }else {
+            passphrase=savedInstanceState.getString("passphrase");
+            alias=savedInstanceState.getString("alias");
+            etPassword.setText(passphrase);
+            identicon=IdenticonGenerator.generate(alias);
+            ivIdenticon.setImageBitmap(identicon);
+        }
 
         return v;
 
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("passphrase",passphrase);
+        outState.putString("alias",alias);
     }
 
     private void launchService() {

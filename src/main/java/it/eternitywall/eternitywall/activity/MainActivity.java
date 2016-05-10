@@ -73,44 +73,41 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         setContentView(R.layout.activity_main);
         Iconify.with(new FontAwesomeModule());
 
+            // Specify that tabs should be displayed in the action bar.
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
 
-        // Specify that tabs should be displayed in the action bar.
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+            //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            viewPager = (ViewPager) findViewById(R.id.viewpager);
+            setupViewPager(viewPager);
 
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
+            // Set Table Layout and Pager with fragments
+            tabLayout = (TabLayout) findViewById(R.id.tabs);
+            tabLayout.setupWithViewPager(viewPager);
+            changeTabsFont();
 
-        // Set Table Layout and Pager with fragments
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
-        changeTabsFont();
-
-        //TODO DEBUG for density
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        Log.i(TAG, "Density:" + metrics.densityDpi);
-        Log.i(TAG, "WidthPixels:" + metrics.widthPixels);
-
+            //TODO DEBUG for density
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            Log.i(TAG, "Density:" + metrics.densityDpi);
+            Log.i(TAG, "WidthPixels:" + metrics.widthPixels);
 
 
+        //Save the fragment's instance
+        if(savedInstanceState!=null) {
+            /*Fragment secondFragment = getSupportFragmentManager().getFragment(savedInstanceState,"account_fragment");
+            setupViewPager(viewPager, secondFragment);*/
+            viewPager.setCurrentItem(savedInstanceState.getInt("viewPager_CurrentItem"));
+        }
 
-        // Show / Hide write button
-        /*SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        String passphrase=sharedPref.getString(Preferences.PASSPHRASE, null);
-        if (passphrase==null){
-            // Hide write button on activity if there is no account
-            findViewById(R.id.payButton).setVisibility(View.GONE);
-        } else {
-            // Show write button on activity if there is one account
-            findViewById(R.id.payButton).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(MainActivity.this, WriteActivity.class);
-                    startActivity(i);
-                }
-            });
+    }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("viewPager_CurrentItem", viewPager.getCurrentItem());
+        /*ViewPagerAdapter viewPagerAdapter =(ViewPagerAdapter)viewPager.getAdapter();
+        if(viewPagerAdapter.getCount()==2){
+            getSupportFragmentManager().putFragment(outState,"account_fragment",viewPagerAdapter.getItem(1));
         }*/
     }
 
@@ -165,6 +162,37 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
 
     }
 
+
+    private void setupViewPager(ViewPager viewPager, Fragment fragment ) {
+        // put the fragments into container ViewPager
+        listFragment=new ListFragment();
+
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(listFragment, getResources().getString(R.string.list_fragment));
+        adapter.addFragment(fragment, getResources().getString(R.string.account_fragment));
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                page_num = position;
+                supportInvalidateOptionsMenu();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        page_num=0;
+        supportInvalidateOptionsMenu();
+        viewPager.setCurrentItem(page_num);
+
+    }
 
     @Override
     public void onFragmentInteraction(Uri uri) {

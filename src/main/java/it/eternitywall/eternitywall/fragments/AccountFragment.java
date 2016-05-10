@@ -75,14 +75,27 @@ public class AccountFragment extends Fragment {
 
         final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String passphrase=sharedPref.getString(Preferences.PASSPHRASE,null);
-        if (passphrase==null) {
+        if(savedInstanceState!=null){
+            Fragment currentFragment=getFragmentManager().getFragment(savedInstanceState,"currentFragment");
+            transaction.replace(R.id.root_frame,currentFragment);
+        }else if (passphrase==null) {
             transaction.replace(R.id.root_frame, new HelloFragment());
         }else {
             transaction.replace(R.id.root_frame, new WalletFragment());
         }
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        transaction.addToBackStack(null);
         transaction.commit();
 
+
         return v;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Fragment currentFragment=getFragmentManager().findFragmentById(R.id.root_frame);
+        getFragmentManager().putFragment(outState,"currentFragment",currentFragment);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
