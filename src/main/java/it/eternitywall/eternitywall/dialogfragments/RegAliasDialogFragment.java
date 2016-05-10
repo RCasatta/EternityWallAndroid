@@ -94,7 +94,7 @@ public class RegAliasDialogFragment extends DialogFragment {
         try {
             transaction = ewWalletService.registerAlias(aliasString);
         } catch (NotSyncedException e) {
-            Toast.makeText(getActivity(), "Not synced",Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Wallet is syncing... Retry in a while",Toast.LENGTH_LONG).show();
             return;
         } catch (InsufficientMoneyException e) {
             Toast.makeText(getActivity(), "You haven't enough bitcoin",Toast.LENGTH_LONG).show();

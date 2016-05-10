@@ -54,6 +54,8 @@ import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.components.MessageView;
 import it.eternitywall.eternitywall.dialogfragments.PinAlertDialogFragment;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
+import it.eternitywall.eternitywall.wallet.NotEnoughAddressException;
+import it.eternitywall.eternitywall.wallet.NotSyncedException;
 import it.eternitywall.eternitywall.wallet.WalletObservable;
 
 
@@ -274,6 +276,14 @@ public class WriteActivity extends ActionBarActivity {
             } catch (InsufficientMoneyException e) {
                 e.printStackTrace();
                 Toast.makeText(this,"Insufficient coin",Toast.LENGTH_LONG).show();
+                return;
+            } catch (NotEnoughAddressException e) {
+                e.printStackTrace();
+                Toast.makeText(this,"Not Enough Address Exception",Toast.LENGTH_LONG).show();
+                return;
+            } catch (NotSyncedException e) {
+                e.printStackTrace();
+                Toast.makeText(this,"Wallet is syncing... Retry in a while",Toast.LENGTH_LONG).show();
                 return;
             } catch (Exception e) {
                 e.printStackTrace();
