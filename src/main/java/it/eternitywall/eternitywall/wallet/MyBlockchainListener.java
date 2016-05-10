@@ -138,6 +138,8 @@ public class MyBlockchainListener implements BlockChainListener {
                 NotificationCompat.Builder mBuilder =
                         new NotificationCompat.Builder(ewApplication)
                                 .setSmallIcon(R.drawable.ic_send_white_24dp)
+                                .setAutoCancel(true)
+                                .setLights( ewApplication.getResources().getColor(R.color.primary) , 1000, 300)
                                 .setContentTitle("Message written")
                                 .setContentText("Your message has been written on the wall!");
 
