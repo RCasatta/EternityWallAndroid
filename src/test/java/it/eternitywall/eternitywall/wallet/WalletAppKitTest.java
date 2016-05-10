@@ -2,15 +2,15 @@ package it.eternitywall.eternitywall.wallet;
 
 import com.google.common.util.concurrent.Service;
 
-import org.bitcoinj.core.AbstractWalletEventListener;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.PeerAddress;
 import org.bitcoinj.core.Transaction;
-import org.bitcoinj.core.Wallet;
 import org.bitcoinj.kits.WalletAppKit;
 import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.wallet.Wallet;
+import org.bitcoinj.wallet.listeners.AbstractWalletEventListener;
 import org.junit.Test;
 
 import java.io.File;
@@ -32,9 +32,9 @@ public class WalletAppKitTest {
                 // This is called in a background thread after startAndWait is called, as setting up various objects
                 // can do disk and network IO that may cause UI jank/stuttering in wallet apps if it were to be done
                 // on the main thread.
-                System.out.println("keyChainSize=" + wallet().getKeychainSize());
+                System.out.println("keyChainSize=" + wallet().getKeyChainGroupSize());
 
-                if (wallet().getKeychainSize() < 1) {
+                if (wallet().getKeyChainGroupSize() < 1) {
                     System.out.println("<1");
                     wallet().importKey(new ECKey());
                 } else {

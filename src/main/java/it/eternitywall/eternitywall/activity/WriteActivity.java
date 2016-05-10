@@ -266,12 +266,12 @@ public class WriteActivity extends ActionBarActivity {
             final EWWalletService ewWalletService = ((EWApplication) getApplication()).getEwWalletService();
             try {
                 curTx= ewWalletService.createMessageTx(curmsg,replyFrom);
+            } catch (AddressFormatException e) {
+                Toast.makeText(this,"Not more 100 messages available",Toast.LENGTH_LONG).show();
+                return;
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
                 Toast.makeText(this,"Wait the pending message",Toast.LENGTH_LONG).show();
-                return;
-            } catch (AddressFormatException e) {
-                Toast.makeText(this,"Not more 100 messages available",Toast.LENGTH_LONG).show();
                 return;
             } catch (InsufficientMoneyException e) {
                 e.printStackTrace();

@@ -25,7 +25,6 @@ import org.bitcoinj.core.TransactionBroadcast;
 import org.bitcoinj.core.TransactionConfidence;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
-import org.bitcoinj.core.Wallet;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.net.discovery.DnsDiscovery;
 import org.bitcoinj.params.RegTestParams;
@@ -34,6 +33,8 @@ import org.bitcoinj.script.ScriptOpCodes;
 import org.bitcoinj.store.BlockStore;
 import org.bitcoinj.store.SPVBlockStore;
 import org.bitcoinj.utils.Threading;
+import org.bitcoinj.wallet.SendRequest;
+import org.bitcoinj.wallet.Wallet;
 import org.bitcoinj.wallet.WalletTransaction;
 import org.spongycastle.util.encoders.Hex;
 
@@ -221,7 +222,7 @@ public class EWWalletService extends Service implements Runnable {
             newTx.addOutput(Coin.valueOf(DONATION), todayDonation.toAddress(PARAMS));
         }
 
-        Wallet.SendRequest req = Wallet.SendRequest.forTx(newTx);
+        SendRequest req = SendRequest.forTx(newTx);
         wallet.signTransaction(req);
         final String newTxHex = Bitcoin.transactionToHex(newTx);
 
@@ -281,7 +282,7 @@ public class EWWalletService extends Service implements Runnable {
 
         newTx.addOutput(Coin.valueOf(toSend), destination );
 
-        Wallet.SendRequest req = Wallet.SendRequest.forTx(newTx);
+        SendRequest req = SendRequest.forTx(newTx);
         wallet.signTransaction(req);
         final String newTxHex = Bitcoin.transactionToHex(newTx);
 
@@ -331,7 +332,7 @@ public class EWWalletService extends Service implements Runnable {
                         .build());
         newTx.addOutput(Coin.valueOf(toSend), change);
 
-        Wallet.SendRequest req = Wallet.SendRequest.forTx(newTx);
+        SendRequest req = SendRequest.forTx(newTx);
         wallet.signTransaction(req);
 
         final String newTxHex = Bitcoin.transactionToHex(newTx);
@@ -455,7 +456,7 @@ public class EWWalletService extends Service implements Runnable {
                 wallet = Wallet.fromKeys(PARAMS,ecKeyList);
             }
 
-            Log.i(TAG, "wallet key size " + wallet.getKeychainSize());
+            Log.i(TAG, "wallet key size " + wallet.getKeyChainGroupSize());
             Log.i(TAG, "wallet bloom " + wallet.getBloomFilter(1E-5));
             wallet.autosaveToFile(walletFile, 30, TimeUnit.SECONDS, new WalletSaveListener());
             wallet.setAcceptRiskyTransactions(true);
@@ -510,7 +511,7 @@ public class EWWalletService extends Service implements Runnable {
             //peerGroup.setMaxConnections(1);
             //peerGroup.addWallet(wallet);
             peerGroup.addPeerFilterProvider(new MyPeerFilterProvider(changes, messagesId));
-            peerGroup.setDownloadTxDependencies(false);
+            peerGroup.setDownloadTxDependencies(0);
             downloadListener = new MyDownloadListener(walletObservable);
             peerGroup.startAsync();
             walletObservable.setState(WalletObservable.State.SYNCING);

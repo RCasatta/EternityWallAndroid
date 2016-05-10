@@ -10,17 +10,14 @@ import android.util.Log;
 
 import org.bitcoinj.core.AbstractBlockChain;
 import org.bitcoinj.core.Address;
-import org.bitcoinj.core.BlockChainListener;
 import org.bitcoinj.core.NetworkParameters;
-import org.bitcoinj.core.ScriptException;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.StoredBlock;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionConfidence;
-import org.bitcoinj.core.TransactionInput;
-import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.core.VerificationException;
-import org.bitcoinj.core.Wallet;
+import org.bitcoinj.core.listeners.BlockChainListener;
+import org.bitcoinj.wallet.Wallet;
 
 import java.util.HashSet;
 import java.util.List;
@@ -78,6 +75,7 @@ public class MyBlockchainListener implements BlockChainListener {
         return bloomMatches;
     }
 
+    /*
     @Override
     public boolean isTransactionRelevant(Transaction tx) throws ScriptException {
         //Log.i(TAG, "starting isTransactionRelevant?" + tx.getHashAsString());
@@ -104,6 +102,7 @@ public class MyBlockchainListener implements BlockChainListener {
 
         return isRelevant;
     }
+    */
 
     @Override
     public void receiveFromBlock(Transaction tx, StoredBlock block, AbstractBlockChain.NewBlockType blockType, int relativityOffset) throws VerificationException {

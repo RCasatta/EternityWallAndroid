@@ -6,7 +6,7 @@ import com.google.common.base.Joiner;
 
 import org.bitcoinj.core.PeerGroup;
 import org.bitcoinj.core.Transaction;
-import org.bitcoinj.core.Wallet;
+import org.bitcoinj.wallet.Wallet;
 
 import java.util.LinkedList;
 import java.util.List;

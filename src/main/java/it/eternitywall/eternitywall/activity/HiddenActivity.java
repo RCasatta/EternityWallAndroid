@@ -422,12 +422,12 @@ public class HiddenActivity extends AppCompatActivity {
                 curTx = ewWalletService.createMessageTx(curmsg, null);
                 Log.i(TAG , "created transaction " + curTx.getHashAsString() );
                 Log.i(TAG, Bitcoin.transactionToHex(curTx));
-            } catch (IllegalArgumentException e) {
+            } catch (AddressFormatException e) {
+                Toast.makeText(this, "No more than 100 messages currently available", Toast.LENGTH_LONG).show();
+                return;
+            } catch (IllegalArgumentException e){
                 e.printStackTrace();
                 Toast.makeText(this, "Wait the pending message", Toast.LENGTH_LONG).show();
-                return;
-            } catch (AddressFormatException e) {
-                Toast.makeText(this, "Not more 100 messages available", Toast.LENGTH_LONG).show();
                 return;
             } catch (InsufficientMoneyException e) {
                 e.printStackTrace();

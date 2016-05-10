@@ -3,12 +3,9 @@ package it.eternitywall.eternitywall.wallet;
 import android.util.Log;
 
 import org.bitcoinj.core.Block;
-import org.bitcoinj.core.DownloadProgressTracker;
 import org.bitcoinj.core.FilteredBlock;
 import org.bitcoinj.core.Peer;
-import org.bitcoinj.core.PeerAddress;
-
-import java.util.Set;
+import org.bitcoinj.core.listeners.DownloadProgressTracker;
 
 /**
  * Created by Riccardo Casatta @RCasatta on 26/11/15.
@@ -88,9 +85,6 @@ public class MyDownloadListener extends DownloadProgressTracker {
         return lastPercent;
     }
 
-    @Override
-    public void onPeersDiscovered(Set<PeerAddress> peerAddresses) {
 
-    }
 
 }

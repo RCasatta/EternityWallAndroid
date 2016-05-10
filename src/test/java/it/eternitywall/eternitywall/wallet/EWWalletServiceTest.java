@@ -3,14 +3,14 @@ package it.eternitywall.eternitywall.wallet;
 import org.bitcoinj.core.BlockChain;
 import org.bitcoinj.core.BloomFilter;
 import org.bitcoinj.core.CheckpointManager;
-import org.bitcoinj.core.DownloadProgressTracker;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.PeerGroup;
 import org.bitcoinj.core.StoredBlock;
-import org.bitcoinj.core.Wallet;
+import org.bitcoinj.core.listeners.DownloadProgressTracker;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.store.BlockStore;
 import org.bitcoinj.store.SPVBlockStore;
+import org.bitcoinj.wallet.Wallet;
 import org.junit.Test;
 
 import java.io.File;
@@ -126,7 +126,7 @@ public class EWWalletServiceTest {
         PeerGroup peerGroup = new PeerGroup(params, chain);
         //peerGroup.addAddress(InetAddress.getByName("10.106.137.73"));
         peerGroup.setMaxConnections(1);
-        peerGroup.setDownloadTxDependencies(false);
+        peerGroup.setDownloadTxDependencies(0);
 
         //peerGroup.addPeerDiscovery(new DnsDiscovery(params));
         //EWFilterProvider provider = new EWFilterProvider( );
