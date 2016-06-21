@@ -117,5 +117,6 @@
     <string name="replyto">Reply to</string>
     <string name="your_passphrase">Your passphrase</string>
     <string name="your_pin">Your PIN</string>
+    <string name="title_activity_notarize">Notarize</string>
 
 </resources>

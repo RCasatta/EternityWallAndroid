@@ -77,7 +77,6 @@ public class HiddenActivity extends AppCompatActivity {
     private String address=null;
     private String replyFrom=null;
     private String aliasName;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

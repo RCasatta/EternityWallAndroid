@@ -40,6 +40,7 @@ import it.eternitywall.eternitywall.fragments.AccountFragment;
 import it.eternitywall.eternitywall.fragments.CreateFragment;
 import it.eternitywall.eternitywall.fragments.HelloFragment;
 import it.eternitywall.eternitywall.fragments.ListFragment;
+import it.eternitywall.eternitywall.fragments.NotarizeListFragment;
 import it.eternitywall.eternitywall.fragments.RecoverPassphraseFragment;
 import it.eternitywall.eternitywall.fragments.WalletFragment;
 import it.eternitywall.eternitywall.wallet.WalletObservable;
@@ -47,7 +48,7 @@ import it.eternitywall.eternitywall.wallet.WalletObservable;
 
 public class MainActivity extends ActionBarActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, PopupMenu.OnMenuItemClickListener,
 ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener, RecoverPassphraseFragment.OnFragmentInteractionListener,
-        CreateFragment.OnFragmentInteractionListener,HelloFragment.OnFragmentInteractionListener,WalletFragment.OnFragmentInteractionListener{
+        CreateFragment.OnFragmentInteractionListener, NotarizeListFragment.OnFragmentInteractionListener, HelloFragment.OnFragmentInteractionListener,WalletFragment.OnFragmentInteractionListener{
 
     private static final int REQUEST_CODE = 8274;
     private static final String TAG = "MainActivity";
@@ -127,6 +128,7 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
                 }
             }
         }
+        tabLayout.getTabAt(2).setIcon(R.drawable.ic_stamp);
     }
 
 
@@ -138,6 +140,7 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(listFragment, getResources().getString(R.string.list_fragment));
         adapter.addFragment(new AccountFragment(), getResources().getString(R.string.account_fragment));
+        adapter.addFragment(new NotarizeListFragment(), "");
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
@@ -162,7 +165,7 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
 
     }
 
-
+/*
     private void setupViewPager(ViewPager viewPager, Fragment fragment ) {
         // put the fragments into container ViewPager
         listFragment=new ListFragment();
@@ -192,7 +195,7 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         supportInvalidateOptionsMenu();
         viewPager.setCurrentItem(page_num);
 
-    }
+    }*/
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -412,11 +415,11 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
     @Override
     public void onBackPressed() {
         if (listFragment.getSearch()!= null){
-            if(searchMenuItem.isActionViewExpanded())
+            if(searchMenuItem!=null && searchMenuItem.isActionViewExpanded())
                 searchMenuItem.collapseActionView();
             listFragment.clear();
             listFragment.loadMoreData();
-        } else if(searchMenuItem.isActionViewExpanded()){
+        } else if(searchMenuItem!=null && searchMenuItem.isActionViewExpanded()){
                 searchMenuItem.collapseActionView();
             listFragment.clear();
             listFragment.loadMoreData();

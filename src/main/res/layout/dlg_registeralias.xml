@@ -17,7 +17,8 @@
             android:layout_height="wrap_content"
             android:hint="@string/alias"
             android:textSize="18sp"
-            style="@style/EditText" />
+            style="@style/EditText"
+            android:visibility="visible" />
     </android.support.design.widget.TextInputLayout>
 
 
