@@ -1,5 +1,9 @@
 package it.eternitywall;
 
+import com.google.common.base.Optional;
+
+import junit.framework.TestCase;
+
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.ScriptException;
 import org.bitcoinj.core.Transaction;
@@ -12,12 +16,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.spongycastle.util.encoders.Hex;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import it.eternitywall.eternitywall.Http;
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 import it.eternitywall.eternitywall.wallet.EWDerivation;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
 
+import static java.net.URLEncoder.encode;
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -128,6 +136,59 @@ public class BitcoinTest {
         assertFalse(EWWalletService.isEWMessage(tx2));
         assertTrue(EWWalletService.isEWMessage(tx3));
 
+
+    }
+
+    @Test
+    public void testOrangeHatApi() throws NoSuchAlgorithmException {
+        String passphrase="[the passphrase here]";
+        byte[] mySeed= Bitcoin.getEntropyFromPassphrase(passphrase);
+        EWDerivation ewDerivation = new EWDerivation(mySeed);
+
+        final DeterministicKey alias = ewDerivation.getAlias();
+        final String aliasString = Bitcoin.keyToStringAddress(alias);
+        final String challenge = System.currentTimeMillis() + "";
+
+        String fakeInput = "This is the string that your fake input stream will return";
+
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        digest.update(fakeInput.getBytes());
+        /*DigestInputStream digestInputStream = new DigestInputStream(p.getInputStream(), digest);
+        while (digestInputStream.read() != -1) {
+        }
+        digestInputStream.close();*/
+        String hash = Hex.toHexString(digest.digest());
+
+        String url = "https://eternitywall.appspot.com/v1/auth/hash/%s?account=%s&signature=%s&challenge=%s";
+        String signature=alias.signMessage(challenge);
+
+        String urlString = String.format(url, hash, encode(aliasString), encode(signature), encode(challenge));
+        Optional<String> result = Http.post(urlString, "", "");
+
+        assertTrue(result.isPresent());
+
+        Optional<String> result2 = Http.post(urlString, "", "");
+        TestCase.assertFalse(result2.isPresent());  //reusing same challenge
+
+        final String challenge2 = System.currentTimeMillis() + "";
+        String signature2=alias.signMessage(challenge2);
+        String urlString2 = String.format(url, hash, encode(aliasString), encode(signature2), encode(challenge2));
+
+        Optional<String> result3 = Http.get(urlString2);
+
+        assertTrue(result3.isPresent());
+
+
+        final String challenge3 = System.currentTimeMillis() + "";
+        String signature3=alias.signMessage(challenge3);
+        String hash2="12500db358e49aabc14566bcbb93b43805a4240b4cc72bc2f509efd531d40dbc";
+
+        String urlString3 = String.format(url, hash2, encode(aliasString), encode(signature3), encode(challenge3));
+
+        Optional<String> result4 = Http.get(urlString3);
+
+        assertTrue(result4.isPresent());
+        System.out.println(result4.get());
 
     }
 
