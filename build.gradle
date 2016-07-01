@@ -3,7 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.0'
+        classpath 'com.android.tools.build:gradle:2.1.2'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -95,4 +95,6 @@ dependencies {
     compile 'com.joanzapata.iconify:android-iconify-fontawesome:2.1.1' // (v4.4)
     compile 'com.joanzapata.iconify:android-iconify:2.1.1' // (v4.4)
 
+    // Database
+    compile 'com.github.satyan:sugar:1.4'
 }
