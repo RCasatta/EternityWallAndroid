@@ -110,8 +110,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/activity_vertical_margin"
             android:layout_weight="1"
-            android:src="@drawable/eternity_logo"
-            android:alpha="0.2" />
+            android:src="@drawable/eternity_logo" />
 
         <TextView
             android:layout_width="wrap_content"

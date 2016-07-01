@@ -73,6 +73,8 @@ import it.eternitywall.eternitywall.dialogfragments.PinAlertDialogFragment;
 import it.eternitywall.eternitywall.wallet.EWDerivation;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
 
+import static java.net.URLEncoder.encode;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -383,46 +385,75 @@ public class NotarizeNewFragment extends Fragment {
 
     public void sendMessage(final String message) {
         Log.i(TAG,"sending message " + message);
+        final String hash = txtHash.getText().toString();
 
-        AsyncTask t = new AsyncTask() {
-
-            boolean success=false;
+        AsyncTask<Void,Void,Boolean> t = new AsyncTask<Void,Void,Boolean>() {
 
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
                 progress.setVisibility(View.VISIBLE);
 
-                // 1. Create Transaction
-                createTx(message);
 
             }
 
             @Override
-            protected void onPostExecute(Object o) {
+            protected void onPostExecute(Boolean res) {
+                super.onPostExecute(res);
 
-                if (curTx!=null && success==true) {
-                    sendBroadcast();
-                }
-
-                if (getActivity()==null || getActivity().isFinishing())  //exception will null pointer happened here, checking getActivity is null or use isAdded()????
-                    return;
-                super.onPostExecute(o);
-                progress.setVisibility(View.INVISIBLE);
-                if (curTx!=null && success==true) {
+                if (res==true)
                     dialogSuccess();
-                }
+                else
+                    dialogFailure();
 
             }
 
             @Override
-            protected Object doInBackground(Object[] params) {
-                if (curTx!=null) {
-                    success=registerMessage(message);
+            protected Boolean doInBackground(Void... params) {
+
+
+                try {
+                    final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                    String passphrase = sharedPref.getString(Preferences.PASSPHRASE, null);
+                    if (passphrase == null)
+                        return false;
+                    passphrase="kiss clap snap wear alter desk rally dance donate lava adult notice";
+                    byte[] mySeed = Bitcoin.getEntropyFromPassphrase(passphrase);
+                    EWDerivation ewDerivation = new EWDerivation(mySeed);
+
+
+                    final DeterministicKey alias = ewDerivation.getAlias();
+                    //final String aliasString = Bitcoin.keyToStringAddress(alias);
+                    final String aliasString="17cua9VpaJqTLQ2PArDog6DWapcDZrPba2";
+                    final String challenge = System.currentTimeMillis() + "";
+                    final String signature=alias.signMessage(challenge);
+
+                    //String fakeInput = "This is the string that your fake input stream will return";
+                    //MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                    //digest.update(fakeInput.getBytes());
+        /*DigestInputStream digestInputStream = new DigestInputStream(p.getInputStream(), digest);
+        while (digestInputStream.read() != -1) {
+        }
+        digestInputStream.close();*/
+
+                    //String hash = Hex.toHexString(buffer);
+
+                    String url = "https://eternitywall.appspot.com/v1/auth/hash/%s?account=%s&signature=%s&challenge=%s";
+
+                    String urlString = String.format(url, hash, encode(aliasString), encode(signature), encode(challenge));
+                    Optional<String> result = Http.post(urlString, "", "");
+
+
+                    Log.d("NOTARIZE","url : "+urlString);
+                    Log.d("NOTARIZE","present : "+result.isPresent());
+                    Log.d("NOTARIZE","result : "+result.get());
+
+                    return result.isPresent();
+
+                } catch (Exception e) {
+                    return false;
                 }
 
-
-                return null;
             }
         };
         t.execute();
@@ -431,7 +462,7 @@ public class NotarizeNewFragment extends Fragment {
 
 
 
-
+/*
     public boolean registerMessage(String message){
         Log.i(TAG,"registerMessage " + message );
 
@@ -453,15 +484,6 @@ public class NotarizeNewFragment extends Fragment {
         map.put("signature", signature);
         map.put("challenge", challenge);
 
-    /*
-    final String message= req.getParameter("message");
-    final String hash= req.getParameter("hash");
-    final String satoshiToRevealString = req.getParameter("satoshiToReveal");
-    final String timestampWhenRevealString = req.getParameter("timestampWhenReveal");
-    final String pubKeyString = req.getParameter("pubKey");
-    final String chainCodeString = req.getParameter("chainCode");
-    final String indexString = req.getParameter("index");
-     */
 
         final int index=0;  //TODO this need to grow!
         final DeterministicKey external = ewDerivation.getAccount(index);//.getExternal(index);
@@ -489,17 +511,7 @@ public class NotarizeNewFragment extends Fragment {
         Log.i(TAG,"createTx " + message);
 
         String messageHash=null;
-        /*MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-            digest.update(message);
-            messageHash = Hex.toHexString(digest.digest());
-            Log.i(TAG, "message hash : " + messageHash);
 
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            Log.w(TAG, "NoSuchAlgorithmException");
-        }*/
         messageHash=message;
 
         if(messageHash!=null && !messageHash.isEmpty()) {
@@ -566,12 +578,12 @@ public class NotarizeNewFragment extends Fragment {
         }
     }
 
-
+*/
     private void dialogSuccess() {
         Log.i(TAG,"showing dialog");
         android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(getActivity());
         alertDialog.setTitle("Success");
-        alertDialog.setMessage("Message successfully broadcasted. You will be notified when written in the blockchain.");
+        alertDialog.setMessage("Message successfully notarized.");
         alertDialog.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -582,5 +594,19 @@ public class NotarizeNewFragment extends Fragment {
         android.support.v7.app.AlertDialog alert = alertDialog.create();
         alert.show();
     }
-
+    private void dialogFailure() {
+        Log.i(TAG,"showing dialog");
+        android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(getActivity());
+        alertDialog.setTitle("Failure");
+        alertDialog.setMessage("Try again.");
+        alertDialog.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ;
+            }
+        });
+        alertDialog.setCancelable(false);
+        android.support.v7.app.AlertDialog alert = alertDialog.create();
+        alert.show();
+    }
 }
