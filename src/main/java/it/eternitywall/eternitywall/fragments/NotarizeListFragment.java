@@ -2,18 +2,28 @@ package it.eternitywall.eternitywall.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
+import com.orm.SugarContext;
+import com.orm.SugarDb;
+
+import java.util.List;
+
+import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.activity.NotarizeActivity;
-import it.eternitywall.eternitywall.activity.WriteActivity;
+import it.eternitywall.eternitywall.adapters.DocumentRecyclerViewAdapter;
+import it.eternitywall.eternitywall.components.Document;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -66,6 +76,9 @@ public class NotarizeListFragment extends Fragment {
         }
     }
 
+
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -80,34 +93,21 @@ public class NotarizeListFragment extends Fragment {
             }
         });
 
-        /*((Button)v.findViewById(R.id.btnCreate)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentTransaction trans = getFragmentManager().beginTransaction();
-                trans.replace(R.id.root_frame, new CreateFragment(),"CreateFragment");
-                trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                trans.addToBackStack(null);
-                trans.commit();
-            }
-        });
-        ((Button)v.findViewById(R.id.btnRecover)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentTransaction trans = getFragmentManager().beginTransaction();
-                trans.replace(R.id.root_frame, new RecoverPassphraseFragment(),"RecoverPassphraseFragment");
-                trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                trans.addToBackStack(null);
-                trans.commit();
-            }
-        });
-        if(savedInstanceState!=null){
-            FragmentTransaction trans = getFragmentManager().beginTransaction();
-            Fragment currentFragment=getFragmentManager().getFragment(savedInstanceState,"currentFragment");
-            trans.replace(R.id.root_frame,currentFragment);
-            trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            trans.addToBackStack(null);
-            trans.commit();
-        }*/
+        // Set Fragment Views
+        RecyclerView lstMessages = (RecyclerView) v.findViewById(R.id.lstMessages);
+
+        // Set Recyclerview
+        final LinearLayoutManager mLayoutManager = new LinearLayoutManager( getActivity().getApplicationContext() );
+        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        lstMessages.setLayoutManager(mLayoutManager);
+
+        // Init DB
+        SugarContext.init(getActivity());
+        // Put elements
+        List<Document> documents = Document.find(Document.class, " 1=1");
+        DocumentRecyclerViewAdapter documentListAdapter = new DocumentRecyclerViewAdapter(documents);
+        lstMessages.setAdapter( documentListAdapter );
+
         return v;
     }
 

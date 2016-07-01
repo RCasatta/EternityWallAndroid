@@ -50,7 +50,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:elevation="10dp" />
-
+<!--
     <ProgressBar
         android:id="@+id/progress"
         android:indeterminate="true"
@@ -59,7 +59,7 @@
         android:background="@android:color/transparent"
         android:layout_centerInParent="true"
         android:layout_gravity="center" />
-
+-->
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabNew"

@@ -18,6 +18,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -69,6 +70,7 @@ import it.eternitywall.eternitywall.Http;
 import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
+import it.eternitywall.eternitywall.components.Document;
 import it.eternitywall.eternitywall.dialogfragments.PinAlertDialogFragment;
 import it.eternitywall.eternitywall.wallet.EWDerivation;
 import it.eternitywall.eternitywall.wallet.EWWalletService;
@@ -136,6 +138,7 @@ public class NotarizeNewFragment extends Fragment {
     ImageView imageView;
     TextView txtHash;
     ProgressBar progress;
+    String path="";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -223,7 +226,7 @@ public class NotarizeNewFragment extends Fragment {
             if (data != null && data.getData() != null) {
                 Uri uri = data.getData();
                 Log.d("NOTARIZE",uri.getPath());
-
+                path=uri.getPath();
 
                 // set image
                 try {
@@ -271,6 +274,7 @@ public class NotarizeNewFragment extends Fragment {
         } else if (requestCode == PICK_IMAGE_REQUEST) {
             if (resultCode == RESULT_OK && data != null && data.getData() != null) {
                 Uri uri = data.getData();
+                path=uri.getPath();
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
                     Log.d("NOTARIZE", String.valueOf(bitmap));
@@ -283,6 +287,7 @@ public class NotarizeNewFragment extends Fragment {
             }
         } else if (requestCode == PICK_CAMERA_REQUEST) {
             Uri selectedImage = file;
+            path=selectedImage.getPath();
             getActivity().getContentResolver().notifyChange(selectedImage, null);
             ContentResolver cr = getActivity().getContentResolver();
             Bitmap bitmap;
@@ -437,16 +442,24 @@ public class NotarizeNewFragment extends Fragment {
         digestInputStream.close();*/
 
                     //String hash = Hex.toHexString(buffer);
-
-                    String url = "https://eternitywall.appspot.com/v1/auth/hash/%s?account=%s&signature=%s&challenge=%s";
-
+                    String url = "https://eternitywall.it/v1/auth/hash/%s?account=%s&signature=%s&challenge=%s";
                     String urlString = String.format(url, hash, encode(aliasString), encode(signature), encode(challenge));
                     Optional<String> result = Http.post(urlString, "", "");
 
-
+                    // Check result
                     Log.d("NOTARIZE","url : "+urlString);
                     Log.d("NOTARIZE","present : "+result.isPresent());
                     Log.d("NOTARIZE","result : "+result.get());
+
+
+                    // Save document into DB
+                    Document document = new Document();
+                    document.path=path;
+                    document.hash=hash;
+                    document.created_at= System.currentTimeMillis();
+                    document.stamped_at=new Long(0);
+                    document.stamp="";
+                    document.save();
 
                     return result.isPresent();
 
