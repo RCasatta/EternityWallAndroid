@@ -111,6 +111,11 @@
             android:name=".activity.ProfileActivity"
             android:label="@string/title_activity_notarize"></activity>
         <activity android:name=".activity.NotarizeActivity"></activity>
+
+        <activity
+            android:name=".activity.NotarizeDetailActivity"
+            android:label="@string/title_activity_notarize"></activity>
+
     </application>
 
 </manifest>
