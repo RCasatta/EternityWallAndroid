@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.LruCache;
@@ -17,9 +18,11 @@ import android.view.ViewGroup;
 import com.orm.SugarContext;
 import com.orm.SugarDb;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import it.eternitywall.eternitywall.EWApplication;
+import it.eternitywall.eternitywall.Message;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.activity.NotarizeActivity;
 import it.eternitywall.eternitywall.adapters.DocumentRecyclerViewAdapter;
@@ -94,7 +97,7 @@ public class NotarizeListFragment extends Fragment {
         });
 
         // Set Fragment Views
-        RecyclerView lstMessages = (RecyclerView) v.findViewById(R.id.lstMessages);
+        final RecyclerView lstMessages = (RecyclerView) v.findViewById(R.id.lstMessages);
 
         // Set Recyclerview
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager( getActivity().getApplicationContext() );
@@ -107,6 +110,18 @@ public class NotarizeListFragment extends Fragment {
         List<Document> documents = Document.find(Document.class, " 1=1");
         DocumentRecyclerViewAdapter documentListAdapter = new DocumentRecyclerViewAdapter(documents);
         lstMessages.setAdapter( documentListAdapter );
+
+        // Set Swipe on refresh scroll-upper event
+        final SwipeRefreshLayout swipe = (SwipeRefreshLayout) v.findViewById(R.id.activity_main_swipe_refresh_layout);
+        swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipe.setRefreshing(false);
+                List<Document> documents = Document.find(Document.class, " 1=1");
+                DocumentRecyclerViewAdapter documentListAdapter = new DocumentRecyclerViewAdapter(documents);
+                lstMessages.setAdapter( documentListAdapter );
+            }
+        });
 
         return v;
     }
