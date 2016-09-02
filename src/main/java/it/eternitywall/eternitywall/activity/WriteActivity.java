@@ -312,7 +312,7 @@ public class WriteActivity extends ActionBarActivity {
                     Handler handler = new Handler();
                     Runnable r = new Runnable() {
                         public void run() {
-                            Optional<String> stringOptional = Http.get("http://eternitywall.it/v1/countmessagesinqueue");
+                            Optional<String> stringOptional = Http.get("https://eternitywall.it/v1/countmessagesinqueue");
                             Log.i(TAG,"count messages in queue returns " + stringOptional.isPresent() );
                         }
                     };
@@ -394,7 +394,7 @@ public class WriteActivity extends ActionBarActivity {
                     String reply="";
                     if (replyFrom!=null)
                         reply="&replyid="+replyFrom;
-                    json = Http.get("http://eternitywall.it/bitcoinform?format=json&text=" + URLEncoder.encode(curmsg, "UTF-8") + "&source=" + getApplicationContext().getPackageName() + reply);
+                    json = Http.get("https://eternitywall.it/bitcoinform?format=json&text=" + URLEncoder.encode(curmsg, "UTF-8") + "&source=" + getApplicationContext().getPackageName() + reply);
                     if (json.isPresent()) {
                         String jstring = json.get();
                         JSONObject jo = new JSONObject(jstring);
@@ -515,7 +515,7 @@ public class WriteActivity extends ActionBarActivity {
 
             @Override
             protected Object doInBackground(Object[] params) {
-                Optional<String> json = Http.get("http://eternitywall.it/m/" + hash_transaction + "?format=json");
+                Optional<String> json = Http.get("https://eternitywall.it/m/" + hash_transaction + "?format=json");
                 if (json.isPresent()) {
                     try {
                         String jstring = json.get();

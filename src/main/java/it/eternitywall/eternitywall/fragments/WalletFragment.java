@@ -585,7 +585,7 @@ public class WalletFragment extends Fragment implements MessageRecyclerViewAdapt
                     return true;
 
                 String address=walletObservable.getAlias().toString();
-                String urlString = "http://eternitywall.it/from/" + address + "?format=json";
+                String urlString = "https://eternitywall.it/from/" + address + "?format=json";
                 if(cursor!=null)
                     urlString = urlString + "&cursor=" + cursor;
                 Log.i(TAG,"apifrom url:" + urlString);

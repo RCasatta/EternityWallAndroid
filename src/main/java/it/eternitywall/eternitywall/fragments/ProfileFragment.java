@@ -257,7 +257,7 @@ public class ProfileFragment extends Fragment implements MessageRecyclerViewAdap
             protected Object doInBackground(Object[] params) {
 
                 Optional<String> json=null;
-                json = cursor == null ? Http.get("http://eternitywall.it/from/"+accountId+"?format=json") : Http.get("http://eternitywall.it/from/"+accountId+"?format=json&cursor=" + cursor);
+                json = cursor == null ? Http.get("https://eternitywall.it/from/"+accountId+"?format=json") : Http.get("https://eternitywall.it/from/"+accountId+"?format=json&cursor=" + cursor);
 
                 if(json.isPresent()) {
                     try {

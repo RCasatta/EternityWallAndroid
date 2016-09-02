@@ -297,7 +297,7 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
                 if (search!=null) {
                     // search api return all the values without cursor
                     if(messages==null || messages.isEmpty())
-                        json = cursor == null ? Http.get("http://eternitywall.it/search?format=json&q=" + search) : Http.get("http://eternitywall.it/?format=json&cursor=" + cursor + "&q=" + search);
+                        json = cursor == null ? Http.get("https://eternitywall.it/search?format=json&q=" + search) : Http.get("https://eternitywall.it/?format=json&cursor=" + cursor + "&q=" + search);
                     else{
                         ok = true;
                         end=true;
@@ -305,13 +305,13 @@ public class ListFragment extends Fragment implements MessageRecyclerViewAdapter
                 }else if (sortby!=null){
                     // sortby api return all the values without cursor
                     if(messages==null || messages.isEmpty())
-                        json = Http.get("http://eternitywall.it/sortby/"+sortby+"?format=json");
+                        json = Http.get("https://eternitywall.it/sortby/"+sortby+"?format=json");
                     else {
                         ok = true;
                         end=true;
                     }
                 } else
-                    json = cursor == null ? Http.get("http://eternitywall.it/?format=json") : Http.get("http://eternitywall.it/?format=json&cursor=" + cursor);
+                    json = cursor == null ? Http.get("https://eternitywall.it/?format=json") : Http.get("https://eternitywall.it/?format=json&cursor=" + cursor);
 
 
                 if(json!=null && json.isPresent()) {

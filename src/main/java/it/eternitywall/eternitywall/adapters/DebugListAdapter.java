@@ -44,10 +44,7 @@ public class DebugListAdapter extends ArrayAdapter<Debug> {
     public View getView(int position, View row, ViewGroup parent) {
         final Debug d = data.get(position);
         DebugHolder h;
-
         log.info("position=" + position);
-
-
         if(row == null) {
             row = activity.getLayoutInflater().inflate(layoutResourceId, parent, false);
             h = new DebugHolder();

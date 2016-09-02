@@ -35,7 +35,7 @@ public class AboutActivity extends AppCompatActivity {
         visit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = "http://eternitywall.it";
+                String url = "https://eternitywall.it";
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 startActivity(i);

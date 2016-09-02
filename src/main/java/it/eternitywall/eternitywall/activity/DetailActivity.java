@@ -164,7 +164,7 @@ public class DetailActivity extends ActionBarActivity {
 
             @Override
             protected Object doInBackground(Object[] params) {
-                Optional<String> json = Http.get("http://eternitywall.it/m/" + hash + "?format=json");
+                Optional<String> json = Http.get("https://eternitywall.it/m/" + hash + "?format=json");
                 if (json.isPresent()) {
                     try {
                         String jstring = json.get();
@@ -352,7 +352,7 @@ public class DetailActivity extends ActionBarActivity {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_SEND);
-                intent.putExtra(Intent.EXTRA_TEXT, "http://eternitywall.it/m/" + message.getTxHash());
+                intent.putExtra(Intent.EXTRA_TEXT, "https://eternitywall.it/m/" + message.getTxHash());
                 intent.setType("text/plain");
                 startActivity(intent);
             }
