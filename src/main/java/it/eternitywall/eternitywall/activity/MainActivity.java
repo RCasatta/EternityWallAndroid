@@ -40,6 +40,8 @@ import it.eternitywall.eternitywall.fragments.AccountFragment;
 import it.eternitywall.eternitywall.fragments.CreateFragment;
 import it.eternitywall.eternitywall.fragments.HelloFragment;
 import it.eternitywall.eternitywall.fragments.ListFragment;
+import it.eternitywall.eternitywall.fragments.NotarizeFragment;
+import it.eternitywall.eternitywall.fragments.NotarizeHelloFragment;
 import it.eternitywall.eternitywall.fragments.NotarizeListFragment;
 import it.eternitywall.eternitywall.fragments.RecoverPassphraseFragment;
 import it.eternitywall.eternitywall.fragments.WalletFragment;
@@ -48,7 +50,8 @@ import it.eternitywall.eternitywall.wallet.WalletObservable;
 
 public class MainActivity extends ActionBarActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, PopupMenu.OnMenuItemClickListener,
 ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener, RecoverPassphraseFragment.OnFragmentInteractionListener,
-        CreateFragment.OnFragmentInteractionListener, NotarizeListFragment.OnFragmentInteractionListener, HelloFragment.OnFragmentInteractionListener,WalletFragment.OnFragmentInteractionListener{
+        CreateFragment.OnFragmentInteractionListener, NotarizeListFragment.OnFragmentInteractionListener, HelloFragment.OnFragmentInteractionListener,WalletFragment.OnFragmentInteractionListener,
+NotarizeFragment.OnFragmentInteractionListener,NotarizeHelloFragment.OnFragmentInteractionListener{
 
     private static final int REQUEST_CODE = 8274;
     private static final String TAG = "MainActivity";
@@ -140,7 +143,7 @@ ListFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractio
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(listFragment, getResources().getString(R.string.list_fragment));
         adapter.addFragment(new AccountFragment(), getResources().getString(R.string.account_fragment));
-        adapter.addFragment(new NotarizeListFragment(), "");
+        adapter.addFragment(new NotarizeFragment(), "");
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
