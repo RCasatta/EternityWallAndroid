@@ -136,7 +136,7 @@ public class NotarizeNewFragment extends Fragment {
     }
 
     ImageView imageView;
-    TextView txtHash;
+    TextView txtHash,txtPath;
     ProgressBar progress;
     String path="";
 
@@ -148,6 +148,7 @@ public class NotarizeNewFragment extends Fragment {
 
         imageView= (ImageView)v.findViewById(R.id.imageView);
         txtHash= (TextView)v.findViewById(R.id.txtHash);
+        txtPath= (TextView)v.findViewById(R.id.txtPath);
 
         FloatingActionButton fabCamera=(FloatingActionButton)v.findViewById(R.id.fabCamera);
         FloatingActionButton fabPhoto=(FloatingActionButton)v.findViewById(R.id.fabPhoto);
@@ -225,6 +226,7 @@ public class NotarizeNewFragment extends Fragment {
         if (requestCode == PICK_FILE_REQUEST) {
             if (data != null && data.getData() != null) {
                 Uri uri = data.getData();
+                txtPath.setText(uri.getPath().toString());
                 Log.d("NOTARIZE",uri.getPath());
                 path=uri.getPath();
 
@@ -246,6 +248,7 @@ public class NotarizeNewFragment extends Fragment {
                 // read file
                 byte[] bytes=null;
                 try {
+
                     InputStream is = getActivity().getContentResolver().openInputStream(uri);
                     int size = (int) is.available();
                     bytes = new byte[size];
@@ -256,6 +259,7 @@ public class NotarizeNewFragment extends Fragment {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
 
 
                 // build digest
@@ -275,19 +279,43 @@ public class NotarizeNewFragment extends Fragment {
             if (resultCode == RESULT_OK && data != null && data.getData() != null) {
                 Uri uri = data.getData();
                 path=uri.getPath();
+                txtPath.setText(uri.getPath().toString());
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
+                    final BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+
+                    //Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
+
+
+                    Bitmap bitmap =decodeSampledBitmapFromUri(uri, 100, 100);
                     Log.d("NOTARIZE", String.valueOf(bitmap));
                     imageView.setImageBitmap(bitmap);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     Log.d("NOTARIZE","error image file");
                     imageView.setImageDrawable(getResources().getDrawable(R.drawable.eternity_logo));
                 }
+
+
+                // build digest
+                /*InputStream is = getActivity().getContentResolver().openInputStream(uri);
+                Bitmap bitmap = BitmapFactory.decodeStream(is);
+                try {
+                    MessageDigest digest = null;
+                    digest = MessageDigest.getInstance("SHA-256");
+                    digest.update(bytes);
+                    String hash = Hex.toHexString(digest.digest());
+                    txtHash.setText(hash.toString());
+
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }*/
             }
         } else if (requestCode == PICK_CAMERA_REQUEST) {
             Uri selectedImage = file;
             path=selectedImage.getPath();
+            txtPath.setText(selectedImage.getPath().toString());
+
             getActivity().getContentResolver().notifyChange(selectedImage, null);
             ContentResolver cr = getActivity().getContentResolver();
             Bitmap bitmap;
@@ -319,6 +347,39 @@ public class NotarizeNewFragment extends Fragment {
                 imageView.setImageDrawable(getResources().getDrawable(R.drawable.eternity_logo));
             }
         }
+    }
+
+    public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            if (width > height) {
+                inSampleSize = Math.round((float)height / (float)reqHeight);
+            } else {
+                inSampleSize = Math.round((float)width / (float)reqWidth);
+            }
+        }
+        return inSampleSize;
+    }
+
+    public Bitmap decodeSampledBitmapFromUri(Uri uri,
+                                                    int reqWidth, int reqHeight) throws FileNotFoundException {
+
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream (getActivity().getContentResolver().openInputStream(uri), null, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(uri), null, options);
     }
 
     private String getRealPathFromURI(Uri contentUri) {
