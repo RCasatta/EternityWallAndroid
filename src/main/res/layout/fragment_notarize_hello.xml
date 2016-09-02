@@ -33,7 +33,7 @@
             android:gravity="center" />
 
         <TextView
-            android:text="@string/notarize_fragment_subtitle"
+            android:text="@string/notarize_fragment_subtitle_temp"
             style="@android:style/TextAppearance.Small"
             android:layout_marginTop="5dp"
             android:layout_width="match_parent"
