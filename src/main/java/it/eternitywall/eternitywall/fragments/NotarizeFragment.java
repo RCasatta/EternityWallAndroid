@@ -11,8 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import it.eternitywall.eternitywall.EWApplication;
 import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
+import it.eternitywall.eternitywall.wallet.WalletObservable;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -75,15 +77,22 @@ public class NotarizeFragment extends Fragment {
 
         final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String passphrase=sharedPref.getString(Preferences.PASSPHRASE,null);
-        /*if(savedInstanceState!=null){
+
+        EWApplication ewApplication = (EWApplication) getActivity().getApplication();
+        WalletObservable walletObservable = ewApplication.getWalletObservable();   //Should be moved in activity, but this way you have no callback for the listener here
+
+        if(savedInstanceState!=null){
             Fragment currentFragment=getFragmentManager().getFragment(savedInstanceState,"currentFragment");
             transaction.replace(R.id.root_frame_notarize,currentFragment);
         }else if (passphrase==null) {
             transaction.replace(R.id.root_frame_notarize, new NotarizeHelloFragment());
-        }else {
+        }else if (walletObservable==null) {
+            transaction.replace(R.id.root_frame_notarize, new NotarizeHelloFragment());
+        }else if (walletObservable.getAliasName()==null) {
+            transaction.replace(R.id.root_frame_notarize, new NotarizeHelloFragment());
+        } else {
             transaction.replace(R.id.root_frame_notarize, new NotarizeListFragment());
-        }*/
-        transaction.replace(R.id.root_frame_notarize, new NotarizeHelloFragment());
+        }
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         transaction.addToBackStack(null);
         transaction.commit();
