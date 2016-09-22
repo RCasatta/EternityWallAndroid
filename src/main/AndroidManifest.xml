@@ -114,7 +114,12 @@
 
         <activity
             android:name=".activity.NotarizeDetailActivity"
-            android:label="@string/title_activity_notarize"></activity>
+            android:label="@string/title_activity_notarize"
+            android:parentActivityName=".activity.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.eternitywall.eternitywall.activity.MainActivity" />
+            </activity>
 
     </application>
 
