@@ -3,6 +3,8 @@ package it.eternitywall.eternitywall.adapters;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.format.DateFormat;
@@ -15,6 +17,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -49,6 +53,7 @@ public class DocumentRecyclerViewAdapter
         public TextView txtPath = null;
         public TextView txtHash = null;
         public TextView txtDate = null;
+        public ImageView imageView = null;
         public View.OnClickListener onClickListener;
 
 
@@ -58,6 +63,7 @@ public class DocumentRecyclerViewAdapter
             txtPath = (TextView) view.findViewById(R.id.txtPath);
             txtHash = (TextView) view.findViewById(R.id.txtHash);
             txtDate = (TextView) view.findViewById(R.id.txtDate);
+            imageView = (ImageView) view.findViewById(R.id.identicon);
         }
 
     }
@@ -77,21 +83,38 @@ public class DocumentRecyclerViewAdapter
     public void onBindViewHolder(DocumentRecyclerViewAdapter.ViewHolder h, int position) {
         final Document d = mValues.get(position);
 
+        // Set name label of the filename of the document
         String name="";
-        if (d.path.indexOf(':')>=0)
-            name=d.path.substring(d.path.indexOf(':')+1);
-        else
-            name= d.path;
 
+        try {
+            Uri uri = Uri.parse(d.path);
+            name=uri.getLastPathSegment();
+            h.txtPath.setText(name);
+        }catch (Exception e ) {
+            e.printStackTrace();
+            Log.d(getClass().toString(),e.getLocalizedMessage());
+        }
+
+        // Set the imageview retrieved from the document
+        try {
+            Uri uri = Uri.parse(d.path);
+            InputStream is = h.mView.getContext().getContentResolver().openInputStream(uri);
+            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            h.imageView.setImageBitmap(bitmap);
+        }catch (Exception e ) {
+            e.printStackTrace();
+            Log.d(getClass().toString(),e.getLocalizedMessage());
+        }
+
+        // Set hash and date
         h.txtHash.setText(d.hash);
-        h.txtPath.setText(name);
         if (d.stamped_at>0) {
             h.txtDate.setText(getDate(d.stamped_at));
         }else {
             h.txtDate.setText(getDate(d.created_at));
         }
 
-        //onclick add click listener
+        // Set onclick add click listener
         h.onClickListener = new View.OnClickListener(){
             @Override
             public void onClick(View v) {

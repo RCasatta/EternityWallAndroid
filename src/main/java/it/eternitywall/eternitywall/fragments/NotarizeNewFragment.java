@@ -13,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -138,7 +139,6 @@ public class NotarizeNewFragment extends Fragment {
     ImageView imageView;
     TextView txtHash,txtPath;
     ProgressBar progress;
-    String path="";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -150,42 +150,15 @@ public class NotarizeNewFragment extends Fragment {
         txtHash= (TextView)v.findViewById(R.id.txtHash);
         txtPath= (TextView)v.findViewById(R.id.txtPath);
 
-        FloatingActionButton fabCamera=(FloatingActionButton)v.findViewById(R.id.fabCamera);
-        FloatingActionButton fabPhoto=(FloatingActionButton)v.findViewById(R.id.fabPhoto);
+
         FloatingActionButton fabFile=(FloatingActionButton)v.findViewById(R.id.fabFile);
-        FloatingActionButton fabPosition=(FloatingActionButton)v.findViewById(R.id.fabPosition);
-
-        fabCamera.setImageDrawable(new IconDrawable(getActivity(), FontAwesomeIcons.fa_camera).color(Color.WHITE).sizeDp(16));
-        fabPhoto.setImageDrawable(new IconDrawable(getActivity(), FontAwesomeIcons.fa_photo).color(Color.WHITE).sizeDp(16));
         fabFile.setImageDrawable(new IconDrawable(getActivity(), FontAwesomeIcons.fa_file).color(Color.WHITE).sizeDp(16));
-        fabPosition.setImageDrawable(new IconDrawable(getActivity(), FontAwesomeIcons.fa_location_arrow).color(Color.WHITE).sizeDp(16));
-
-
-        fabCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    takePictureButton.setEnabled(false);
-                    getActivity().requestPermissions(this, new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
-                }*/
-                takeCamera();
-            }
-        });
-
         fabFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 takeFile();
             }
         });
-        fabPhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                takeGallery();
-            }
-        });
-
 
         progress = (ProgressBar) v.findViewById(R.id.progress);
 
@@ -199,23 +172,11 @@ public class NotarizeNewFragment extends Fragment {
         return v;
     }
 
+    // Choose file from intent
     Uri file;
 
-    public void takeCamera(){
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        file = Uri.fromFile(getOutputMediaFile());
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, file);
-        startActivityForResult(intent, PICK_CAMERA_REQUEST);
-    }
-    public  void takeGallery(){
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
-    }
-
     public void takeFile(){
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("*/*");
         startActivityForResult(intent, PICK_FILE_REQUEST);
     }
@@ -226,9 +187,13 @@ public class NotarizeNewFragment extends Fragment {
         if (requestCode == PICK_FILE_REQUEST) {
             if (data != null && data.getData() != null) {
                 Uri uri = data.getData();
-                txtPath.setText(uri.getPath().toString());
+                txtPath.setText(uri.toString());
                 Log.d("NOTARIZE",uri.getPath());
-                path=uri.getPath();
+
+                // set persistent Authorization to read the file from data storage
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    getActivity().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION );
+                }
 
                 // set image
                 try {
@@ -260,8 +225,6 @@ public class NotarizeNewFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-
-
                 // build digest
                 try {
                     MessageDigest digest = null;
@@ -276,136 +239,12 @@ public class NotarizeNewFragment extends Fragment {
 
             }
         } else if (requestCode == PICK_IMAGE_REQUEST) {
-            if (resultCode == RESULT_OK && data != null && data.getData() != null) {
-                Uri uri = data.getData();
-                path=uri.getPath();
-                txtPath.setText(uri.getPath().toString());
-                try {
-                    final BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inJustDecodeBounds = true;
+            Log.d("NOTARIZE","Invalid access to gallery");
 
-                    //Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
-
-
-                    Bitmap bitmap =decodeSampledBitmapFromUri(uri, 100, 100);
-                    Log.d("NOTARIZE", String.valueOf(bitmap));
-                    imageView.setImageBitmap(bitmap);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.d("NOTARIZE","error image file");
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.eternity_logo));
-                }
-
-
-                // build digest
-                /*InputStream is = getActivity().getContentResolver().openInputStream(uri);
-                Bitmap bitmap = BitmapFactory.decodeStream(is);
-                try {
-                    MessageDigest digest = null;
-                    digest = MessageDigest.getInstance("SHA-256");
-                    digest.update(bytes);
-                    String hash = Hex.toHexString(digest.digest());
-                    txtHash.setText(hash.toString());
-
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                }*/
-            }
         } else if (requestCode == PICK_CAMERA_REQUEST) {
-            Uri selectedImage = file;
-            path=selectedImage.getPath();
-            txtPath.setText(selectedImage.getPath().toString());
+            Log.d("NOTARIZE","Invalid access to camera");
 
-            getActivity().getContentResolver().notifyChange(selectedImage, null);
-            ContentResolver cr = getActivity().getContentResolver();
-            Bitmap bitmap;
-            try {
-                bitmap = android.provider.MediaStore.Images.Media
-                        .getBitmap(cr, selectedImage);
-                imageView.setImageBitmap(bitmap);
-                Toast.makeText(getActivity(), selectedImage.toString(), Toast.LENGTH_LONG).show();
-
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                byte[] byteArray = stream.toByteArray();
-
-                try {
-                    MessageDigest digest = null;
-                    digest = MessageDigest.getInstance("SHA-256");
-                    digest.update(byteArray);
-                    String hash = Hex.toHexString(digest.digest());
-                    txtHash.setText(hash.toString());
-
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                }
-
-            } catch (Exception e) {
-                Toast.makeText(getActivity(), "Failed to load", Toast.LENGTH_SHORT)
-                        .show();
-                Log.d("NOTARIZE","error image from camera file");
-                imageView.setImageDrawable(getResources().getDrawable(R.drawable.eternity_logo));
-            }
         }
-    }
-
-    public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-            if (width > height) {
-                inSampleSize = Math.round((float)height / (float)reqHeight);
-            } else {
-                inSampleSize = Math.round((float)width / (float)reqWidth);
-            }
-        }
-        return inSampleSize;
-    }
-
-    public Bitmap decodeSampledBitmapFromUri(Uri uri,
-                                                    int reqWidth, int reqHeight) throws FileNotFoundException {
-
-
-        // First decode with inJustDecodeBounds=true to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream (getActivity().getContentResolver().openInputStream(uri), null, options);
-
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(uri), null, options);
-    }
-
-    private String getRealPathFromURI(Uri contentUri) {
-        String[] proj = { MediaStore.Images.Media.DATA };
-        CursorLoader loader = new CursorLoader(getActivity(), contentUri, proj, null, null, null);
-        Cursor cursor = loader.loadInBackground();
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        String result = cursor.getString(column_index);
-        cursor.close();
-        return result;
-    }
-
-    private static File getOutputMediaFile(){
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "EW");
-
-        if (!mediaStorageDir.exists()){
-            if (!mediaStorageDir.mkdirs()){
-                return null;
-            }
-        }
-
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        return new File(mediaStorageDir.getPath() + File.separator +
-                "IMG_"+ timeStamp + ".jpg");
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -452,6 +291,7 @@ public class NotarizeNewFragment extends Fragment {
     public void sendMessage(final String message) {
         Log.i(TAG,"sending message " + message);
         final String hash = txtHash.getText().toString();
+        final String path = txtPath.getText().toString();
 
         AsyncTask<Void,Void,Boolean> t = new AsyncTask<Void,Void,Boolean>() {
 
@@ -489,8 +329,7 @@ public class NotarizeNewFragment extends Fragment {
 
 
                     final DeterministicKey alias = ewDerivation.getAlias();
-                    //final String aliasString = Bitcoin.keyToStringAddress(alias);
-                    final String aliasString="17cua9VpaJqTLQ2PArDog6DWapcDZrPba2";
+                    final String aliasString=Bitcoin.keyToStringAddress(alias);
                     final String challenge = System.currentTimeMillis() + "";
                     final String signature=alias.signMessage(challenge);
 

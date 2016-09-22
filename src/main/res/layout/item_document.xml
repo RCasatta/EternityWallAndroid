@@ -45,11 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textColor="@color/primaryText"
-                android:layout_marginTop="2dp"
-                android:linksClickable="false"
-                android:autoLink="web"
-                android:focusable="false"
-                android:clickable="false"/>
+                android:layout_marginTop="2dp"/>
 
             <TextView
                 style="@style/TextAppearance.AppCompat.Small"
@@ -59,8 +55,7 @@
                 android:visibility="visible"
                 android:layout_marginTop="4dp"
                 android:textColor="@color/primaryText"
-                android:ellipsize="middle"
-                android:textIsSelectable="true"/>
+                android:ellipsize="middle"/>
         </LinearLayout>
     </RelativeLayout>
 
