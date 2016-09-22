@@ -5,19 +5,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="it.eternitywall.eternitywall.fragments.NotarizeListFragment">
 
-
-
-    <!--<android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/activity_main_swipe_refresh_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ListView
-            android:id="@+id/lstMessages"
-            android:layout_width="match_parent"
-            android:divider="@android:color/transparent"
-            android:layout_height="match_parent" />
-    </android.support.v4.widget.SwipeRefreshLayout>-->
-
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/activity_main_swipe_refresh_layout"
         android:layout_width="match_parent"
@@ -33,7 +20,6 @@
             android:layout_height="match_parent" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
-
     <TextView
         android:id="@+id/txtHeader"
         android:layout_width="match_parent"
@@ -46,20 +32,10 @@
         android:textSize="18sp"
         android:textColor="@color/primaryText"
         android:visibility="gone"
-        android:text="@string/no_msg_found"
+        android:text="@string/no_notarize_found"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:elevation="10dp" />
-<!--
-    <ProgressBar
-        android:id="@+id/progress"
-        android:indeterminate="true"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:background="@android:color/transparent"
-        android:layout_centerInParent="true"
-        android:layout_gravity="center" />
--->
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabNew"

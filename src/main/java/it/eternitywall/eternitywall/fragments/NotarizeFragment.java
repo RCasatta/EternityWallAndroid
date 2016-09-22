@@ -81,10 +81,12 @@ public class NotarizeFragment extends Fragment {
         EWApplication ewApplication = (EWApplication) getActivity().getApplication();
         WalletObservable walletObservable = ewApplication.getWalletObservable();   //Should be moved in activity, but this way you have no callback for the listener here
 
-        if(savedInstanceState!=null){
+        /*if(savedInstanceState!=null){
             Fragment currentFragment=getFragmentManager().getFragment(savedInstanceState,"currentFragment");
             transaction.replace(R.id.root_frame_notarize,currentFragment);
-        }else if (passphrase==null) {
+        }else
+        */
+        if (passphrase==null) {
             transaction.replace(R.id.root_frame_notarize, new NotarizeHelloFragment());
         }else if (walletObservable==null) {
             transaction.replace(R.id.root_frame_notarize, new NotarizeHelloFragment());
@@ -100,14 +102,14 @@ public class NotarizeFragment extends Fragment {
 
         return v;
     }
-
+/*
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Fragment currentFragment=getFragmentManager().findFragmentById(R.id.root_frame);
         getFragmentManager().putFragment(outState,"currentFragment",currentFragment);
     }
-
+*/
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

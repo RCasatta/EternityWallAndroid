@@ -14,6 +14,7 @@ import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.orm.SugarContext;
 import com.orm.SugarDb;
@@ -80,13 +81,17 @@ public class NotarizeListFragment extends Fragment {
     }
 
 
-
+    TextView txtHeader;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v= inflater.inflate(R.layout.fragment_notarize_list, container, false);
+
+        // Set TextViews
+        txtHeader=(TextView) v.findViewById(R.id.txtHeader);
+
         // Show / Hide write button
         v.findViewById(R.id.fabNew).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,8 +125,15 @@ public class NotarizeListFragment extends Fragment {
                 List<Document> documents = Document.find(Document.class, " 1=1");
                 DocumentRecyclerViewAdapter documentListAdapter = new DocumentRecyclerViewAdapter(documents);
                 lstMessages.setAdapter( documentListAdapter );
+
+                if(documents.isEmpty()){
+                    txtHeader.setVisibility(View.VISIBLE);
+                }else{
+                    txtHeader.setVisibility(View.GONE);
+                }
             }
         });
+
 
         return v;
     }
