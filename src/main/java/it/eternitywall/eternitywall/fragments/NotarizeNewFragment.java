@@ -359,6 +359,8 @@ public class NotarizeNewFragment extends Fragment {
                     document.created_at= System.currentTimeMillis();
                     document.stamped_at=new Long(0);
                     document.stamp="";
+                    document.signature=signature;
+                    document.challenge=challenge;
                     document.save();
 
                     return result.isPresent();

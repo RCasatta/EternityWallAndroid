@@ -9,4 +9,6 @@ public class Document extends SugarRecord {
     public Long created_at= Long.valueOf(0);
     public Long stamped_at= Long.valueOf(0);
     public String stamp="";
+    public String signature="";
+    public String challenge="";
 }
