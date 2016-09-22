@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -63,6 +64,9 @@ public class NotarizeDetailActivity extends AppCompatActivity implements Notariz
         txtStamped.setText( getDate(document.stamped_at) );
         txtStamp.setText( document.stamp);
 */
+        txtHash.setText(document.hash);
+        txtPath.setText(document.path);
+        imageView.setImageURI(Uri.parse(new File(document.path).toString()));
 
     }
     private String getDate(long time) {
