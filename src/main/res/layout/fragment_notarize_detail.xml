@@ -32,6 +32,14 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:id="@+id/txtPath" />
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:id="@+id/imageView"
+                android:layout_margin="@dimen/activity_vertical_margin"
+                android:src="@drawable/eternity_logo"
+                android:layout_gravity="center_horizontal"
+                android:scaleType="fitCenter" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -92,38 +100,7 @@
                 style="@android:style/TextAppearance.Small" />
 
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:id="@+id/imageView"
-                android:layout_margin="@dimen/activity_vertical_margin"
-                android:src="@drawable/eternity_logo"
-                android:layout_gravity="center_horizontal"
-                android:scaleType="fitCenter" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_marginTop="@dimen/padding_high"
-                android:layout_height="wrap_content">
-
-                <ProgressBar
-                    android:id="@+id/progress"
-                    android:indeterminate="true"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:visibility="invisible"
-                    android:background="@android:color/transparent"
-                    android:layout_centerInParent="true"/>
-
-                <Button
-                    android:id="@+id/btnSend"
-                    android:text="Aggiorna"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/whiteText"
-                    android:layout_centerInParent="true"/>
-
-            </RelativeLayout>
         </LinearLayout>
     </ScrollView>
 

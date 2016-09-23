@@ -1,24 +1,40 @@
 package it.eternitywall.eternitywall.activity;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.common.base.Optional;
+
+import org.bitcoinj.crypto.DeterministicKey;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Locale;
 
+import it.eternitywall.eternitywall.Http;
+import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
+import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 import it.eternitywall.eternitywall.components.Document;
+import it.eternitywall.eternitywall.wallet.EWDerivation;
+
+import static java.net.URLEncoder.encode;
 
 public class NotarizeDetailActivity extends AppCompatActivity {
 
@@ -64,8 +80,8 @@ public class NotarizeDetailActivity extends AppCompatActivity {
         txtHash.setText(document.hash);
         txtPath.setText(document.path);
         txtCreated.setText(getDate(document.created_at));
-        txtStamped.setText(getDate(document.stamped_at));
-        txtStamp.setText(document.stamp);
+        txtStamped.setText("");
+        txtStamp.setText("");
 
 
         // Set the imageview retrieved from the document
@@ -79,6 +95,8 @@ public class NotarizeDetailActivity extends AppCompatActivity {
             Log.d(getClass().toString(),e.getLocalizedMessage());
         }
 
+        checkMessage(document.hash);
+
     }
     private String getDate(long time) {
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
@@ -87,4 +105,52 @@ public class NotarizeDetailActivity extends AppCompatActivity {
         return date;
     }
 
+
+    public void checkMessage(final String hash) {
+
+        AsyncTask<Void,Void,Boolean> t = new AsyncTask<Void,Void,Boolean>() {
+            JSONObject jObj;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(Boolean res) {
+                super.onPostExecute(res);
+                try {
+                    txtStamped.setText(getDate(jObj.getLong("timestamp") * 1000) );
+                    txtStamp.setText(jObj.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                try {
+                    //String hash = Hex.toHexString(buffer);
+                    String url = "https://eternitywall.it/v1/hash/%s";
+                    String urlString = String.format(url, hash);
+                    Optional<String>json = Http.get(urlString);
+                    if(json!=null && json.isPresent()) {
+                        try {
+                            String jstring = json.get();
+                            jObj = new JSONObject(jstring);
+                        } catch (Exception ex) {
+                            Log.i(getClass().toString(), "no value in json " + ex.getMessage());
+                        }
+                    }else{
+                        return false;
+                    }
+
+                } catch (Exception e) {
+                    return false;
+                }
+                return true;
+            }
+        };
+        t.execute();
+    }
 }
