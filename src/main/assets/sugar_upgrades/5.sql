@@ -1,0 +1,2 @@
+alter table DOCUMENT add SIGNATURE TEXT;
+alter table DOCUMENT add CHALLENGE TEXT;
