@@ -90,6 +90,7 @@
     <string name="confirm_pin">Confirm PIN</string>
     <string name="passphrase_info">Your account can only be restored using the above passphrase. Make sure you save it before proceeding. For safety reasons, the passphrase is stored only on your device and not on the servers. If you loose it without backup, it is not recoverable.</string>
     <string name="no_msg_found">No eternity messages found</string>
+    <string name="no_notarize_found">No eternity notarized documents found</string>
     <string name="recover_account">Recover account</string>
     <string name="passphrase">passphrase</string>
     <string name="confirm">Confirm</string>

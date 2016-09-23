@@ -323,7 +323,7 @@ public class NotarizeNewFragment extends Fragment {
                     String passphrase = sharedPref.getString(Preferences.PASSPHRASE, null);
                     if (passphrase == null)
                         return false;
-                    passphrase="kiss clap snap wear alter desk rally dance donate lava adult notice";
+                    //passphrase="kiss clap snap wear alter desk rally dance donate lava adult notice";
                     byte[] mySeed = Bitcoin.getEntropyFromPassphrase(passphrase);
                     EWDerivation ewDerivation = new EWDerivation(mySeed);
 
