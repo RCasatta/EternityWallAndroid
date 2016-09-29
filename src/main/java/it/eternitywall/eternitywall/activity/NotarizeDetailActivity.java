@@ -112,6 +112,7 @@ public class NotarizeDetailActivity extends AppCompatActivity {
         }catch (Exception e ) {
             e.printStackTrace();
             Log.d(getClass().toString(),e.getLocalizedMessage());
+            imageView.setVisibility(View.GONE);
         }
 
         checkMessage(document.hash);
