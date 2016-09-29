@@ -1,5 +1,7 @@
 package it.eternitywall.eternitywall.activity;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -94,6 +96,12 @@ public class NotarizeDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                clipboard.setText(document.stamp);
+                //ClipData clip = ClipData.newPlainText(label, text);
+                //clipboard.setPrimaryClip(clip);
+
+/*
                 TextView showText = new TextView(NotarizeDetailActivity.this);
                 showText.setText(document.stamp);
                 showText.setTextIsSelectable(true);
@@ -103,7 +111,7 @@ public class NotarizeDetailActivity extends AppCompatActivity {
                         .setView(showText,8,8,8,8)
                         .setPositiveButton(android.R.string.ok, null)
                         .setCancelable(true)
-                        .create().show();
+                        .create().show();*/
             }
         });
 
