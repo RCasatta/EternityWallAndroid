@@ -74,32 +74,31 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="Stamped At"
                 android:layout_marginTop="@dimen/activity_vertical_margin" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textAppearance="?android:attr/textAppearanceLarge"
                 android:id="@+id/txtStamped"
-                style="@android:style/TextAppearance.Small" />
+                style="@android:style/TextAppearance.Large" />
 
-            <TextView
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/padding_high"
+                android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/btnShow"
+                android:text="@string/btn_stamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Stamp"
-                android:layout_marginTop="@dimen/activity_vertical_margin" />
+                android:textColor="@color/whiteText"
+                android:layout_centerInParent="true"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:id="@+id/txtStamp"
-                style="@android:style/TextAppearance.Small" />
-
-
+            </RelativeLayout>
 
         </LinearLayout>
     </ScrollView>

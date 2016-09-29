@@ -121,5 +121,6 @@
     <string name="title_activity_notarize">Notarize</string>
     <string name="notarize_fragment_subtitle">To notarize documents you need an account with a confirmed alias</string>
     <string name="notarize_fragment_subtitle_temp">To notarize documents you need an account with a confirmed alias. SOON AVAILABLE!</string>
+    <string name="btn_stamp">Show stamp</string>
 
 </resources>

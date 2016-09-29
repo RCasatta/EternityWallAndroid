@@ -1,5 +1,6 @@
 package it.eternitywall.eternitywall.activity;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -7,10 +8,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -43,7 +46,8 @@ public class NotarizeDetailActivity extends AppCompatActivity {
 
 
     ImageView imageView;
-    TextView txtHash,txtPath,txtCreated,txtStamped,txtStamp;
+    TextView txtHash,txtPath,txtCreated,txtStamped;
+    Button btnShow;
     ProgressBar progress;
     String path="";
 
@@ -75,14 +79,29 @@ public class NotarizeDetailActivity extends AppCompatActivity {
         txtPath= (TextView)findViewById(R.id.txtPath);
         txtCreated= (TextView)findViewById(R.id.txtCreated);
         txtStamped= (TextView)findViewById(R.id.txtStamped);
-        txtStamp= (TextView)findViewById(R.id.txtStamp);
+        btnShow= (Button)findViewById(R.id.btnShow);
 
         txtHash.setText(document.hash);
         txtPath.setText(document.path);
         txtCreated.setText(getDate(document.created_at));
         txtStamped.setText("");
-        txtStamp.setText("");
 
+        btnShow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                TextView showText = new TextView(NotarizeDetailActivity.this);
+                showText.setText(document.stamp);
+                showText.setTextIsSelectable(true);
+
+                new AlertDialog.Builder(NotarizeDetailActivity.this)
+                        .setTitle("Stamp")
+                        .setView(showText)
+                        .setPositiveButton(android.R.string.ok, null)
+                        .setCancelable(false)
+                        .create().show();
+            }
+        });
 
         // Set the imageview retrieved from the document
         try {
@@ -120,8 +139,9 @@ public class NotarizeDetailActivity extends AppCompatActivity {
             protected void onPostExecute(Boolean res) {
                 super.onPostExecute(res);
                 try {
-                    txtStamped.setText(getDate(jObj.getLong("timestamp") * 1000) );
-                    txtStamp.setText(jObj.toString());
+                    document.stamp=jObj.toString();
+                    document.stamped_at=jObj.getLong("timestamp") * 1000;
+                    txtStamped.setText(getDate(document.stamped_at) );
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
