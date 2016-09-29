@@ -172,15 +172,13 @@ public class NotarizeNewFragment extends Fragment {
         return v;
     }
 
-    // Choose file from intent
-    Uri file;
-
+    // Choose file with intent
     public void takeFile(){
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("*/*");
         startActivityForResult(intent, PICK_FILE_REQUEST);
     }
-
+    // Retrieve file from intent
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -287,7 +285,7 @@ public class NotarizeNewFragment extends Fragment {
     }
 
 
-
+    // Send hash message
     public void sendMessage(final String message) {
         Log.i(TAG,"sending message " + message);
         final String hash = txtHash.getText().toString();

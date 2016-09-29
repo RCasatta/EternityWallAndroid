@@ -101,7 +101,7 @@ NotarizeFragment.OnFragmentInteractionListener,NotarizeHelloFragment.OnFragmentI
         if(savedInstanceState!=null) {
             /*Fragment secondFragment = getSupportFragmentManager().getFragment(savedInstanceState,"account_fragment");
             setupViewPager(viewPager, secondFragment);*/
-            viewPager.setCurrentItem(savedInstanceState.getInt("viewPager_CurrentItem"));
+            //viewPager.setCurrentItem(savedInstanceState.getInt("viewPager_CurrentItem"));
         }
 
     }
@@ -360,6 +360,7 @@ NotarizeFragment.OnFragmentInteractionListener,NotarizeHelloFragment.OnFragmentI
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
         Toast.makeText(this, "requestCode=" + requestCode + " resultCode=" + resultCode + " data=" + data , Toast.LENGTH_LONG).show();
     }
 

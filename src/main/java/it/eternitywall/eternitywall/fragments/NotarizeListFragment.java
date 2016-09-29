@@ -1,33 +1,51 @@
 package it.eternitywall.eternitywall.fragments;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.LruCache;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.common.base.Optional;
 import com.orm.SugarContext;
-import com.orm.SugarDb;
 
-import java.util.ArrayList;
+import org.bitcoinj.crypto.DeterministicKey;
+import org.spongycastle.util.encoders.Hex;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import it.eternitywall.eternitywall.EWApplication;
-import it.eternitywall.eternitywall.Message;
+import it.eternitywall.eternitywall.Http;
+import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
 import it.eternitywall.eternitywall.activity.NotarizeActivity;
+import it.eternitywall.eternitywall.activity.NotarizeDetailActivity;
 import it.eternitywall.eternitywall.adapters.DocumentRecyclerViewAdapter;
+import it.eternitywall.eternitywall.bitcoin.Bitcoin;
 import it.eternitywall.eternitywall.components.Document;
+import it.eternitywall.eternitywall.wallet.EWDerivation;
+
+import static java.net.URLEncoder.encode;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -82,6 +100,7 @@ public class NotarizeListFragment extends Fragment {
 
 
     TextView txtHeader;
+    ProgressBar progress;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -96,8 +115,7 @@ public class NotarizeListFragment extends Fragment {
         v.findViewById(R.id.fabNew).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getActivity(), NotarizeActivity.class);
-                startActivity(i);
+                takeFile();
             }
         });
 
@@ -133,6 +151,9 @@ public class NotarizeListFragment extends Fragment {
                 }
             }
         });
+
+
+        progress = (ProgressBar) v.findViewById(R.id.progress);
 
 
         return v;
@@ -184,4 +205,194 @@ public class NotarizeListFragment extends Fragment {
         public void onFragmentInteraction(Uri uri);
     }
 
+    // pick request code
+    private static final int PICK_FILE_REQUEST = 100;
+
+    private Long id_document;
+
+    // Choose file with intent
+    public void takeFile(){
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.setType("*/*");
+        startActivityForResult(intent, PICK_FILE_REQUEST);
+    }
+
+    // Retrieve file from intent
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        String path=null,hash=null;
+
+        if (requestCode == PICK_FILE_REQUEST) {
+            if (data != null && data.getData() != null) {
+                Uri uri = data.getData();
+                path=uri.toString();
+                Log.d("NOTARIZE",uri.getPath());
+
+                // set persistent Authorization to read the file from data storage
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    getActivity().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION );
+                }
+
+                // set image
+                try {
+                    InputStream is = getActivity().getContentResolver().openInputStream(uri);
+                    Bitmap bitmap = BitmapFactory.decodeStream(is);
+                    if(bitmap==null){
+                        Log.d("NOTARIZE","no image file");
+                        //imageView.setImageDrawable(getResources().getDrawable(R.drawable.eternity_logo));
+                    }else {
+                        //imageView.setImageBitmap(bitmap);
+                    }
+                }catch(Exception e){
+                    Log.d("NOTARIZE","no image file");
+                    //imageView.setImageDrawable(getResources().getDrawable(R.drawable.eternity_logo));
+                }
+
+                // read file
+                byte[] bytes=null;
+                try {
+                    InputStream is = getActivity().getContentResolver().openInputStream(uri);
+                    int size = (int) is.available();
+                    bytes = new byte[size];
+                    is.read(bytes, 0, bytes.length);
+                    is.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                // build digest
+                try {
+                    MessageDigest digest = null;
+                    digest = MessageDigest.getInstance("SHA-256");
+                    digest.update(bytes);
+                    hash = Hex.toHexString(digest.digest());
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+
+                // run
+                if(path!=null && hash!=null){
+                    sendMessage(path,hash);
+                }else {
+                    dialogFailure();
+                }
+
+            }
+        }
+    }
+
+
+    // Send hash message
+    public void sendMessage(final String path,final String hash) {
+
+        AsyncTask<Void,Void,Boolean> t = new AsyncTask<Void,Void,Boolean>() {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progress.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            protected void onPostExecute(Boolean res) {
+                super.onPostExecute(res);
+                progress.setVisibility(View.GONE);
+
+                if (res==true)
+                    dialogSuccess();
+                else
+                    dialogFailure();
+
+            }
+
+            @Override
+            protected Boolean doInBackground(Void... params) {
+
+
+                try {
+                    final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                    String passphrase = sharedPref.getString(Preferences.PASSPHRASE, null);
+                    if (passphrase == null)
+                        return false;
+                    //passphrase="kiss clap snap wear alter desk rally dance donate lava adult notice";
+                    byte[] mySeed = Bitcoin.getEntropyFromPassphrase(passphrase);
+                    EWDerivation ewDerivation = new EWDerivation(mySeed);
+
+
+                    final DeterministicKey alias = ewDerivation.getAlias();
+                    final String aliasString=Bitcoin.keyToStringAddress(alias);
+                    final String challenge = System.currentTimeMillis() + "";
+                    final String signature=alias.signMessage(challenge);
+
+
+                    //String hash = Hex.toHexString(buffer);
+                    String url = "https://eternitywall.it/v1/auth/hash/%s?account=%s&signature=%s&challenge=%s";
+                    String urlString = String.format(url, hash, encode(aliasString), encode(signature), encode(challenge));
+                    Optional<String> result = Http.post(urlString, "", "");
+
+                    // Check result
+                    Log.d("NOTARIZE","url : "+urlString);
+                    Log.d("NOTARIZE","present : "+result.isPresent());
+                    Log.d("NOTARIZE","result : "+result.get());
+
+
+                    // Save document into DB
+                    Document document = new Document();
+                    document.path=path;
+                    document.hash=hash;
+                    document.created_at= System.currentTimeMillis();
+                    document.stamped_at=new Long(0);
+                    document.stamp="";
+                    document.signature=signature;
+                    document.challenge=challenge;
+                    document.save();
+                    id_document=document.getId();
+
+                    return result.isPresent();
+
+                } catch (Exception e) {
+                    return false;
+                }
+
+            }
+        };
+        t.execute();
+    }
+
+
+    private void dialogSuccess() {
+        Log.i(getClass().toString(),"showing dialogSuccess");
+        android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(getActivity());
+        alertDialog.setTitle("Success");
+        alertDialog.setMessage("Message successfully notarized.");
+        alertDialog.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(getActivity(), NotarizeDetailActivity.class);
+                intent.putExtra("id",id_document);
+                startActivity(intent);
+            }
+        });
+        alertDialog.setCancelable(false);
+        android.support.v7.app.AlertDialog alert = alertDialog.create();
+        alert.show();
+    }
+    private void dialogFailure() {
+        Log.i(getClass().toString(),"showing dialogFailure");
+        android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(getActivity());
+        alertDialog.setTitle("Failure");
+        alertDialog.setMessage("Try again.");
+        alertDialog.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ;
+            }
+        });
+        alertDialog.setCancelable(false);
+        android.support.v7.app.AlertDialog alert = alertDialog.create();
+        alert.show();
+    }
 }
