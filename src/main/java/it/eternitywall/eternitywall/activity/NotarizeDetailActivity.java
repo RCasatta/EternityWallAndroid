@@ -28,6 +28,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Locale;
@@ -108,9 +110,11 @@ public class NotarizeDetailActivity extends AppCompatActivity {
         // Set the imageview retrieved from the document
         try {
             Uri uri = Uri.parse(document.path);
-            InputStream is = getContentResolver().openInputStream(uri);
-            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            Bitmap bitmap = decodeImageFile(uri,400,400);
+            //InputStream is = getContentResolver().openInputStream(uri);
+            //BitmapFactory.decodeStream(is);
             imageView.setImageBitmap(bitmap);
+
         }catch (Exception e ) {
             e.printStackTrace();
             Log.d(getClass().toString(),e.getLocalizedMessage());
@@ -175,5 +179,33 @@ public class NotarizeDetailActivity extends AppCompatActivity {
             }
         };
         t.execute();
+    }
+
+    public Bitmap decodeImageFile(Uri uri, int WIDTH, int HIGHT){
+        try {
+            //Decode image size
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            InputStream is = getContentResolver().openInputStream(uri);
+            BitmapFactory.decodeStream(is,null,o);
+
+            //The new size we want to scale to
+            final int REQUIRED_WIDTH=WIDTH;
+            final int REQUIRED_HIGHT=HIGHT;
+            //Find the correct scale value. It should be the power of 2.
+            int scale=1;
+            while(o.outWidth/scale/2>=REQUIRED_WIDTH && o.outHeight/scale/2>=REQUIRED_HIGHT)
+                scale*=2;
+
+            //Decode with inSampleSize
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize=scale;
+            InputStream is1 = getContentResolver().openInputStream(uri);
+            return BitmapFactory.decodeStream(is1,null,o2);
+
+        } catch (FileNotFoundException e) {
+            Log.d( "decode" ,e.getLocalizedMessage().toString());
+        }
+        return null;
     }
 }

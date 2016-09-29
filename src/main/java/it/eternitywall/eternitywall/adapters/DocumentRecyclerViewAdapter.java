@@ -1,6 +1,7 @@
 package it.eternitywall.eternitywall.adapters;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -98,8 +100,9 @@ public class DocumentRecyclerViewAdapter
         // Set the imageview retrieved from the document
         try {
             Uri uri = Uri.parse(d.path);
-            InputStream is = h.mView.getContext().getContentResolver().openInputStream(uri);
-            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            Bitmap bitmap = decodeImageFile(uri,200,200,h.mView.getContext());
+            //InputStream is = h.mView.getContext().getContentResolver().openInputStream(uri);
+            //Bitmap bitmap = BitmapFactory.decodeStream(is);
             h.imageView.setImageBitmap(bitmap);
         }catch (Exception e ) {
             e.printStackTrace();
@@ -137,5 +140,33 @@ public class DocumentRecyclerViewAdapter
         cal.setTimeInMillis(time);
         String date = DateFormat.format("dd MMMM yyyy HH:mm", cal).toString();
         return date;
+    }
+
+    public Bitmap decodeImageFile(Uri uri, int WIDTH, int HIGHT,Context context){
+        try {
+            //Decode image size
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            InputStream is = context.getContentResolver().openInputStream(uri);
+            BitmapFactory.decodeStream(is,null,o);
+
+            //The new size we want to scale to
+            final int REQUIRED_WIDTH=WIDTH;
+            final int REQUIRED_HIGHT=HIGHT;
+            //Find the correct scale value. It should be the power of 2.
+            int scale=1;
+            while(o.outWidth/scale/2>=REQUIRED_WIDTH && o.outHeight/scale/2>=REQUIRED_HIGHT)
+                scale*=2;
+
+            //Decode with inSampleSize
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize=scale;
+            InputStream is1 = context.getContentResolver().openInputStream(uri);
+            return BitmapFactory.decodeStream(is1,null,o2);
+
+        } catch (FileNotFoundException e) {
+            Log.d( "decode" ,e.getLocalizedMessage().toString());
+        }
+        return null;
     }
 }
