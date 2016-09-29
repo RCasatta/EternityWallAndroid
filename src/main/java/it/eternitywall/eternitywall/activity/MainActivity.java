@@ -360,8 +360,8 @@ NotarizeFragment.OnFragmentInteractionListener,NotarizeHelloFragment.OnFragmentI
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-            super.onActivityResult(requestCode, resultCode, data);
-        Toast.makeText(this, "requestCode=" + requestCode + " resultCode=" + resultCode + " data=" + data , Toast.LENGTH_LONG).show();
+        super.onActivityResult(requestCode, resultCode, data);
+        //Toast.makeText(this, "requestCode=" + requestCode + " resultCode=" + resultCode + " data=" + data , Toast.LENGTH_LONG).show();
     }
 
 

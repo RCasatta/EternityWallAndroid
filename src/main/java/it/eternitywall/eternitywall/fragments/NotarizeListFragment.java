@@ -234,7 +234,7 @@ public class NotarizeListFragment extends Fragment {
                 }
 
                 // set image
-                try {
+                /*try {
                     InputStream is = getActivity().getContentResolver().openInputStream(uri);
                     Bitmap bitmap = BitmapFactory.decodeStream(is);
                     if(bitmap==null){
@@ -246,7 +246,7 @@ public class NotarizeListFragment extends Fragment {
                 }catch(Exception e){
                     Log.d("NOTARIZE","no image file");
                     //imageView.setImageDrawable(getResources().getDrawable(R.drawable.eternity_logo));
-                }
+                }*/
 
                 // read file
                 byte[] bytes=null;
