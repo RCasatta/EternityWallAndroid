@@ -21,7 +21,7 @@ public class NotarizeActivity extends AppCompatActivity implements NotarizeNewFr
         toolbar.setTitle("NOTARIZE");
         setSupportActionBar(toolbar);*/
 
-        setTitle("NOTARIZE");
+        setTitle("Notarize");
     }
 
     @Override
