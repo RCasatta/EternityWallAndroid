@@ -101,6 +101,7 @@ public class NotarizeListFragment extends Fragment {
 
     TextView txtHeader;
     ProgressBar progress;
+    RecyclerView lstMessages;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -120,7 +121,7 @@ public class NotarizeListFragment extends Fragment {
         });
 
         // Set Fragment Views
-        final RecyclerView lstMessages = (RecyclerView) v.findViewById(R.id.lstMessages);
+        lstMessages = (RecyclerView) v.findViewById(R.id.lstMessages);
 
         // Set Recyclerview
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager( getActivity().getApplicationContext() );
@@ -151,8 +152,6 @@ public class NotarizeListFragment extends Fragment {
                 }
             }
         });
-
-
         progress = (ProgressBar) v.findViewById(R.id.progress);
 
 
@@ -371,6 +370,20 @@ public class NotarizeListFragment extends Fragment {
         alertDialog.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+                // Refresh content
+
+                List<Document> documents = Document.find(Document.class, " 1=1");
+                DocumentRecyclerViewAdapter documentListAdapter = new DocumentRecyclerViewAdapter(documents);
+                lstMessages.setAdapter( documentListAdapter );
+
+                if(documents.isEmpty()){
+                    txtHeader.setVisibility(View.VISIBLE);
+                }else{
+                    txtHeader.setVisibility(View.GONE);
+                }
+
+                // show message detail
                 Intent intent = new Intent(getActivity(), NotarizeDetailActivity.class);
                 intent.putExtra("id",id_document);
                 startActivity(intent);

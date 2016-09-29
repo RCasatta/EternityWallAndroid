@@ -10,9 +10,11 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -96,9 +98,9 @@ public class NotarizeDetailActivity extends AppCompatActivity {
 
                 new AlertDialog.Builder(NotarizeDetailActivity.this)
                         .setTitle("Stamp")
-                        .setView(showText)
+                        .setView(showText,8,8,8,8)
                         .setPositiveButton(android.R.string.ok, null)
-                        .setCancelable(false)
+                        .setCancelable(true)
                         .create().show();
             }
         });
