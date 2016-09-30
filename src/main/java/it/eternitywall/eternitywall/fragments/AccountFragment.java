@@ -75,10 +75,11 @@ public class AccountFragment extends Fragment {
 
         final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String passphrase=sharedPref.getString(Preferences.PASSPHRASE,null);
-        if(savedInstanceState!=null){
+        /*if(savedInstanceState!=null){
             Fragment currentFragment=getFragmentManager().getFragment(savedInstanceState,"currentFragment");
             transaction.replace(R.id.root_frame,currentFragment);
-        }else if (passphrase==null) {
+        }else*/
+        if (passphrase==null) {
             transaction.replace(R.id.root_frame, new HelloFragment());
         }else {
             transaction.replace(R.id.root_frame, new WalletFragment());
@@ -91,12 +92,12 @@ public class AccountFragment extends Fragment {
         return v;
     }
 
-    @Override
+    /*@Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Fragment currentFragment=getFragmentManager().findFragmentById(R.id.root_frame);
         getFragmentManager().putFragment(outState,"currentFragment",currentFragment);
-    }
+    }*/
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

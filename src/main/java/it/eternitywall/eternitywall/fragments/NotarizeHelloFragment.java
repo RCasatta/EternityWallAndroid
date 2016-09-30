@@ -80,12 +80,12 @@ public class NotarizeHelloFragment extends Fragment {
         return v;
     }
 
-    @Override
+    /*@Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Fragment currentFragment=getFragmentManager().findFragmentById(R.id.root_frame);
         getFragmentManager().putFragment(outState,"currentFragment",currentFragment);
-    }
+    }*/
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

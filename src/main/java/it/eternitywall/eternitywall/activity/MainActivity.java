@@ -98,22 +98,22 @@ NotarizeFragment.OnFragmentInteractionListener,NotarizeHelloFragment.OnFragmentI
 
 
         //Save the fragment's instance
-        if(savedInstanceState!=null) {
+        //if(savedInstanceState!=null) {
             /*Fragment secondFragment = getSupportFragmentManager().getFragment(savedInstanceState,"account_fragment");
             setupViewPager(viewPager, secondFragment);*/
             //viewPager.setCurrentItem(savedInstanceState.getInt("viewPager_CurrentItem"));
-        }
+        //}
 
     }
-    @Override
+    /*@Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("viewPager_CurrentItem", viewPager.getCurrentItem());
         /*ViewPagerAdapter viewPagerAdapter =(ViewPagerAdapter)viewPager.getAdapter();
         if(viewPagerAdapter.getCount()==2){
             getSupportFragmentManager().putFragment(outState,"account_fragment",viewPagerAdapter.getItem(1));
-        }*/
-    }
+        }
+    }*/
 
     private void changeTabsFont() {
         // Set typeface font inside toolbar for support font-awesome

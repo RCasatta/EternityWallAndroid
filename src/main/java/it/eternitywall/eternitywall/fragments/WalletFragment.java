@@ -134,9 +134,9 @@ public class WalletFragment extends Fragment implements MessageRecyclerViewAdapt
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i(TAG,"onCreate");
-        if (savedInstanceState!=null) {
+        /*if (savedInstanceState!=null) {
             return;
-        }
+        }*/
 
 
         if (getArguments() != null) {

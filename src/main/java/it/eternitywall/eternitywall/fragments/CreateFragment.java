@@ -144,29 +144,29 @@ public class CreateFragment extends Fragment {
         });
 
 
-        if (savedInstanceState==null) {
+        //if (savedInstanceState==null) {
             newPassphrase();
             etPassword.setText(passphrase);
             ivIdenticon.setImageBitmap(identicon);
-        }else {
+        /*}else {
             passphrase=savedInstanceState.getString("passphrase");
             alias=savedInstanceState.getString("alias");
             etPassword.setText(passphrase);
             identicon=IdenticonGenerator.generate(alias);
             ivIdenticon.setImageBitmap(identicon);
-        }
+        }*/
 
         return v;
 
     }
 
 
-    @Override
+    /*@Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("passphrase",passphrase);
         outState.putString("alias",alias);
-    }
+    }*/
 
     private void launchService() {
         EWApplication ewApplication = (EWApplication) getActivity().getApplication();

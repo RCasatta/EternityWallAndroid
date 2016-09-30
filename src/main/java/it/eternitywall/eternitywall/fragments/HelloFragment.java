@@ -89,23 +89,23 @@ public class HelloFragment extends Fragment {
                 trans.commit();
             }
         });
-        if(savedInstanceState!=null){
+        //if(savedInstanceState!=null){
             FragmentTransaction trans = getFragmentManager().beginTransaction();
             Fragment currentFragment=getFragmentManager().getFragment(savedInstanceState,"currentFragment");
             trans.replace(R.id.root_frame,currentFragment);
             trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             trans.addToBackStack(null);
             trans.commit();
-        }
+        //}
         return v;
     }
 
-    @Override
+    /*@Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Fragment currentFragment=getFragmentManager().findFragmentById(R.id.root_frame);
         getFragmentManager().putFragment(outState,"currentFragment",currentFragment);
-    }
+    }*/
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
