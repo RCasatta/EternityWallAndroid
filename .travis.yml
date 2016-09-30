@@ -8,6 +8,7 @@ android:
         - extra-android-support
         - extra-android-m2repository
         - extra-google-m2repository
-
+jdk:
+  - oraclejdk8
 script:
    - ./gradlew clean assembleDevDebug
