@@ -197,7 +197,7 @@ public class WalletFragment extends Fragment implements MessageRecyclerViewAdapt
         public void update(Observable observable, Object data) {
             Log.i(TAG, "update");
             final FragmentActivity activity = getActivity();
-            if (activity == null)
+            if (activity == null || WalletFragment.this.isAdded()==false)
                 return;
             activity.runOnUiThread(new Runnable() {
                 @Override
