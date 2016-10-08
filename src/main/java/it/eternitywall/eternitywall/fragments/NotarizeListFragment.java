@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.google.common.base.Optional;
 import com.orm.SugarContext;
+import com.orm.query.Select;
 
 import org.bitcoinj.crypto.DeterministicKey;
 import org.spongycastle.util.encoders.Hex;
@@ -131,31 +132,32 @@ public class NotarizeListFragment extends Fragment {
         // Init DB
         SugarContext.init(getActivity());
         // Put elements
-        List<Document> documents = Document.find(Document.class, " 1=1");
-        DocumentRecyclerViewAdapter documentListAdapter = new DocumentRecyclerViewAdapter(documents);
-        lstMessages.setAdapter( documentListAdapter );
-
+        refresh();
         // Set Swipe on refresh scroll-upper event
         final SwipeRefreshLayout swipe = (SwipeRefreshLayout) v.findViewById(R.id.activity_main_swipe_refresh_layout);
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 swipe.setRefreshing(false);
-                List<Document> documents = Document.find(Document.class, " 1=1");
-                DocumentRecyclerViewAdapter documentListAdapter = new DocumentRecyclerViewAdapter(documents);
-                lstMessages.setAdapter( documentListAdapter );
-
-                if(documents.isEmpty()){
-                    txtHeader.setVisibility(View.VISIBLE);
-                }else{
-                    txtHeader.setVisibility(View.GONE);
-                }
+                refresh();
             }
         });
         progress = (ProgressBar) v.findViewById(R.id.progress);
 
 
         return v;
+    }
+
+    private void refresh(){
+        List<Document> documents = Document.find(Document.class, null, null, null, "createdat DESC",null);
+        DocumentRecyclerViewAdapter documentListAdapter = new DocumentRecyclerViewAdapter(documents);
+        lstMessages.setAdapter( documentListAdapter );
+
+        if(documents.isEmpty()){
+            txtHeader.setVisibility(View.VISIBLE);
+        }else{
+            txtHeader.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -289,7 +291,7 @@ public class NotarizeListFragment extends Fragment {
 
         // Check if the message was just notarized = check into documents DB
         boolean found=false;
-        List<Document> documents = Document.listAll(Document.class);
+        List<Document>  documents = Document.find(Document.class, null, null, null, "createdat DESC");
         for (int i=0;i<documents.size();i++){
             if(documents.get(i).hash.equals(hash)){
                 found=true;
