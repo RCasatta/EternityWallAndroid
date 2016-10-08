@@ -287,6 +287,19 @@ public class NotarizeListFragment extends Fragment {
     // Send hash message
     public void sendMessage(final String path,final String hash) {
 
+        // Check if the message was just notarized = check into documents DB
+        boolean found=false;
+        List<Document> documents = Document.listAll(Document.class);
+        for (int i=0;i<documents.size();i++){
+            if(documents.get(i).hash.equals(hash)){
+                found=true;
+            }
+        }
+        if(found==true){
+            dialogExistDocument();
+            return;
+        }
+
         AsyncTask<Void,Void,Boolean> t = new AsyncTask<Void,Void,Boolean>() {
 
             @Override
@@ -405,6 +418,20 @@ public class NotarizeListFragment extends Fragment {
             }
         });
         alertDialog.setCancelable(false);
+        android.support.v7.app.AlertDialog alert = alertDialog.create();
+        alert.show();
+    }
+    private void dialogExistDocument() {
+        android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(getActivity());
+        alertDialog.setTitle("Attention");
+        alertDialog.setMessage("This document was just notarized.");
+        alertDialog.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ;
+            }
+        });
+        alertDialog.setCancelable(true);
         android.support.v7.app.AlertDialog alert = alertDialog.create();
         alert.show();
     }
