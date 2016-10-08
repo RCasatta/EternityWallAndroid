@@ -64,54 +64,43 @@ public class NotarizeDetailActivity extends AppCompatActivity {
 
 
         try {
-            id = getIntent().getLongExtra("id",0);
+            id = getIntent().getLongExtra("id", 0);
         } catch (Exception e) {
-            //succhia!
-            Toast.makeText(NotarizeDetailActivity.this, getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
-            return;
+            Toast.makeText(NotarizeDetailActivity.this, "No document selected", Toast.LENGTH_SHORT).show();
+            finish();
         }
-
         try {
-            document = Document.findById( Document.class , id );
+            document = Document.findById(Document.class, id);
         } catch (Exception e) {
-            //succhia!
-            Toast.makeText(NotarizeDetailActivity.this, getString(R.string.err_check_internet), Toast.LENGTH_SHORT).show();
-            return;
+            Toast.makeText(NotarizeDetailActivity.this, "No document found", Toast.LENGTH_SHORT).show();
         }
 
+        imageView = (ImageView) findViewById(R.id.imageView);
+        txtHash = (TextView) findViewById(R.id.txtHash);
+        txtPath = (TextView) findViewById(R.id.txtPath);
+        txtCreated = (TextView) findViewById(R.id.txtCreated);
+        txtStamped = (TextView) findViewById(R.id.txtStamped);
+        btnShow = (Button) findViewById(R.id.btnShow);
 
-        imageView= (ImageView)findViewById(R.id.imageView);
-        txtHash= (TextView)findViewById(R.id.txtHash);
-        txtPath= (TextView)findViewById(R.id.txtPath);
-        txtCreated= (TextView)findViewById(R.id.txtCreated);
-        txtStamped= (TextView)findViewById(R.id.txtStamped);
-        btnShow= (Button)findViewById(R.id.btnShow);
+
+        refresh();
+        checkMessage(document.hash);
+    }
+
+    private void refresh(){
 
         txtHash.setText(document.hash);
         txtPath.setText(document.path);
         txtCreated.setText(getDate(document.created_at));
-        txtStamped.setText("");
+        txtStamped.setText(getDate(document.stamped_at) );
 
         btnShow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                 clipboard.setText(document.stamp);
                 //ClipData clip = ClipData.newPlainText(label, text);
                 //clipboard.setPrimaryClip(clip);
-
-/*
-                TextView showText = new TextView(NotarizeDetailActivity.this);
-                showText.setText(document.stamp);
-                showText.setTextIsSelectable(true);
-
-                new AlertDialog.Builder(NotarizeDetailActivity.this)
-                        .setTitle("Stamp")
-                        .setView(showText,8,8,8,8)
-                        .setPositiveButton(android.R.string.ok, null)
-                        .setCancelable(true)
-                        .create().show();*/
             }
         });
 
@@ -119,8 +108,6 @@ public class NotarizeDetailActivity extends AppCompatActivity {
         try {
             Uri uri = Uri.parse(document.path);
             Bitmap bitmap = decodeImageFile(uri,400,400);
-            //InputStream is = getContentResolver().openInputStream(uri);
-            //BitmapFactory.decodeStream(is);
             imageView.setImageBitmap(bitmap);
 
         }catch (Exception e ) {
@@ -129,7 +116,6 @@ public class NotarizeDetailActivity extends AppCompatActivity {
             imageView.setVisibility(View.GONE);
         }
 
-        checkMessage(document.hash);
 
     }
     private String getDate(long time) {
@@ -156,7 +142,8 @@ public class NotarizeDetailActivity extends AppCompatActivity {
                 try {
                     document.stamp=jObj.toString();
                     document.stamped_at=jObj.getLong("timestamp") * 1000;
-                    txtStamped.setText(getDate(document.stamped_at) );
+                    document.save();
+                    refresh();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
