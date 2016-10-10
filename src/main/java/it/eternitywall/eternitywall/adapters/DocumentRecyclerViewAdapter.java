@@ -18,6 +18,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.joanzapata.iconify.IconDrawable;
+import com.joanzapata.iconify.Iconify;
+import com.joanzapata.iconify.fonts.FontAwesomeIcons;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -107,6 +111,7 @@ public class DocumentRecyclerViewAdapter
         }catch (Exception e ) {
             e.printStackTrace();
             Log.d(getClass().toString(),e.getLocalizedMessage());
+            h.imageView.setImageDrawable(  new IconDrawable(h.mView.getContext(), FontAwesomeIcons.fa_file) );
         }
 
         // Set hash and date

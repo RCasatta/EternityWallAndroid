@@ -24,6 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.base.Optional;
+import com.joanzapata.iconify.IconDrawable;
+import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 
 import org.bitcoinj.crypto.DeterministicKey;
 import org.json.JSONException;
@@ -108,12 +110,14 @@ public class NotarizeDetailActivity extends AppCompatActivity {
         try {
             Uri uri = Uri.parse(document.path);
             Bitmap bitmap = decodeImageFile(uri,400,400);
+            if(bitmap==null)
+                throw new Exception();
             imageView.setImageBitmap(bitmap);
 
         }catch (Exception e ) {
             e.printStackTrace();
-            Log.d(getClass().toString(),e.getLocalizedMessage());
-            imageView.setVisibility(View.GONE);
+            //imageView.setVisibility(View.GONE);
+            imageView.setImageDrawable(  new IconDrawable(this, FontAwesomeIcons.fa_file).colorRes(R.color.accent) );
         }
 
 
