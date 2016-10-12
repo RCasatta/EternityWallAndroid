@@ -94,7 +94,12 @@ public class NotarizeDetailActivity extends AppCompatActivity {
         txtHash.setText(document.hash);
         txtPath.setText(document.path);
         txtCreated.setText(getDate(document.created_at));
-        txtStamped.setText(getDate(document.stamped_at) );
+
+        if(document.stamped_at==null || document.stamped_at==0){
+            txtStamped.setText("Processing...");
+        }else {
+            txtStamped.setText(getDate(document.stamped_at));
+        }
 
         btnShow.setOnClickListener(new View.OnClickListener() {
             @Override
