@@ -124,7 +124,7 @@ public class NotarizeDetailActivity extends AppCompatActivity {
         }catch (Exception e ) {
             e.printStackTrace();
             //imageView.setVisibility(View.GONE);
-            imageView.setImageDrawable(  new IconDrawable(this, FontAwesomeIcons.fa_file).colorRes(R.color.accent) );
+            imageView.setImageDrawable(  new IconDrawable(this,FontAwesomeIcons.fa_file).colorRes(R.color.accent).sizeDp(50) );
         }
 
 

@@ -105,13 +105,13 @@ public class DocumentRecyclerViewAdapter
         try {
             Uri uri = Uri.parse(d.path);
             Bitmap bitmap = decodeImageFile(uri,200,200,h.mView.getContext());
-            //InputStream is = h.mView.getContext().getContentResolver().openInputStream(uri);
-            //Bitmap bitmap = BitmapFactory.decodeStream(is);
+            if(bitmap==null)
+                throw new Exception();
             h.imageView.setImageBitmap(bitmap);
+
         }catch (Exception e ) {
             e.printStackTrace();
-            Log.d(getClass().toString(),e.getLocalizedMessage());
-            h.imageView.setImageDrawable(  new IconDrawable(h.mView.getContext(), FontAwesomeIcons.fa_file) );
+            h.imageView.setImageDrawable(  new IconDrawable(h.mView.getContext(),FontAwesomeIcons.fa_file).colorRes(R.color.accent).sizeDp(50) );
         }
 
         // Set hash and date
