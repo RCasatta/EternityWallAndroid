@@ -387,8 +387,7 @@ public class NotarizeListFragment extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
 
                 // Refresh content
-
-                List<Document> documents = Document.find(Document.class, " 1=1");
+                List<Document> documents = Document.find(Document.class, null, null, null, "createdat DESC",null);
                 DocumentRecyclerViewAdapter documentListAdapter = new DocumentRecyclerViewAdapter(documents);
                 lstMessages.setAdapter( documentListAdapter );
 
