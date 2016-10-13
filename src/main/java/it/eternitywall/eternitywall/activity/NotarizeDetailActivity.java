@@ -83,7 +83,7 @@ public class NotarizeDetailActivity extends AppCompatActivity {
         txtCreated = (TextView) findViewById(R.id.txtCreated);
         txtStamped = (TextView) findViewById(R.id.txtStamped);
         btnShow = (Button) findViewById(R.id.btnShow);
-
+        btnShow.setVisibility(View.GONE);
 
         refresh();
         checkMessage(document.hash);
@@ -97,8 +97,10 @@ public class NotarizeDetailActivity extends AppCompatActivity {
 
         if(document.stamped_at==null || document.stamped_at==0){
             txtStamped.setText("Processing...");
+            btnShow.setVisibility(View.GONE);
         }else {
             txtStamped.setText(getDate(document.stamped_at));
+            btnShow.setVisibility(View.VISIBLE);
         }
 
         btnShow.setOnClickListener(new View.OnClickListener() {
