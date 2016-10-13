@@ -291,7 +291,7 @@ public class NotarizeListFragment extends Fragment {
 
         // Check if the message was just notarized = check into documents DB
         boolean found=false;
-        List<Document>  documents = Document.find(Document.class, null, null, null, "createdat DESC");
+        List<Document>  documents = Document.find(Document.class, null, null, null, "createdat DESC",null);
         for (int i=0;i<documents.size();i++){
             if(documents.get(i).hash.equals(hash)){
                 found=true;
