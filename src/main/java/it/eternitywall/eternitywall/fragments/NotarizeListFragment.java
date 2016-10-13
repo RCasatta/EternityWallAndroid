@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -24,7 +22,6 @@ import android.widget.TextView;
 
 import com.google.common.base.Optional;
 import com.orm.SugarContext;
-import com.orm.query.Select;
 
 import org.bitcoinj.crypto.DeterministicKey;
 import org.spongycastle.util.encoders.Hex;
@@ -39,7 +36,6 @@ import java.util.List;
 import it.eternitywall.eternitywall.Http;
 import it.eternitywall.eternitywall.Preferences;
 import it.eternitywall.eternitywall.R;
-import it.eternitywall.eternitywall.activity.NotarizeActivity;
 import it.eternitywall.eternitywall.activity.NotarizeDetailActivity;
 import it.eternitywall.eternitywall.adapters.DocumentRecyclerViewAdapter;
 import it.eternitywall.eternitywall.bitcoin.Bitcoin;
@@ -427,7 +423,7 @@ public class NotarizeListFragment extends Fragment {
     private void dialogExistDocument() {
         android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(getActivity());
         alertDialog.setTitle("Attention");
-        alertDialog.setMessage("This document was just notarized.");
+        alertDialog.setMessage("This document was already notarized.");
         alertDialog.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
