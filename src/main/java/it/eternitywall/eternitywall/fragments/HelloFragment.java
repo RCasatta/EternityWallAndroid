@@ -90,13 +90,13 @@ public class HelloFragment extends Fragment {
             }
         });
         //if(savedInstanceState!=null){
-            FragmentTransaction trans = getFragmentManager().beginTransaction();
+/*            FragmentTransaction trans = getFragmentManager().beginTransaction();
             Fragment currentFragment=getFragmentManager().getFragment(savedInstanceState,"currentFragment");
             trans.replace(R.id.root_frame,currentFragment);
             trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             trans.addToBackStack(null);
             trans.commit();
-        //}
+*/        //}
         return v;
     }
 
