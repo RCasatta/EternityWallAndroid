@@ -62,6 +62,8 @@
                 android:visibility="visible"
                 android:layout_margin="@dimen/padding_high"
                 android:maxLines="2"
+		android:inputType="textCapSentences"
+	        android:capitalize="sentences"
                 android:padding="@dimen/padding_high"></EditText>
 
             <TextView
